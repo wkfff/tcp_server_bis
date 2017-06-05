@@ -57,7 +57,7 @@ begin
   ServerIni := TIniFile.Create(IniPath + 'DIOCPTcpClient.ini');
   try
     FServerInfo^.IP := ServerIni.ReadString('ServerInfo','IP','127.0.0.1');
-    FServerInfo^.Port := ServerIni.ReadInteger('ServerInfo','Port', 8080);
+    FServerInfo^.Port := ServerIni.ReadInteger('ServerInfo','Port', 8923);
     FServerInfo^.ReadTimeOut := ServerIni.ReadInteger('ServerInfo','ReadTimeOut',5);
     sfLogger.logMessage(Format('【服务器信息】IP:%s;Port:%s;ReadTimeOut:%s',
       [FServerInfo^.IP, Inttostr(FServerInfo^.Port), InttoStr(FServerInfo^.ReadTimeOut)]));

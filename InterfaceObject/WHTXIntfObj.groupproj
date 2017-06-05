@@ -9,6 +9,9 @@
         <Projects Include="Client\test\TestTcpDll.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Server\src\DIOCPTCPServer.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="TestTcpDll:Make">
         <MSBuild Projects="Client\test\TestTcpDll.dproj" Targets="Make"/>
     </Target>
+    <Target Name="DIOCPTCPServer">
+        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj"/>
+    </Target>
+    <Target Name="DIOCPTCPServer:Clean">
+        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DIOCPTCPServer:Make">
+        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
