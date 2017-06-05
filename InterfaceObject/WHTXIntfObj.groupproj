@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{C5D28D90-07A9-4C83-A5D9-B9B51C86517A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Client\src\DIOCPTcpClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Client\test\TestTcpDll.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DIOCPTcpClient">
+        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj"/>
+    </Target>
+    <Target Name="DIOCPTcpClient:Clean">
+        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DIOCPTcpClient:Make">
+        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestTcpDll">
+        <MSBuild Projects="Client\test\TestTcpDll.dproj"/>
+    </Target>
+    <Target Name="TestTcpDll:Clean">
+        <MSBuild Projects="Client\test\TestTcpDll.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestTcpDll:Make">
+        <MSBuild Projects="Client\test\TestTcpDll.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

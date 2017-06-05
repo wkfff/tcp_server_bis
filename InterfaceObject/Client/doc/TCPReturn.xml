@@ -1,0 +1,16 @@
+<!-- IntfGetHisInfo 函数返回XML 格式及说明 -->
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <!-- resultcode -1：发生错误，错误信息在resultmessage节点  0：正常发送数据，如有数据返回放在results节点 -->
+  <resultcode></resultcode>
+  <!-- 存储错误及其他说明信息 -->
+  <resultmessage></resultmessage>
+  <!-- 存储返回数据 -->
+  <results>
+    <result></result>
+    <result></result>
+    <result></result>
+    <result></result>
+    ...
+  </results>
+</root>

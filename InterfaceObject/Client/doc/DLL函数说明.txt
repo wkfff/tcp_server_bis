@@ -1,0 +1,14 @@
+【说明】
+DLL名称：DIOCPTcpClient.dll
+发送函数名称：IntfGetHisInfo
+delphi声明：
+function IntfGetHisInfo(const ASendData:PWideChar): PChar;
+     stdcall; external 'DIOCPTcpClient.dll' name 'IntfGetHisInfo';
+PB声明：
+function string IntfGetHisInfo( string ASendData) LIBRARY "DIOCPTcpClient.dll"
+
+配置文件：DIOCPTcpClient.ini
+
+日志：log文件夹，日志名称格式：进程ID_日期(yyyymmdd).log
+
+返回XML信息见 TCPReturn.xml
