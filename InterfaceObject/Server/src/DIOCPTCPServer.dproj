@@ -121,6 +121,7 @@
         <DCCReference Include="TCPServer\U_DIOCPStreamCoder.pas"/>
         <DCCReference Include="TCPServer\U_MyTCPClientContext.pas"/>
         <DCCReference Include="TCPServer\U_RunTimeINfoTools.pas"/>
+        <DCCReference Include="IntfModule\U_EHSBInterface.pas"/>
         <RcItem Include="Server.ico">
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>
