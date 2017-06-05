@@ -4,13 +4,13 @@ program DIOCPTCPServer;
 
 uses
   Vcl.Forms,
-  F_whtxServerMain in 'F_whtxServerMain.pas' {frmDIOCPTcpServer},
   Vcl.Themes,
   Vcl.Styles,
-  U_DIOCPStreamCoder in 'U_DIOCPStreamCoder.pas',
-  F_DIOCPMMonitor in 'F_DIOCPMMonitor.pas' {FMMonitor: TFrame},
-  U_RunTimeINfoTools in 'U_RunTimeINfoTools.pas',
-  U_MyTCPClientContext in 'U_MyTCPClientContext.pas';
+  F_DIOCPMMonitor in 'TCPServer\F_DIOCPMMonitor.pas' {FMMonitor: TFrame},
+  F_whtxServerMain in 'TCPServer\F_whtxServerMain.pas' {frmDIOCPTcpServer},
+  U_DIOCPStreamCoder in 'TCPServer\U_DIOCPStreamCoder.pas',
+  U_MyTCPClientContext in 'TCPServer\U_MyTCPClientContext.pas',
+  U_RunTimeINfoTools in 'TCPServer\U_RunTimeINfoTools.pas';
 
 {$R *.res}
 var
