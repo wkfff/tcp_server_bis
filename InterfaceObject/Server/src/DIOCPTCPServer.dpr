@@ -11,7 +11,8 @@ uses
   U_DIOCPStreamCoder in 'TCPServer\U_DIOCPStreamCoder.pas',
   U_MyTCPClientContext in 'TCPServer\U_MyTCPClientContext.pas',
   U_RunTimeINfoTools in 'TCPServer\U_RunTimeINfoTools.pas',
-  U_EHSBInterface in 'IntfModule\U_EHSBInterface.pas';
+  U_EHSBInterface in 'IntfModule\U_EHSBInterface.pas',
+  U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas';
 
 {$R *.res}
 var

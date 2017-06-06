@@ -107,8 +107,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="U_SendInfobyTcpClient.pas"/>
         <DCCReference Include="U_GetHisInfoIntf.pas"/>
+        <DCCReference Include="U_SendInfobyTCPClient.pas"/>
         <DCCReference Include="uICoderSocket.pas"/>
         <DCCReference Include="uRawTcpClientCoderImpl.pas"/>
         <DCCReference Include="uStreamCoderSocket.pas"/>

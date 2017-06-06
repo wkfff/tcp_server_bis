@@ -1,34 +1,171 @@
-unit U_SendInfobyTcpClient;
+unit U_SendInfobyTCPClient;
 
 interface
 
 uses
+  System.Classes,
   System.SysUtils,
-  U_GetHisInfoIntf;
+  IniFiles,
+  qxml,
+  qstring,
+  utils_safeLogger,
+  diocp_tcp_blockClient,
+  uRawTcpClientCoderImpl,
+  uStreamCoderSocket,
+  utils_zipTools,
+  uICoderSocket;
 
-function IntfGetHisInfo(const ASendData:PChar): PChar; stdcall;
+type
+  PServerInfo = ^TServerInfo;
+  TServerInfo = record
+    IP: string;
+    Port: Integer;
+    ReadTimeOut: Integer;
+  end;
+
+  TSendInfobyTCPClient = class
+  private
+    FSendStream: TMemoryStream;
+    FRecvStream: TMemoryStream;
+    FCoderSocket: TRawTcpClientCoderImpl;
+    FResultCode: Integer;
+    FResultMessage: string;
+    FXMLNode: TQXML;
+    FLogFile: TLogFileAppender;
+    FServerInfo: PServerInfo;
+    FTcpClient: TDiocpBlockTcpClient;
+    function GetServerInfo: PServerInfo;
+    procedure GetServerIPAddress;
+    procedure ParseXML(var AXMLData: string);
+    function GenerateXml: string;
+    function SupplementXml(AXML: string): string;
+    function SendRequest: string;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Execute(ASendData: string;var ARecvData: string);
+    property ServerInfo: PServerInfo read GetServerInfo;
+  end;
 
 implementation
 
-function IntfGetHisInfo(const ASendData:PChar): PChar;
+procedure TSendInfobyTCPClient.GetServerIPAddress;
 var
-  FIntf: TGetHisInfoIntf;
-  ARecvData: string;
+  ServerIni: TIniFile;
+  IniPath: string;
 begin
-  FIntf := TGetHisInfoIntf.Create;
+  IniPath := ExtractFilePath(GetModuleName(HInstance));
+  ServerIni := TIniFile.Create(IniPath + 'DIOCPTcpClient.ini');
   try
-    try
-      FIntf.Execute(ASendData, ARecvData);
-      Result := PWideChar(ARecvData);
-    except
-      on E: Exception do
-      begin
-        Result := PWideChar(E.Message);
-        FIntf.Free;
-      end;
-    end;
+    FServerInfo^.IP := ServerIni.ReadString('ServerInfo','IP','127.0.0.1');
+    FServerInfo^.Port := ServerIni.ReadInteger('ServerInfo','Port', 8923);
+    FServerInfo^.ReadTimeOut := ServerIni.ReadInteger('ServerInfo','ReadTimeOut',5);
+    sfLogger.logMessage(Format('【服务器信息】IP:%s;Port:%s;ReadTimeOut:%s',
+      [FServerInfo^.IP, Inttostr(FServerInfo^.Port), InttoStr(FServerInfo^.ReadTimeOut)]));
   finally
-    FIntf.Free;
+    ServerIni.Free;
   end;
 end;
+
+procedure TSendInfobyTCPClient.ParseXML(var AXMLData: string);
+begin
+  FXMLNode.Parse(AXMLData);
+end;
+
+function TSendInfobyTCPClient.SendRequest: string;
+begin
+  FTcpClient.Host := FServerInfo^.IP;
+  FTcpClient.Port := FserverInfo^.Port;
+  FTcpClient.ReadTimeOut := 1000 * 60 * FServerInfo^.ReadTimeOut;
+  FSendStream.Clear;
+  FRecvStream.Clear;
+  FXMLNode.SaveToStream(FSendStream, teUTF8);
+  TZipTools.ZipStream(FSendStream, FSendStream);
+
+  FTcpClient.Disconnect;
+  FTcpClient.Connect;
+  TStreamCoderSocket.SendObject(FCoderSocket as ICoderSocket, FSendStream);
+  TStreamCoderSocket.RecvObject(FCoderSocket as ICoderSocket, FRecvStream);
+  TZipTools.UnZipStream(FRecvStream, FRecvStream);
+  FRecvStream.Position := 0;
+  FXMLNode.LoadFromStream(FRecvStream);
+  Result := SupplementXml(FXMLNode.Encode(False));
+end;
+
+function TSendInfobyTCPClient.SupplementXml(AXML: string): string;
+begin
+  Result := '<?xml version="1.0" encoding="GB2312"?>' + #13+ #10 + AXML;
+end;
+
+{ TGetHisInfoIntf }
+
+constructor TSendInfobyTCPClient.Create;
+begin
+  inherited;
+  FLogFile := TLogFileAppender.Create(False);
+  sfLogger.setAppender(FLogFile);
+  FTcpClient := TDiocpBlockTcpClient.Create(nil);
+  FCoderSocket := TRawTcpClientCoderImpl.Create(FTcpClient);
+  FXMLNode := TQXML.Create;
+  New(FServerInfo);
+
+  FSendStream := TMemoryStream.Create;
+  FRecvStream := TMemoryStream.Create;
+end;
+
+destructor TSendInfobyTCPClient.Destroy;
+begin
+  if Assigned(FCoderSocket) then
+    FCoderSocket := nil;
+  FTcpClient.Disconnect;
+  FreeAndNil(FTcpClient);
+  FreeAndNil(FXMLNode);
+  FRecvStream.Free;
+  FSendStream.Free;
+  inherited;
+end;
+
+procedure TSendInfobyTCPClient.Execute(ASendData: string; var ARecvData: string);
+begin
+  sfLogger.logMessage('【传入参数ASendData】' + ASendData);
+
+  try
+    ParseXML(ASendData);
+    GetServerIPAddress;
+    ARecvData := SendRequest;
+    sfLogger.logMessage('【返回参数ARecvData】' + ARecvData);
+  except
+    on E: Exception do
+    begin
+      FResultCode := -1;
+      FResultMessage := E.Message;
+      ARecvData := GenerateXml;
+      sfLogger.logMessage('【返回参数ARecvData】' + ARecvData);
+      Exit;
+    end;
+  end;
+end;
+
+function TSendInfobyTCPClient.GenerateXml: string;
+var
+  FChildNode: TQXMLNode;
+begin
+  FXMLNode.Clear(True);
+  FXMLNode := FXMLNode.AddNode('root');
+  FChildNode := FXMLNode.AddNode('resultcode');
+  FChildNode.Text := IntToStr(FResultCode);
+  FChildNode := FXMLNode.AddNode('resultmessage');
+  FChildNode.Text := FResultMessage;
+  FXMLNode.AddNode('results');
+  Result := SupplementXml(FXMLNode.Encode(False));
+end;
+
+function TSendInfobyTCPClient.GetServerInfo: PServerInfo;
+begin
+  if FServerInfo <> nil then
+    Result := FServerInfo
+  else
+    Result := nil;
+end;
+
 end.

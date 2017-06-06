@@ -11,9 +11,8 @@ library DIOCPTcpClient;
   using PChar or ShortString parameters. }
 
 uses
-//  ShareMem,
-  U_SendInfobyTcpClient in 'U_SendInfobyTcpClient.pas',
   U_GetHisInfoIntf in 'U_GetHisInfoIntf.pas',
+  U_SendInfobyTCPClient in 'U_SendInfobyTCPClient.pas',
   uICoderSocket in 'uICoderSocket.pas',
   uRawTcpClientCoderImpl in 'uRawTcpClientCoderImpl.pas',
   uStreamCoderSocket in 'uStreamCoderSocket.pas';

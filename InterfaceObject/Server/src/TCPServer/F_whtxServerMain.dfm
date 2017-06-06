@@ -3,7 +3,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = 'frmDIOCPTcpServer'
+  Caption = #26381#21153#22120#20449#24687
   ClientHeight = 441
   ClientWidth = 580
   Color = clBtnFace
@@ -725,6 +725,10 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     object tsLog: TTabSheet
       Caption = #30417#25511#20449#24687
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object bceLog: TBCEditor
         Left = 0
         Top = 0
@@ -1120,7 +1124,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 247
     Top = 206
     Bitmap = {
-      494C010103000800240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFF00FFFFFF00FEFEFE00FCFC
       FC00FBFBFB00FCFCFC00FEFEFE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
