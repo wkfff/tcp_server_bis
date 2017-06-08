@@ -4,6 +4,7 @@ interface
 
 uses
   System.SysUtils,
+  JNI,
   QPlugins,
   Qxml,
   U_TCPServerInterface;

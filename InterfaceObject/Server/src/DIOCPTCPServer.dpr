@@ -12,7 +12,8 @@ uses
   U_MyTCPClientContext in 'TCPServer\U_MyTCPClientContext.pas',
   U_RunTimeINfoTools in 'TCPServer\U_RunTimeINfoTools.pas',
   U_EHSBInterface in 'IntfModule\U_EHSBInterface.pas',
-  U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas';
+  U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas',
+  JNI in 'lib\JNI.pas';
 
 {$R *.res}
 var

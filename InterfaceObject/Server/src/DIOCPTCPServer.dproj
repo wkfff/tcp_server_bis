@@ -123,6 +123,7 @@
         <DCCReference Include="TCPServer\U_RunTimeINfoTools.pas"/>
         <DCCReference Include="IntfModule\U_EHSBInterface.pas"/>
         <DCCReference Include="IntfModule\U_TCPServerInterface.pas"/>
+        <DCCReference Include="lib\JNI.pas"/>
         <RcItem Include="Server.ico">
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>
