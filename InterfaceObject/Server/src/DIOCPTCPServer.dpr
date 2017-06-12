@@ -13,7 +13,9 @@ uses
   U_RunTimeINfoTools in 'TCPServer\U_RunTimeINfoTools.pas',
   U_EHSBInterface in 'IntfModule\U_EHSBInterface.pas',
   U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas',
-  JNI in 'lib\JNI.pas';
+  MQClass in 'lib\MQClass.pas',
+  MQI in 'lib\MQI.pas',
+  MQIC in 'lib\MQIC.pas';
 
 {$R *.res}
 var
