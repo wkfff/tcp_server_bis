@@ -6,7 +6,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
-  Dialogs, diocp_tcp_server, StdCtrls, ExtCtrls, U_RunTimeINfoTools, psApi;
+  Dialogs, diocp_tcp_server, StdCtrls, ExtCtrls, U_RunTimeINfoTools, psApi,
+  Vcl.Imaging.pngimage,
+  untWaterEffect, Vcl.Imaging.jpeg;
 
 type
   TFMMonitor = class(TFrame)
@@ -42,15 +44,21 @@ type
     lblRecvRequestCaption: TLabel;
     Port: TLabel;
     lblPort: TLabel;
+    imgWater: TImage;
+    tmrWater: TTimer;
     procedure lblRecvCaptionDblClick(Sender: TObject);
     procedure lblWorkerCountClick(Sender: TObject);
     procedure tmrReaderTimer(Sender: TObject);
     procedure RefreshState;
+    procedure tmrWaterTimer(Sender: TObject);
   private
     FIocpTcpServer: TDiocpTcpServer;
+    Water: TWaterEffect;
+    Bmp: TBitmap;
     procedure Translate();
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy;override;
     class function CreateAsChild(pvParent: TWinControl; pvIOCPTcpServer:
         TDiocpTcpServer): TFMMonitor;
     property IocpTcpServer: TDiocpTcpServer read FIocpTcpServer write FIocpTcpServer;
@@ -96,6 +104,14 @@ constructor TFMMonitor.Create(AOwner: TComponent);
 begin
   inherited;
   lblFirstRunTime.Caption := 'Æô¶¯Ê±¼ä:' + FormatDateTime('yyyy-MM-dd hh:nn:ss.zzz', Now());
+
+  Bmp := TBitmap.Create;
+  Bmp.Assign(imgWater.Picture.Graphic);
+  imgWater.Picture.Graphic := nil;
+  imgWater.Picture.Bitmap.Height := Bmp.Height;
+  imgWater.Picture.Bitmap.Width := Bmp.Width;
+  Water := TWaterEffect.Create;
+  Water.SetSize(Bmp.Width,Bmp.Height);
 end;
 
 class function TFMMonitor.CreateAsChild(pvParent: TWinControl; pvIOCPTcpServer:
@@ -116,6 +132,13 @@ begin
    
 end;
 
+destructor TFMMonitor.Destroy;
+begin
+  Water.Free;
+  Bmp.Free;
+  inherited;
+end;
+
 procedure TFMMonitor.lblRecvCaptionDblClick(Sender: TObject);
 begin
   FIocpTcpServer.DataMoniter.Clear;
@@ -132,6 +155,22 @@ end;
 procedure TFMMonitor.tmrReaderTimer(Sender: TObject);
 begin
   RefreshState;
+end;
+
+procedure TFMMonitor.tmrWaterTimer(Sender: TObject);
+begin
+  //
+  if Random(3)= 1 then
+    Water.Blob(-1, -1, Random(8)+1, Random(500)+50);
+  Water.Render(Bmp,imgWater.Picture.Bitmap);
+  with imgWater.Canvas do
+    begin
+      Brush.Style:=bsClear;
+      font.size:=12;
+      font.color:=$FFFFFF;
+      TextOut((Bmp.Width - TextWidth(' '))div 2+2,
+        10,'');
+    end;
 end;
 
 procedure TFMMonitor.Translate;

@@ -15,7 +15,8 @@ uses
   U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas',
   MQClass in 'lib\MQClass.pas',
   MQI in 'lib\MQI.pas',
-  MQIC in 'lib\MQIC.pas';
+  MQIC in 'lib\MQIC.pas',
+  untWaterEffect in 'lib\untWaterEffect.pas';
 
 {$R *.res}
 var
@@ -24,7 +25,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Windows10');
+  TStyleManager.TrySetStyle('TabletDark');
   Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
   Application.Run;
 end.

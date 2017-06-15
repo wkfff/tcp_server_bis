@@ -725,10 +725,6 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     object tsLog: TTabSheet
       Caption = #30417#25511#20449#24687
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object bceLog: TBCEditor
         Left = 0
         Top = 0
@@ -766,16 +762,6 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
         LeftMargin.LineNumbers.DigitCount = 2
         LeftMargin.Width = 41
         TabOrder = 0
-        TokenInfo.Font.Charset = DEFAULT_CHARSET
-        TokenInfo.Font.Color = clWindowText
-        TokenInfo.Font.Height = -11
-        TokenInfo.Font.Name = 'Courier New'
-        TokenInfo.Font.Style = []
-        TokenInfo.Title.Font.Charset = DEFAULT_CHARSET
-        TokenInfo.Title.Font.Color = clWindowText
-        TokenInfo.Title.Font.Height = -11
-        TokenInfo.Title.Font.Name = 'Courier New'
-        TokenInfo.Title.Font.Style = []
       end
     end
   end
@@ -1124,7 +1110,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 247
     Top = 206
     Bitmap = {
-      494C010103000800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFF00FFFFFF00FEFEFE00FCFC
       FC00FBFBFB00FCFCFC00FEFEFE00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
