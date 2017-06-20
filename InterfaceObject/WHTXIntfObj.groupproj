@@ -12,6 +12,9 @@
         <Projects Include="Server\src\DIOCPTCPServer.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\EvunTool\src\EvunTool.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="DIOCPTCPServer:Make">
         <MSBuild Projects="Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
     </Target>
+    <Target Name="EvunTool">
+        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj"/>
+    </Target>
+    <Target Name="EvunTool:Clean">
+        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EvunTool:Make">
+        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
