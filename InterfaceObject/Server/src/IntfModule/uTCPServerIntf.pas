@@ -1,4 +1,4 @@
-unit U_TCPServerInterface;
+unit uTCPServerIntf;
 
 interface
 

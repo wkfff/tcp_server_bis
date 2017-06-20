@@ -1,4 +1,4 @@
-unit U_EHSBInterface;
+unit uEHSBIntf;
 
 interface
 
@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   QPlugins,
   Qxml,
-  U_TCPServerInterface;
+  uTCPServerIntf;
 
 type
   TEHSBInterfaceObject = class(TQService, ITCPServerInterface)

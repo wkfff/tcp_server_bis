@@ -1,4 +1,4 @@
-unit F_whtxServerMain;
+unit ServerMainFrm;
 
 interface
 
@@ -24,9 +24,9 @@ uses
   BCEditor.Editor,
   diocp_tcp_server,
   diocp_coder_tcpServer,
-  F_DIOCPMMonitor,
-  U_DIOCPStreamCoder,
-  U_MyTCPClientContext,
+  ServerMMonitorFrm,
+  uDIOCPStreamCoder,
+  uIntfTCPClientContext,
   utils_safeLogger;
 
 type
@@ -42,20 +42,25 @@ type
     actPop: TActionList;
     actShow: TAction;
     actHide: TAction;
-    actClose: TAction;
+    actReopen: TAction;
     pnlMonitor: TPanel;
     tsLog: TTabSheet;
-    btnOpen: TButton;
     bceLog: TBCEditor;
+    actOpen: TAction;
+    actOpen1: TMenuItem;
+    mmMain: TMainMenu;
+    o1: TMenuItem;
+    O2: TMenuItem;
+    actClose1: TMenuItem;
     procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
       var Resize: Boolean);
     procedure actShowExecute(Sender: TObject);
     procedure actHideExecute(Sender: TObject);
-    procedure actCloseExecute(Sender: TObject);
+    procedure actReopenExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure traMainDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure btnOpenClick(Sender: TObject);
+    procedure actOpenExecute(Sender: TObject);
   private
     { Private declarations }
     FTcpServer: TDiocpCoderTcpServer;
@@ -69,7 +74,7 @@ implementation
 
 {$R *.dfm}
 
-procedure TfrmDIOCPTcpServer.actCloseExecute(Sender: TObject);
+procedure TfrmDIOCPTcpServer.actReopenExecute(Sender: TObject);
 begin
   //
   SetServerPort;
@@ -84,18 +89,19 @@ begin
   WindowState := wsMinimized;
 end;
 
+procedure TfrmDIOCPTcpServer.actOpenExecute(Sender: TObject);
+begin
+  if not FTcpServer.Active then
+    FTcpServer.Active := True;
+  actOpen1.Enabled := False;
+end;
+
 procedure TfrmDIOCPTcpServer.actShowExecute(Sender: TObject);
 begin
   //
   WindowState := wsNormal;
   Show;
   Application.BringToFront;
-end;
-
-procedure TfrmDIOCPTcpServer.btnOpenClick(Sender: TObject);
-begin
-  FTcpServer.Active := True;
-  btnOpen.Enabled := False;
 end;
 
 destructor TfrmDIOCPTcpServer.Destroy;

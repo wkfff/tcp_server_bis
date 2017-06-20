@@ -6,13 +6,13 @@ uses
   Vcl.Forms,
   Vcl.Themes,
   Vcl.Styles,
-  F_DIOCPMMonitor in 'TCPServer\F_DIOCPMMonitor.pas' {FMMonitor: TFrame},
-  F_whtxServerMain in 'TCPServer\F_whtxServerMain.pas' {frmDIOCPTcpServer},
-  U_DIOCPStreamCoder in 'TCPServer\U_DIOCPStreamCoder.pas',
-  U_MyTCPClientContext in 'TCPServer\U_MyTCPClientContext.pas',
-  U_RunTimeINfoTools in 'TCPServer\U_RunTimeINfoTools.pas',
-  U_EHSBInterface in 'IntfModule\U_EHSBInterface.pas',
-  U_TCPServerInterface in 'IntfModule\U_TCPServerInterface.pas',
+  ServerMMonitorFrm in 'TCPServer\ServerMMonitorFrm.pas' {FMMonitor: TFrame},
+  ServerMainFrm in 'TCPServer\ServerMainFrm.pas' {frmDIOCPTcpServer},
+  uDIOCPStreamCoder in 'TCPServer\uDIOCPStreamCoder.pas',
+  uIntfTCPClientContext in 'TCPServer\uIntfTCPClientContext.pas',
+  uRunTimeINfoTools in 'TCPServer\uRunTimeINfoTools.pas',
+  uEHSBIntf in 'IntfModule\uEHSBIntf.pas',
+  uTCPServerIntf in 'IntfModule\uTCPServerIntf.pas',
   MQClass in 'lib\MQClass.pas',
   MQI in 'lib\MQI.pas',
   MQIC in 'lib\MQIC.pas',
@@ -25,7 +25,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('TabletDark');
+  TStyleManager.TrySetStyle('Carbon');
   Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
   Application.Run;
 end.

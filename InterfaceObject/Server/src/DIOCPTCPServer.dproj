@@ -59,7 +59,7 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>DIOCPTCPServer</SanitizedProjectName>
-        <Custom_Styles>TabletDark|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TabletDark.vsf</Custom_Styles>
+        <Custom_Styles>Carbon|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Carbon.vsf</Custom_Styles>
         <VerInfo_Locale>2052</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
@@ -109,20 +109,20 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="TCPServer\F_DIOCPMMonitor.pas">
+        <DCCReference Include="TCPServer\ServerMMonitorFrm.pas">
             <Form>FMMonitor</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="TCPServer\F_whtxServerMain.pas">
+        <DCCReference Include="TCPServer\ServerMainFrm.pas">
             <Form>frmDIOCPTcpServer</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="TCPServer\U_DIOCPStreamCoder.pas"/>
-        <DCCReference Include="TCPServer\U_MyTCPClientContext.pas"/>
-        <DCCReference Include="TCPServer\U_RunTimeINfoTools.pas"/>
-        <DCCReference Include="IntfModule\U_EHSBInterface.pas"/>
-        <DCCReference Include="IntfModule\U_TCPServerInterface.pas"/>
+        <DCCReference Include="TCPServer\uDIOCPStreamCoder.pas"/>
+        <DCCReference Include="TCPServer\uIntfTCPClientContext.pas"/>
+        <DCCReference Include="TCPServer\uRunTimeINfoTools.pas"/>
+        <DCCReference Include="IntfModule\uEHSBIntf.pas"/>
+        <DCCReference Include="IntfModule\uTCPServerIntf.pas"/>
         <DCCReference Include="lib\MQClass.pas"/>
         <DCCReference Include="lib\MQI.pas"/>
         <DCCReference Include="lib\MQIC.pas"/>

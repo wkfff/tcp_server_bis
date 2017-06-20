@@ -1,4 +1,4 @@
-unit U_MyTCPClientContext;
+unit uIntfTCPClientContext;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   qxml,
   QPlugins,
   qstring,
-  U_TCPServerInterface;
+  uTCPServerIntf;
 
 type
   TMyTCPClientContext = class(TIOCPCoderClientContext)

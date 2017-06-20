@@ -1,4 +1,4 @@
-unit U_SendInfobyTCPClient;
+unit uSendInfoByTCPClient;
 
 interface
 

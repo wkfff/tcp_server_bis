@@ -1,16 +1,16 @@
 object FMMonitor: TFMMonitor
   Left = 0
   Top = 0
-  Width = 501
-  Height = 345
+  Width = 451
+  Height = 305
   Align = alClient
   TabOrder = 0
   DesignSize = (
-    501
-    345)
+    451
+    305)
   object imgWater: TImage
-    Left = 328
-    Top = 163
+    Left = 278
+    Top = 123
     Width = 125
     Height = 133
     Anchors = [akRight, akBottom]
@@ -128,6 +128,8 @@ object FMMonitor: TFMMonitor
       A00000C801901D8042800643701C07609F64EB5F912708889549111011110111
       103FFFD9}
     Stretch = True
+    ExplicitLeft = 328
+    ExplicitTop = 163
   end
   object lblServerStateCaption: TLabel
     Left = 16
@@ -353,8 +355,8 @@ object FMMonitor: TFMMonitor
     Caption = 'recvRequest'
   end
   object Port: TLabel
-    Left = 16
-    Top = 292
+    Left = 13
+    Top = 257
     Width = 20
     Height = 13
     Anchors = []
@@ -365,10 +367,12 @@ object FMMonitor: TFMMonitor
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
+    ExplicitLeft = 16
+    ExplicitTop = 292
   end
   object lblPort: TLabel
-    Left = 111
-    Top = 292
+    Left = 98
+    Top = 257
     Width = 30
     Height = 13
     Anchors = []
@@ -379,6 +383,8 @@ object FMMonitor: TFMMonitor
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
+    ExplicitLeft = 111
+    ExplicitTop = 292
   end
   object tmrReader: TTimer
     Enabled = False

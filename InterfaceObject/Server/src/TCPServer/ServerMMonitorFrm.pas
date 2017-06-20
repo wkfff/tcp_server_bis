@@ -1,4 +1,4 @@
-unit F_DIOCPMMonitor;
+unit ServerMMonitorFrm;
 
 interface
 
@@ -6,7 +6,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
-  Dialogs, diocp_tcp_server, StdCtrls, ExtCtrls, U_RunTimeINfoTools, psApi,
+  Dialogs, diocp_tcp_server, StdCtrls, ExtCtrls, uRunTimeINfoTools, psApi,
   Vcl.Imaging.pngimage,
   untWaterEffect, Vcl.Imaging.jpeg;
 

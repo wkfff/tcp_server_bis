@@ -1,10 +1,10 @@
-unit U_GetHisInfoIntf;
+unit uGetHisInfoExpts;
 
 interface
 
 uses
   System.SysUtils,
-  U_SendInfobyTCPClient;
+  uSendInfoByTCPClient;
 
 function IntfGetHisInfo(const ASendData:PChar): PChar; stdcall;
 

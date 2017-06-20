@@ -11,11 +11,11 @@ library DIOCPTcpClient;
   using PChar or ShortString parameters. }
 
 uses
-  U_GetHisInfoIntf in 'U_GetHisInfoIntf.pas',
-  U_SendInfobyTCPClient in 'U_SendInfobyTCPClient.pas',
+  uSendInfoByTCPClient in 'uSendInfoByTCPClient.pas',
   uICoderSocket in 'uICoderSocket.pas',
   uRawTcpClientCoderImpl in 'uRawTcpClientCoderImpl.pas',
-  uStreamCoderSocket in 'uStreamCoderSocket.pas';
+  uStreamCoderSocket in 'uStreamCoderSocket.pas',
+  uGetHisInfoExpts in 'uGetHisInfoExpts.pas';
 
 {$R *.res}
 
