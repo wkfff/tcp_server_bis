@@ -13,9 +13,6 @@ uses
   uRunTimeINfoTools in 'TCPServer\uRunTimeINfoTools.pas',
   uEHSBIntf in 'IntfModule\uEHSBIntf.pas',
   uTCPServerIntf in 'IntfModule\uTCPServerIntf.pas',
-  MQClass in 'lib\MQClass.pas',
-  MQI in 'lib\MQI.pas',
-  MQIC in 'lib\MQIC.pas',
   untWaterEffect in 'lib\untWaterEffect.pas',
   uEwellMqExpts in 'IntfModule\uEwellMqExpts.pas';
 

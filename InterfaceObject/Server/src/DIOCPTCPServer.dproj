@@ -123,9 +123,6 @@
         <DCCReference Include="TCPServer\uRunTimeINfoTools.pas"/>
         <DCCReference Include="IntfModule\uEHSBIntf.pas"/>
         <DCCReference Include="IntfModule\uTCPServerIntf.pas"/>
-        <DCCReference Include="lib\MQClass.pas"/>
-        <DCCReference Include="lib\MQI.pas"/>
-        <DCCReference Include="lib\MQIC.pas"/>
         <DCCReference Include="lib\untWaterEffect.pas"/>
         <DCCReference Include="IntfModule\uEwellMqExpts.pas"/>
         <RcItem Include="Server.ico">

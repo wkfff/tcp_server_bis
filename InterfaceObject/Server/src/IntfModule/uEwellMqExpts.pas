@@ -2,6 +2,28 @@ unit uEwellMqExpts;
 
 interface
 
+uses
+  System.SysUtils,
+  System.Classes;
+
+type
+  TCALLBACK_FUN = procedure(AMsgID,AMsg: PChar);
+
+  TMQClass = class(TObject)
+  private
+    FActive: Boolean;
+    function GetActive: Boolean;
+    procedure SetActive(const Value: Boolean);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function GetMessageOneWay(AFid: string;var AMsg: string): Boolean;
+    procedure Connect; overload;
+    procedure Connect(AServerName:string); overload;
+    procedure DisConnect;
+    property Active: Boolean read GetActive write SetActive;
+  end;
+
 /// <summary>
 ///连接队列管理器，不带参数则默认连接第一个配置，即“MQMGR1”
 /// </summary>
@@ -34,6 +56,7 @@ function PutMsgMQ(Fid: PChar; QMsgID: PChar; QMsg: PChar; ErrMsg: PChar):
 /// 根据服务Id从相应队列中获取指定消息Id的第一条消息
 /// </summary>
 /// <param name=" Fid ">服务Id</param>
+/// <param name=" WaitInterval ">等待时间：毫秒</param>
 /// <param name=" QMsgID ">消息ID</param>
 /// <param name=" QMsg ">消息内容D</param>
 /// <param name=" ErrMsg ">返回错误内容</param>
@@ -74,11 +97,109 @@ function PutMsgWithId(Fid: PChar; QMsgID: pchar; QMsg: PChar; ErrMsg: PChar):
 function putMsgTC(Fid: PChar; WaitInterval: Integer; QMsgID: pchar; QinMsg:
   PChar; QoutMsg: PChar; ErrMsg: PChar): Integer; stdcall; external
   'EwellMq.dll';
+/// <summary>
+///侦听消息队列，一旦有消息就立即获取，并回调函数
+/// </summary>
+/// <param name=" Fid ">服务Id</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" func">回调函数</param>
+/// <returns>0:失败；1:成功； </returns>
+function MessageListener(Fid :PChar; QMsgID :PChar; func:TCALLBACK_FUN) :Integer;
+  stdcall;external 'EwellMq.dll';
 
 function Query(Fid :PChar; WaitInterval:Integer; QMsgID :pchar; QinMsg :PChar;
   QoutMsg:PChar; ErrMsg :PChar):Integer; stdcall; external 'EwellMq.dll';
 
 implementation
+
+{ TMQClass }
+
+procedure TMQClass.Connect;
+var
+  iReturn: Integer;
+begin
+  iReturn := ConnectMQ;
+  if iReturn < 1 then
+    raise Exception.Create('连接队列管理器失败!');
+  FActive := True;
+end;
+
+procedure TMQClass.Connect(AServerName: string);
+var
+  iReturn: Integer;
+begin
+  iReturn := ConnectMQX(PChar(AServerName));
+  if iReturn < 1 then
+    raise Exception.Create('连接队列管理器 '+ AServerName +' 失败!');
+  FActive := True;
+end;
+
+constructor TMQClass.Create;
+begin
+  inherited;
+  FActive := False;
+end;
+
+destructor TMQClass.Destroy;
+begin
+  if FActive then
+    DisConnect;
+  inherited;
+end;
+
+procedure TMQClass.DisConnect;
+var
+  iReturn: Integer;
+begin
+  iReturn := DisConnectMQ;
+  FActive := False;
+  if iReturn < 1 then
+    raise Exception.Create('断开连接队列管理器失败!');
+end;
+
+function TMQClass.GetActive: Boolean;
+begin
+  Result := FActive;
+end;
+
+function TMQClass.GetMessageOneWay(AFid: string;var AMsg: string): Boolean;
+var
+  ErrMsg: PChar;
+  MsgId: PChar;
+  Msg: PChar;
+  iReturn: Integer;
+begin
+  if not FActive then
+    raise Exception.Create('未连接队列管理器!');
+
+  GetMem(ErrMsg, 1024);
+  GetMem(MsgId,48);
+  GetMem(Msg, 1024);
+
+  try
+    iReturn := GetMsgMQ(PChar(AFid), 1000, @MsgId[0], @Msg[0], @ErrMsg[0]);
+
+    if iReturn < 1 then
+      raise Exception.Create('获取消息失败!【'+ AFid + '】错误信息:' + ErrMsg);
+
+    AMsg := Msg;
+  finally
+    FreeMem(ErrMsg);
+    FreeMem(MsgId);
+    FreeMem(Msg);
+  end;
+end;
+
+procedure TMQClass.SetActive(const Value: Boolean);
+begin
+  if not FActive and Value then
+    Connect;
+
+  if FActive and (not Value) then
+    DisConnect;
+
+  FActive := Value;
+end;
 
 end.
 
