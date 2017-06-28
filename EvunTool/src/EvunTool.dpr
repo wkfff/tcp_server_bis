@@ -7,7 +7,6 @@ uses
   ToolMainfrm in 'form\ToolMainfrm.pas' {Mainfrm},
   DMSToolfrm in 'form\DMSToolfrm.pas' {frmDMSTool},
   uResourceString in 'unit\uResourceString.pas',
-  ShDebugInfo in 'unit\ShDebugInfo.pas',
   ShShareMemMap in 'unit\ShShareMemMap.pas',
   ShThread in 'unit\ShThread.pas';
 

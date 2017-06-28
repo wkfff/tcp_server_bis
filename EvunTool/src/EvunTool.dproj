@@ -112,7 +112,6 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="unit\uResourceString.pas"/>
-        <DCCReference Include="unit\ShDebugInfo.pas"/>
         <DCCReference Include="unit\ShShareMemMap.pas"/>
         <DCCReference Include="unit\ShThread.pas"/>
         <BuildConfiguration Include="Release">
