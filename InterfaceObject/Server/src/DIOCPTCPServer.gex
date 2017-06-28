@@ -1,0 +1,15 @@
+[General]
+Name=DIOCPTCPServer
+BaseDir=E:\WHTX\InterfaceObject\Server\src\
+Project=1
+[Classes]
+Count=9
+Class0="TFMMonitor","TFrame","ServerMMonitorFrm","13","E:\WHTX\InterfaceObject\Server\src\TCPServer\ServerMMonitorFrm.pas"
+Class1="TfrmDIOCPTcpServer","TForm","ServerMainFrm","32","E:\WHTX\InterfaceObject\Server\src\TCPServer\ServerMainFrm.pas"
+Class2="TIOCPStreamDecoder","TIOCPDecoder","uDIOCPStreamCoder","12","E:\WHTX\InterfaceObject\Server\src\TCPServer\uDIOCPStreamCoder.pas"
+Class3="TIOCPStreamEncoder","TIOCPEncoder","uDIOCPStreamCoder","25","E:\WHTX\InterfaceObject\Server\src\TCPServer\uDIOCPStreamCoder.pas"
+Class4="TMyTCPClientContext","TIOCPCoderClientContext","uIntfTCPClientContext","16","E:\WHTX\InterfaceObject\Server\src\TCPServer\uIntfTCPClientContext.pas"
+Class5="TRunTimeINfoTools","TObject","uRunTimeINfoTools","8","E:\WHTX\InterfaceObject\Server\src\TCPServer\uRunTimeINfoTools.pas"
+Class6="TEHSBInterfaceObject","TQService, ITCPServerInterface","uEHSBIntf","12","E:\WHTX\InterfaceObject\Server\src\IntfModule\uEHSBIntf.pas"
+Class7="TWaterEffect","TObject","untWaterEffect","66","E:\WHTX\InterfaceObject\Server\src\lib\untWaterEffect.pas"
+Class8="TMQClass","TObject","uEwellMqExpts","11","E:\WHTX\InterfaceObject\Server\src\IntfModule\uEwellMqExpts.pas"

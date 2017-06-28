@@ -3,16 +3,16 @@
         <ProjectGuid>{C5D28D90-07A9-4C83-A5D9-B9B51C86517A}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="Client\src\DIOCPTcpClient.dproj">
+        <Projects Include="InterfaceObject\Client\src\DIOCPTcpClient.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Client\test\TestTcpDll.dproj">
+        <Projects Include="InterfaceObject\Client\test\TestTcpDll.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Server\src\DIOCPTCPServer.dproj">
+        <Projects Include="InterfaceObject\Server\src\DIOCPTCPServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\EvunTool\src\EvunTool.dproj">
+        <Projects Include="EvunTool\src\EvunTool.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -24,40 +24,40 @@
         </BorlandProject>
     </ProjectExtensions>
     <Target Name="DIOCPTcpClient">
-        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj"/>
+        <MSBuild Projects="InterfaceObject\Client\src\DIOCPTcpClient.dproj"/>
     </Target>
     <Target Name="DIOCPTcpClient:Clean">
-        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj" Targets="Clean"/>
+        <MSBuild Projects="InterfaceObject\Client\src\DIOCPTcpClient.dproj" Targets="Clean"/>
     </Target>
     <Target Name="DIOCPTcpClient:Make">
-        <MSBuild Projects="Client\src\DIOCPTcpClient.dproj" Targets="Make"/>
+        <MSBuild Projects="InterfaceObject\Client\src\DIOCPTcpClient.dproj" Targets="Make"/>
     </Target>
     <Target Name="TestTcpDll">
-        <MSBuild Projects="Client\test\TestTcpDll.dproj"/>
+        <MSBuild Projects="InterfaceObject\Client\test\TestTcpDll.dproj"/>
     </Target>
     <Target Name="TestTcpDll:Clean">
-        <MSBuild Projects="Client\test\TestTcpDll.dproj" Targets="Clean"/>
+        <MSBuild Projects="InterfaceObject\Client\test\TestTcpDll.dproj" Targets="Clean"/>
     </Target>
     <Target Name="TestTcpDll:Make">
-        <MSBuild Projects="Client\test\TestTcpDll.dproj" Targets="Make"/>
+        <MSBuild Projects="InterfaceObject\Client\test\TestTcpDll.dproj" Targets="Make"/>
     </Target>
     <Target Name="DIOCPTCPServer">
-        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj"/>
+        <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj"/>
     </Target>
     <Target Name="DIOCPTCPServer:Clean">
-        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj" Targets="Clean"/>
+        <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj" Targets="Clean"/>
     </Target>
     <Target Name="DIOCPTCPServer:Make">
-        <MSBuild Projects="Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
+        <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="EvunTool">
-        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj"/>
+        <MSBuild Projects="EvunTool\src\EvunTool.dproj"/>
     </Target>
     <Target Name="EvunTool:Clean">
-        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj" Targets="Clean"/>
+        <MSBuild Projects="EvunTool\src\EvunTool.dproj" Targets="Clean"/>
     </Target>
     <Target Name="EvunTool:Make">
-        <MSBuild Projects="..\EvunTool\src\EvunTool.dproj" Targets="Make"/>
+        <MSBuild Projects="EvunTool\src\EvunTool.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
         <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool"/>

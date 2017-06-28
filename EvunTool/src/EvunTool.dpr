@@ -2,19 +2,25 @@ program EvunTool;
 
 uses
   Vcl.Forms,
-  toolMainForm in 'form\toolMainForm.pas' {toolMainFrm},
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  ToolMainfrm in 'form\ToolMainfrm.pas' {Mainfrm},
+  DMSToolfrm in 'form\DMSToolfrm.pas' {frmDMSTool},
+  uResourceString in 'unit\uResourceString.pas',
+  ShDebugInfo in 'unit\ShDebugInfo.pas',
+  ShShareMemMap in 'unit\ShShareMemMap.pas',
+  ShThread in 'unit\ShThread.pas';
 
 {$R *.res}
 
 var
-  toolMainFrm: TtoolMainFrm;
+  Mainfrm: TMainfrm;
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Slate Classico');
-  Application.CreateForm(TtoolMainFrm, toolMainFrm);
+  ReportMemoryLeaksOnShutdown := True;
+  TStyleManager.TrySetStyle('Iceberg Classico');
+  Application.CreateForm(TMainfrm, Mainfrm);
   Application.Run;
 end.
