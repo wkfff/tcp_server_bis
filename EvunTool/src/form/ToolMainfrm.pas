@@ -22,10 +22,11 @@ uses
   Vcl.ToolWin,
   Vcl.ComCtrls,
   DMSToolfrm,
-  JvTabBar,
   qplugins_base,
   QWorker,
-  qplugins_params;
+  qplugins_params,
+  ChromeTabs,
+  ChromeTabsClasses;
 
 type
   TMainfrm = class(TForm)
@@ -35,19 +36,21 @@ type
     mniQuit: TMenuItem;
     mniTool: TMenuItem;
     mniDMSTool: TMenuItem;
-    jvtbrTab: TJvTabBar;
     tlbTool: TToolBar;
     btnDMSTool: TToolButton;
+    chrmtbTool: TChromeTabs;
     procedure FormCreate(Sender: TObject);
     procedure mniQuitClick(Sender: TObject);
     procedure btnDMSClick(Sender: TObject);
-    procedure jvtbrTabTabClosed(Sender: TObject; Item: TJvTabBarItem);
     procedure FormDestroy(Sender: TObject);
-    procedure jvtbrTabTabSelected(Sender: TObject; Item: TJvTabBarItem);
+    procedure chrmtbToolButtonCloseTabClick(Sender: TObject; ATab: TChromeTab;
+      var Close: Boolean);
+    procedure chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
   private
     { Private declarations }
     procedure Initialize;
     procedure DoDeleteTabItemJob(AJob: PQJob);
+    function FindTab(ACaption: string): TChromeTab;
   public
     { Public declarations }
   end;
@@ -56,28 +59,62 @@ implementation
 
 {$R *.dfm}
 
+function TMainfrm.FindTab(ACaption: string): TChromeTab;
+var
+  I: Integer;
+begin
+  Result := nil;
+  for I := 0 to chrmtbTool.Tabs.Count - 1 do
+    if SameText(chrmtbTool.Tabs.Items[I].Caption, ACaption) then
+    begin
+      Result := chrmtbTool.Tabs.Items[I];
+      Break;
+    end;
+end;
+
 procedure TMainfrm.btnDMSClick(Sender: TObject);
 var
   ASign: string;
+  ATab: TChromeTab;
+  AParams: TQParams;
 begin
   ASign := TToolButton(Sender).Caption;
-  Workers.PostSignal('MDIChildForm.' + ASign + '.Create', nil);
-  if not Assigned(jvtbrTab.FindTab(ASign)) then
-    jvtbrTab.AddTab(ASign);
+  ATab := FindTab(ASign);
+  if Assigned(ATab) then
+    Exit;
+
+  ATab := chrmtbTool.Tabs.Add;
+  ATab.Caption := ASign;
+  AParams := TQParams.Create;
+  AParams.Add('TabIndex', ATab.Index);
+  Workers.PostSignal('MDIChildForm.' + ASign + '.Create', AParams, jdfFreeAsObject);
+end;
+
+procedure TMainfrm.chrmtbToolActiveTabChanged(Sender: TObject;
+  ATab: TChromeTab);
+begin
+  Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Show', nil);
+end;
+
+procedure TMainfrm.chrmtbToolButtonCloseTabClick(Sender: TObject;
+  ATab: TChromeTab; var Close: Boolean);
+begin
+  Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Free', nil);
+  Close := True;
 end;
 
 procedure TMainfrm.DoDeleteTabItemJob(AJob: PQJob);
 var
-  objTabItem: TJvTabBarItem;
+  objTabItem: TChromeTab;
   AParams: TQParams;
-  ASign: string;
+  AIndex: Integer;
+  AClose: Boolean;
 begin
   AParams := TQParams(AJob.Data);
-  ASign := AParams.ByName('TabItemCaption').AsString;
-  objTabItem := jvtbrTab.FindTab(ASign);
-  if not Assigned(objTabItem) then
-    Exit;
-  jvtbrTab.CloseTab(objTabItem);
+  AIndex := AParams.ByName('TabIndex').AsInteger;
+  chrmtbTool.BeginUpdate;
+  chrmtbTool.Tabs.DeleteTab(AIndex, True);
+  chrmtbTool.EndUpdate;
 end;
 
 procedure TMainfrm.FormCreate(Sender: TObject);
@@ -97,19 +134,6 @@ procedure TMainfrm.Initialize;
 begin
   Position := poDesktopCenter;
   WindowState := wsMaximized;
-end;
-
-procedure TMainfrm.jvtbrTabTabClosed(Sender: TObject; Item: TJvTabBarItem);
-begin
-  Workers.PostSignal('MDIChildForm.' + Item.Caption + '.Free', nil);
-end;
-
-procedure TMainfrm.jvtbrTabTabSelected(Sender: TObject; Item: TJvTabBarItem);
-begin
-  //
-  if not Assigned(Item) then
-    Exit;
-  Workers.PostSignal('MDIChildForm.' + Item.Caption + '.Show', nil);
 end;
 
 procedure TMainfrm.mniQuitClick(Sender: TObject);

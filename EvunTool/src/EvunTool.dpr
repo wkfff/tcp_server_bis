@@ -8,7 +8,8 @@ uses
   DMSToolfrm in 'form\DMSToolfrm.pas' {frmDMSTool},
   uResourceString in 'unit\uResourceString.pas',
   ShShareMemMap in 'unit\ShShareMemMap.pas',
-  ShThread in 'unit\ShThread.pas';
+  ShThread in 'unit\ShThread.pas',
+  uShareMemServer in 'unit\uShareMemServer.pas';
 
 {$R *.res}
 

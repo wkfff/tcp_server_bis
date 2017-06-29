@@ -2,7 +2,7 @@ object Mainfrm: TMainfrm
   Left = 0
   Top = 0
   Caption = 'Evun Tool'
-  ClientHeight = 304
+  ClientHeight = 284
   ClientWidth = 495
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -320,23 +320,6 @@ object Mainfrm: TMainfrm
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object jvtbrTab: TJvTabBar
-    Left = 0
-    Top = 279
-    Width = 495
-    Height = 25
-    Hint = ''
-    Align = alBottom
-    Orientation = toBottom
-    SelectBeforeClose = True
-    Images = ilIcons
-    Tabs = <>
-    OnTabClosed = jvtbrTabTabClosed
-    OnTabSelected = jvtbrTabTabSelected
-    ExplicitLeft = 16
-    ExplicitTop = 43
-    ExplicitWidth = 480
-  end
   object tlbTool: TToolBar
     Left = 0
     Top = 0
@@ -349,158 +332,489 @@ object Mainfrm: TMainfrm
     Images = ilIcons
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 1
+    TabOrder = 0
     object btnDMSTool: TToolButton
       Left = 0
       Top = 0
       Hint = 'DMSTool'
       Caption = 'DMSTool'
-      ImageIndex = 1
+      ImageIndex = 0
       OnClick = btnDMSClick
     end
+  end
+  object chrmtbTool: TChromeTabs
+    Left = 0
+    Top = 254
+    Width = 495
+    Height = 30
+    OnActiveTabChanged = chrmtbToolActiveTabChanged
+    OnButtonCloseTabClick = chrmtbToolButtonCloseTabClick
+    ActiveTabIndex = -1
+    Options.Display.CloseButton.Offsets.Vertical = 6
+    Options.Display.CloseButton.Offsets.Horizontal = 2
+    Options.Display.CloseButton.Height = 14
+    Options.Display.CloseButton.Width = 14
+    Options.Display.CloseButton.AutoHide = True
+    Options.Display.CloseButton.Visibility = bvAll
+    Options.Display.CloseButton.AutoHideWidth = 20
+    Options.Display.CloseButton.CrossRadialOffset = 4
+    Options.Display.AddButton.Offsets.Vertical = 10
+    Options.Display.AddButton.Offsets.Horizontal = 2
+    Options.Display.AddButton.Height = 14
+    Options.Display.AddButton.Width = 31
+    Options.Display.AddButton.ShowPlusSign = False
+    Options.Display.AddButton.Visibility = avNone
+    Options.Display.AddButton.HorizontalOffsetFloating = -3
+    Options.Display.ScrollButtonLeft.Offsets.Vertical = 10
+    Options.Display.ScrollButtonLeft.Offsets.Horizontal = 1
+    Options.Display.ScrollButtonLeft.Height = 15
+    Options.Display.ScrollButtonLeft.Width = 15
+    Options.Display.ScrollButtonRight.Offsets.Vertical = 10
+    Options.Display.ScrollButtonRight.Offsets.Horizontal = 1
+    Options.Display.ScrollButtonRight.Height = 15
+    Options.Display.ScrollButtonRight.Width = 15
+    Options.Display.TabModifiedGlow.Style = msRightToLeft
+    Options.Display.TabModifiedGlow.VerticalOffset = -6
+    Options.Display.TabModifiedGlow.Height = 30
+    Options.Display.TabModifiedGlow.Width = 100
+    Options.Display.TabModifiedGlow.AnimationPeriodMS = 4000
+    Options.Display.TabModifiedGlow.EaseType = ttEaseInOutQuad
+    Options.Display.TabModifiedGlow.AnimationUpdateMS = 50
+    Options.Display.Tabs.SeeThroughTabs = False
+    Options.Display.Tabs.TabOverlap = 15
+    Options.Display.Tabs.ContentOffsetLeft = 18
+    Options.Display.Tabs.ContentOffsetRight = 16
+    Options.Display.Tabs.OffsetLeft = 0
+    Options.Display.Tabs.OffsetTop = 4
+    Options.Display.Tabs.OffsetRight = 0
+    Options.Display.Tabs.OffsetBottom = 0
+    Options.Display.Tabs.MinWidth = 30
+    Options.Display.Tabs.MaxWidth = 100
+    Options.Display.Tabs.TabWidthFromContent = False
+    Options.Display.Tabs.PinnedWidth = 39
+    Options.Display.Tabs.ImageOffsetLeft = 13
+    Options.Display.Tabs.TextTrimType = tttFade
+    Options.Display.Tabs.Orientation = toBottom
+    Options.Display.Tabs.BaseLineTabRegionOnly = False
+    Options.Display.Tabs.WordWrap = False
+    Options.Display.Tabs.TextAlignmentHorizontal = taLeftJustify
+    Options.Display.Tabs.TextAlignmentVertical = taVerticalCenter
+    Options.Display.Tabs.ShowImages = True
+    Options.Display.Tabs.ShowPinnedTabText = False
+    Options.Display.TabContainer.TransparentBackground = True
+    Options.Display.TabContainer.OverlayButtons = True
+    Options.Display.TabContainer.PaddingLeft = 0
+    Options.Display.TabContainer.PaddingRight = 0
+    Options.Display.TabMouseGlow.Offsets.Vertical = 0
+    Options.Display.TabMouseGlow.Offsets.Horizontal = 0
+    Options.Display.TabMouseGlow.Height = 200
+    Options.Display.TabMouseGlow.Width = 200
+    Options.Display.TabMouseGlow.Visible = True
+    Options.Display.TabSpinners.Upload.ReverseDirection = True
+    Options.Display.TabSpinners.Upload.RenderedAnimationStep = 2
+    Options.Display.TabSpinners.Upload.Position.Offsets.Vertical = 0
+    Options.Display.TabSpinners.Upload.Position.Offsets.Horizontal = 0
+    Options.Display.TabSpinners.Upload.Position.Height = 16
+    Options.Display.TabSpinners.Upload.Position.Width = 16
+    Options.Display.TabSpinners.Upload.SweepAngle = 135
+    Options.Display.TabSpinners.Download.ReverseDirection = False
+    Options.Display.TabSpinners.Download.RenderedAnimationStep = 5
+    Options.Display.TabSpinners.Download.Position.Offsets.Vertical = 0
+    Options.Display.TabSpinners.Download.Position.Offsets.Horizontal = 0
+    Options.Display.TabSpinners.Download.Position.Height = 16
+    Options.Display.TabSpinners.Download.Position.Width = 16
+    Options.Display.TabSpinners.Download.SweepAngle = 135
+    Options.Display.TabSpinners.AnimationUpdateMS = 50
+    Options.Display.TabSpinners.HideImagesWhenSpinnerVisible = True
+    Options.DragDrop.DragType = dtBetweenContainers
+    Options.DragDrop.DragOutsideImageAlpha = 220
+    Options.DragDrop.DragOutsideDistancePixels = 30
+    Options.DragDrop.DragStartPixels = 2
+    Options.DragDrop.DragControlImageResizeFactor = 0.500000000000000000
+    Options.DragDrop.DragCursor = crDefault
+    Options.DragDrop.DragDisplay = ddTabAndControl
+    Options.DragDrop.DragFormBorderWidth = 2
+    Options.DragDrop.DragFormBorderColor = 8421504
+    Options.DragDrop.ContrainDraggedTabWithinContainer = True
+    Options.Animation.DefaultMovementAnimationTimeMS = 100
+    Options.Animation.DefaultStyleAnimationTimeMS = 300
+    Options.Animation.AnimationTimerInterval = 15
+    Options.Animation.MinimumTabAnimationWidth = 40
+    Options.Animation.DefaultMovementEaseType = ttLinearTween
+    Options.Animation.DefaultStyleEaseType = ttLinearTween
+    Options.Animation.MovementAnimations.TabAdd.UseDefaultEaseType = True
+    Options.Animation.MovementAnimations.TabAdd.UseDefaultAnimationTime = True
+    Options.Animation.MovementAnimations.TabAdd.EaseType = ttEaseOutExpo
+    Options.Animation.MovementAnimations.TabAdd.AnimationTimeMS = 500
+    Options.Animation.MovementAnimations.TabDelete.UseDefaultEaseType = True
+    Options.Animation.MovementAnimations.TabDelete.UseDefaultAnimationTime = True
+    Options.Animation.MovementAnimations.TabDelete.EaseType = ttEaseOutExpo
+    Options.Animation.MovementAnimations.TabDelete.AnimationTimeMS = 500
+    Options.Animation.MovementAnimations.TabMove.UseDefaultEaseType = False
+    Options.Animation.MovementAnimations.TabMove.UseDefaultAnimationTime = False
+    Options.Animation.MovementAnimations.TabMove.EaseType = ttEaseOutExpo
+    Options.Animation.MovementAnimations.TabMove.AnimationTimeMS = 500
+    Options.Behaviour.BackgroundDblClickMaximiseRestoreForm = True
+    Options.Behaviour.BackgroundDragMovesForm = True
+    Options.Behaviour.TabSmartDeleteResizing = True
+    Options.Behaviour.TabSmartDeleteResizeCancelDelay = 700
+    Options.Behaviour.UseBuiltInPopupMenu = True
+    Options.Behaviour.TabRightClickSelect = True
+    Options.Behaviour.ActivateNewTab = True
+    Options.Behaviour.DebugMode = False
+    Options.Behaviour.IgnoreDoubleClicksWhileAnimatingMovement = True
+    Options.Scrolling.Enabled = True
+    Options.Scrolling.ScrollButtons = csbRight
+    Options.Scrolling.ScrollStep = 20
+    Options.Scrolling.ScrollRepeatDelay = 20
+    Options.Scrolling.AutoHideButtons = False
+    Options.Scrolling.DragScroll = True
+    Options.Scrolling.DragScrollOffset = 50
+    Options.Scrolling.MouseWheelScroll = True
+    Tabs = <>
+    LookAndFeel.TabsContainer.StartColor = 14586466
+    LookAndFeel.TabsContainer.StopColor = 13201730
+    LookAndFeel.TabsContainer.StartAlpha = 255
+    LookAndFeel.TabsContainer.StopAlpha = 255
+    LookAndFeel.TabsContainer.OutlineColor = 14520930
+    LookAndFeel.TabsContainer.OutlineAlpha = 0
+    LookAndFeel.Tabs.BaseLine.Color = 11110509
+    LookAndFeel.Tabs.BaseLine.Thickness = 1.000000000000000000
+    LookAndFeel.Tabs.BaseLine.Alpha = 255
+    LookAndFeel.Tabs.Modified.CentreColor = clWhite
+    LookAndFeel.Tabs.Modified.OutsideColor = clWhite
+    LookAndFeel.Tabs.Modified.CentreAlpha = 130
+    LookAndFeel.Tabs.Modified.OutsideAlpha = 0
+    LookAndFeel.Tabs.DefaultFont.Name = 'Segoe UI'
+    LookAndFeel.Tabs.DefaultFont.Color = clBlack
+    LookAndFeel.Tabs.DefaultFont.Size = 9
+    LookAndFeel.Tabs.DefaultFont.Alpha = 255
+    LookAndFeel.Tabs.DefaultFont.TextRendoringMode = TextRenderingHintClearTypeGridFit
+    LookAndFeel.Tabs.MouseGlow.CentreColor = clWhite
+    LookAndFeel.Tabs.MouseGlow.OutsideColor = clWhite
+    LookAndFeel.Tabs.MouseGlow.CentreAlpha = 120
+    LookAndFeel.Tabs.MouseGlow.OutsideAlpha = 0
+    LookAndFeel.Tabs.Spinners.Upload.Color = 12759975
+    LookAndFeel.Tabs.Spinners.Upload.Thickness = 2.500000000000000000
+    LookAndFeel.Tabs.Spinners.Upload.Alpha = 255
+    LookAndFeel.Tabs.Spinners.Download.Color = 14388040
+    LookAndFeel.Tabs.Spinners.Download.Thickness = 2.500000000000000000
+    LookAndFeel.Tabs.Spinners.Download.Alpha = 255
+    LookAndFeel.Tabs.Active.Font.Name = 'Segoe UI'
+    LookAndFeel.Tabs.Active.Font.Color = clOlive
+    LookAndFeel.Tabs.Active.Font.Size = 9
+    LookAndFeel.Tabs.Active.Font.Alpha = 100
+    LookAndFeel.Tabs.Active.Font.TextRendoringMode = TextRenderingHintClearTypeGridFit
+    LookAndFeel.Tabs.Active.Font.UseDefaultFont = True
+    LookAndFeel.Tabs.Active.Style.StartColor = clWhite
+    LookAndFeel.Tabs.Active.Style.StopColor = 16316920
+    LookAndFeel.Tabs.Active.Style.StartAlpha = 255
+    LookAndFeel.Tabs.Active.Style.StopAlpha = 255
+    LookAndFeel.Tabs.Active.Style.OutlineColor = 10189918
+    LookAndFeel.Tabs.Active.Style.OutlineSize = 1.000000000000000000
+    LookAndFeel.Tabs.Active.Style.OutlineAlpha = 255
+    LookAndFeel.Tabs.NotActive.Font.Name = 'Segoe UI'
+    LookAndFeel.Tabs.NotActive.Font.Color = 4603477
+    LookAndFeel.Tabs.NotActive.Font.Size = 9
+    LookAndFeel.Tabs.NotActive.Font.Alpha = 215
+    LookAndFeel.Tabs.NotActive.Font.TextRendoringMode = TextRenderingHintClearTypeGridFit
+    LookAndFeel.Tabs.NotActive.Font.UseDefaultFont = False
+    LookAndFeel.Tabs.NotActive.Style.StartColor = 15194573
+    LookAndFeel.Tabs.NotActive.Style.StopColor = 15194573
+    LookAndFeel.Tabs.NotActive.Style.StartAlpha = 210
+    LookAndFeel.Tabs.NotActive.Style.StopAlpha = 210
+    LookAndFeel.Tabs.NotActive.Style.OutlineColor = 13546390
+    LookAndFeel.Tabs.NotActive.Style.OutlineSize = 1.000000000000000000
+    LookAndFeel.Tabs.NotActive.Style.OutlineAlpha = 215
+    LookAndFeel.Tabs.Hot.Font.Name = 'Segoe UI'
+    LookAndFeel.Tabs.Hot.Font.Color = 4210752
+    LookAndFeel.Tabs.Hot.Font.Size = 9
+    LookAndFeel.Tabs.Hot.Font.Alpha = 215
+    LookAndFeel.Tabs.Hot.Font.TextRendoringMode = TextRenderingHintClearTypeGridFit
+    LookAndFeel.Tabs.Hot.Font.UseDefaultFont = False
+    LookAndFeel.Tabs.Hot.Style.StartColor = 15721176
+    LookAndFeel.Tabs.Hot.Style.StopColor = 15589847
+    LookAndFeel.Tabs.Hot.Style.StartAlpha = 255
+    LookAndFeel.Tabs.Hot.Style.StopAlpha = 255
+    LookAndFeel.Tabs.Hot.Style.OutlineColor = 12423799
+    LookAndFeel.Tabs.Hot.Style.OutlineSize = 1.000000000000000000
+    LookAndFeel.Tabs.Hot.Style.OutlineAlpha = 235
+    LookAndFeel.CloseButton.Cross.Normal.Color = 6643031
+    LookAndFeel.CloseButton.Cross.Normal.Thickness = 1.500000000000000000
+    LookAndFeel.CloseButton.Cross.Normal.Alpha = 255
+    LookAndFeel.CloseButton.Cross.Down.Color = 15461369
+    LookAndFeel.CloseButton.Cross.Down.Thickness = 2.000000000000000000
+    LookAndFeel.CloseButton.Cross.Down.Alpha = 220
+    LookAndFeel.CloseButton.Cross.Hot.Color = clWhite
+    LookAndFeel.CloseButton.Cross.Hot.Thickness = 2.000000000000000000
+    LookAndFeel.CloseButton.Cross.Hot.Alpha = 220
+    LookAndFeel.CloseButton.Circle.Normal.StartColor = clGradientActiveCaption
+    LookAndFeel.CloseButton.Circle.Normal.StopColor = clNone
+    LookAndFeel.CloseButton.Circle.Normal.StartAlpha = 0
+    LookAndFeel.CloseButton.Circle.Normal.StopAlpha = 0
+    LookAndFeel.CloseButton.Circle.Normal.OutlineColor = clGray
+    LookAndFeel.CloseButton.Circle.Normal.OutlineSize = 1.000000000000000000
+    LookAndFeel.CloseButton.Circle.Normal.OutlineAlpha = 0
+    LookAndFeel.CloseButton.Circle.Down.StartColor = 3487169
+    LookAndFeel.CloseButton.Circle.Down.StopColor = 3487169
+    LookAndFeel.CloseButton.Circle.Down.StartAlpha = 255
+    LookAndFeel.CloseButton.Circle.Down.StopAlpha = 255
+    LookAndFeel.CloseButton.Circle.Down.OutlineColor = clGray
+    LookAndFeel.CloseButton.Circle.Down.OutlineSize = 1.000000000000000000
+    LookAndFeel.CloseButton.Circle.Down.OutlineAlpha = 255
+    LookAndFeel.CloseButton.Circle.Hot.StartColor = 9408475
+    LookAndFeel.CloseButton.Circle.Hot.StopColor = 9803748
+    LookAndFeel.CloseButton.Circle.Hot.StartAlpha = 255
+    LookAndFeel.CloseButton.Circle.Hot.StopAlpha = 255
+    LookAndFeel.CloseButton.Circle.Hot.OutlineColor = 6054595
+    LookAndFeel.CloseButton.Circle.Hot.OutlineSize = 1.000000000000000000
+    LookAndFeel.CloseButton.Circle.Hot.OutlineAlpha = 255
+    LookAndFeel.AddButton.Button.Normal.StartColor = 14340292
+    LookAndFeel.AddButton.Button.Normal.StopColor = 14340035
+    LookAndFeel.AddButton.Button.Normal.StartAlpha = 255
+    LookAndFeel.AddButton.Button.Normal.StopAlpha = 255
+    LookAndFeel.AddButton.Button.Normal.OutlineColor = 13088421
+    LookAndFeel.AddButton.Button.Normal.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.Button.Normal.OutlineAlpha = 255
+    LookAndFeel.AddButton.Button.Down.StartColor = 13417645
+    LookAndFeel.AddButton.Button.Down.StopColor = 13417644
+    LookAndFeel.AddButton.Button.Down.StartAlpha = 255
+    LookAndFeel.AddButton.Button.Down.StopAlpha = 255
+    LookAndFeel.AddButton.Button.Down.OutlineColor = 10852748
+    LookAndFeel.AddButton.Button.Down.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.Button.Down.OutlineAlpha = 255
+    LookAndFeel.AddButton.Button.Hot.StartColor = 15524314
+    LookAndFeel.AddButton.Button.Hot.StopColor = 15524314
+    LookAndFeel.AddButton.Button.Hot.StartAlpha = 255
+    LookAndFeel.AddButton.Button.Hot.StopAlpha = 255
+    LookAndFeel.AddButton.Button.Hot.OutlineColor = 14927787
+    LookAndFeel.AddButton.Button.Hot.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.Button.Hot.OutlineAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Normal.StartColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Normal.StopColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Normal.StartAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Normal.StopAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Normal.OutlineColor = clGray
+    LookAndFeel.AddButton.PlusSign.Normal.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.PlusSign.Normal.OutlineAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Down.StartColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Down.StopColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Down.StartAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Down.StopAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Down.OutlineColor = clGray
+    LookAndFeel.AddButton.PlusSign.Down.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.PlusSign.Down.OutlineAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Hot.StartColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Hot.StopColor = clWhite
+    LookAndFeel.AddButton.PlusSign.Hot.StartAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Hot.StopAlpha = 255
+    LookAndFeel.AddButton.PlusSign.Hot.OutlineColor = clGray
+    LookAndFeel.AddButton.PlusSign.Hot.OutlineSize = 1.000000000000000000
+    LookAndFeel.AddButton.PlusSign.Hot.OutlineAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Normal.StartColor = 14735310
+    LookAndFeel.ScrollButtons.Button.Normal.StopColor = 14274499
+    LookAndFeel.ScrollButtons.Button.Normal.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Normal.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Normal.OutlineColor = 11507842
+    LookAndFeel.ScrollButtons.Button.Normal.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Button.Normal.OutlineAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Down.StartColor = 13417645
+    LookAndFeel.ScrollButtons.Button.Down.StopColor = 13417644
+    LookAndFeel.ScrollButtons.Button.Down.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Down.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Down.OutlineColor = 10852748
+    LookAndFeel.ScrollButtons.Button.Down.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Button.Down.OutlineAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Hot.StartColor = 15524314
+    LookAndFeel.ScrollButtons.Button.Hot.StopColor = 15524313
+    LookAndFeel.ScrollButtons.Button.Hot.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Hot.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Hot.OutlineColor = 14927788
+    LookAndFeel.ScrollButtons.Button.Hot.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Button.Hot.OutlineAlpha = 255
+    LookAndFeel.ScrollButtons.Button.Disabled.StartColor = 14340036
+    LookAndFeel.ScrollButtons.Button.Disabled.StopColor = 14274499
+    LookAndFeel.ScrollButtons.Button.Disabled.StartAlpha = 150
+    LookAndFeel.ScrollButtons.Button.Disabled.StopAlpha = 150
+    LookAndFeel.ScrollButtons.Button.Disabled.OutlineColor = 11113341
+    LookAndFeel.ScrollButtons.Button.Disabled.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Button.Disabled.OutlineAlpha = 100
+    LookAndFeel.ScrollButtons.Arrow.Normal.StartColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Normal.StopColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Normal.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Normal.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Normal.OutlineColor = clGray
+    LookAndFeel.ScrollButtons.Arrow.Normal.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Arrow.Normal.OutlineAlpha = 200
+    LookAndFeel.ScrollButtons.Arrow.Down.StartColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Down.StopColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Down.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Down.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Down.OutlineColor = clGray
+    LookAndFeel.ScrollButtons.Arrow.Down.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Arrow.Down.OutlineAlpha = 200
+    LookAndFeel.ScrollButtons.Arrow.Hot.StartColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Hot.StopColor = clWhite
+    LookAndFeel.ScrollButtons.Arrow.Hot.StartAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Hot.StopAlpha = 255
+    LookAndFeel.ScrollButtons.Arrow.Hot.OutlineColor = clGray
+    LookAndFeel.ScrollButtons.Arrow.Hot.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Arrow.Hot.OutlineAlpha = 200
+    LookAndFeel.ScrollButtons.Arrow.Disabled.StartColor = clSilver
+    LookAndFeel.ScrollButtons.Arrow.Disabled.StopColor = clSilver
+    LookAndFeel.ScrollButtons.Arrow.Disabled.StartAlpha = 150
+    LookAndFeel.ScrollButtons.Arrow.Disabled.StopAlpha = 150
+    LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineColor = clGray
+    LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineSize = 1.000000000000000000
+    LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineAlpha = 200
+    Align = alBottom
+    TabOrder = 1
+    ExplicitLeft = 32
+    ExplicitTop = 192
+    ExplicitWidth = 300
   end
   object ilIcons: TImageList
     ColorDepth = cd32Bit
     Left = 233
     Top = 158
     Bitmap = {
-      494C01010200B000D00010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010100B000DC0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFEFEFDFF914B2EFFB38570FFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B
       1A39000000010000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFDFCFBFF7B2A09FF843616FF843616FF9B5C42FFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000A0B060F6D79
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000A0B060F6D79
       499FAABD72FBADC074FFAFC275FFAFC275FFAFC275FFAFC275FFAFC275FFACBF
       73FB6D79499F0A0B060F00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFBF9F8FF7D2D0CFF843616FF843616FF843616FF843616FFA1654CFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000A0B060F859359C2AFC2
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000A0B060F859359C2AFC2
       75FFC2CDA1FFC4CDAAFFABBB7CFFAEC174FFAFC275FFAFC275FFAFC175FFA9BA
       70FFACBE73FF859359C20A0B060F000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFDFC
-      FBFF7C2D0CFF843616FF843616FF843616FF843616FF843616FF843616FFA368
-      51FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000016D79499FABBE73FFAEC1
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000016D79499FABBE73FFAEC1
       74FFBFCE92FFF8F9F2FFF2F4EDFFB1C281FFAFC275FFAFC174FFA0B87DFF8AC1
       CAFF96BDA5FFAFC274FF6D79499F000000010000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFCFBFAFFC39E
-      8FFF944F33FF843616FF843616FF843616FF843616FF843616FF843616FF8436
-      16FFAA745DFFFFFFFFFFFFFFFFFFFFFFFFFF272B1A39ABBF72FBC8D3A5FFB4C1
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000272B1A39ABBF72FBC8D3A5FFB4C1
       8BFFAEC174FFC1D096FFFDFDFCFFD1DBB1FFAFC174FFA0B87DFF89C8DDFF87CF
       F5FF93CBCFFFAFC274FFACBF73FB272B1A390000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFAF7F6FF7C2C0AFF8335
-      14FFA0634BFFC8A698FF7C2B0AFF843616FF843616FF843616FF843616FF8436
-      16FF9E5F46FFFFFFFFFFFFFFFFFFFFFFFFFF6F7B4AA2AEC274FFD2DDB2FFF5F6
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000006F7B4AA2AEC274FFD2DDB2FFF5F6
       F1FFB4C18EFFB8C494FFFDFDFCFFCFD9B2FFA0B77DFF89C8DDFF87CFF5FF8DCC
       E0FFAAC384FFAFC275FFAFC275FF6F7B4AA20000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000F8F4F2FF7D2F0EFF843616FF8436
-      16FF843717FF7B2B09FFEDE2DDFF893D1FFF813211FF843616FF843616FF7D2F
-      0EFFEDE2DEFFFFFFFFFFA2664EFFFFFFFFFF9DAE69E5AFC275FFB7C884FFF6F8
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000009DAE69E5AFC275FFB7C884FFF6F8
       EFFFFDFDFCFFFDFDFCFFFFFFFFFFEBEEE5FF8FC2D3FF86CEF5FF8DCCE0FFAAC3
       84FFAFC275FFAFC275FFAFC275FF9DAE69E50000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000007A2A08FF843616FF843616FF8131
-      10FF7A2907FF7C2D0CFF7D2F0EFFA66C54FFF2EAE7FFAA735DFF98563CFFDFCC
-      C3FFFFFFFFFFD0B3A6FF833514FFB3846EFFADC074FDAFC275FFAFC274FFB7C8
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000ADC074FDAFC275FFAFC274FFB7C8
       84FFD2DDB2FFD3DEB4FFF2F5E8FFFFFFFFFFE7F1F7FF93C6D5FFA9C283FFADC0
       74FFAFC275FFAFC275FFAFC275FFADC074FD0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000813111FF843717FF883C1DFFF5EF
-      EDFFFFFFFFFFFFFFFFFFD6BCB2FF823312FF792806FF99593EFFD0B3A7FFD3B8
-      ADFF9A5A40FF823312FF843616FF924C30FFADC074FDAFC275FFAFC275FFAFC2
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000ADC074FDAFC275FFAFC275FFAFC2
       75FFAEC274FFADC073FF9EA274FFE7E4E2FFFFFFFFFFEDF0E6FFC6CEADFFC4CD
       AAFFABBB7CFFAEC174FFAFC275FFADC074FD0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000D1B4A8FF7C2C0BFFFFFFFFFFFBF9
-      F8FF7B2B09FF7A2A07FF7B2B09FFC09988FFDEC9C1FF792705FF843616FF8436
-      16FF843616FF843616FF7C2D0BFFFAF7F6FF9DAE69E5AFC275FFAFC275FFAFC2
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000009DAE69E5AFC275FFAFC275FFAFC2
       75FFAABD72FF909461FF756350FFA8AE7AFFF2F4E8FFFFFFFFFFFDFEFCFFFDFE
       FCFFF2F4EDFFB1C281FFAFC275FF9DAE69E50000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFEBDED9FFFFFFFFFF9048
-      2BFF843616FF843616FF843616FF843617FF782704FFE2CFC8FF8D4528FF8436
-      16FF843616FF80300FFFFAF7F6FFFFFFFFFF6F7B4AA2AFC275FFAFC275FFA2B0
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000006F7B4AA2AFC275FFAFC275FFA2B0
       6DFF7E7656FF74614FFF9EA569FFAFC274FFD2DCB4FFFDFDFCFFC4D29BFFC2D0
       96FFF8F9F2FFD1DBB1FFAEC274FF6F7B4AA20000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF7A28
-      06FF843616FF843616FF843616FF843616FF843616FF823313FFA1654DFFBF97
-      86FF7A2A08FFFAF7F5FFFFFFFFFFFFFFFFFF272B1A39ACBF73FBAEC174FF837B
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000272B1A39ACBF73FBAEC174FF837B
       59FF715B4DFF8B865DFFAFC275FFAEC274FFD2DDB2FFFDFDFCFFB7C490FFAEC1
       74FFBFCE92FFCCD8A7FFABBF72FB272B1A390000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFCEB0
-      A3FF833515FF843616FF843616FF843616FF843616FF843616FF843717FF7B2B
-      09FFFCFBFAFFFFFFFFFFFFFFFFFFFFFFFFFF000000016D79499FAEC074FF877D
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000016D79499FAEC074FF877D
       5BFF8A855DFFAAB971FFAFC275FFAFC275FFB7C884FFF6F8EFFFF5F6F1FFB5C2
       8BFFAFC274FFAFC275FF6D79499F000000010000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFCCADA0FF843515FF843616FF843616FF843616FF843616FF7A2A08FFFCFB
-      FAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000A0B060F859359C2AEC1
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000A0B060F859359C2AEC1
       74FFAFC275FFAFC275FFAFC275FFAFC275FFAFC274FFB7C884FFD2DDB2FFCBD7
       A7FFAFC275FF859359C20A0B060F000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFC6A395FF843515FF843616FF843616FF7D2E0DFFFDFBFBFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000A0B060F6D79
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000A0B060F6D79
       499FACBF73FBAFC275FFAFC275FFAFC275FFAFC275FFAFC275FFAEC274FFABBF
       72FB6D79499F0A0B060F00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFC29C8CFF833414FF7C2C0AFFFCFAF9FFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B
       1A39000000010000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
       2800000040000000100000000100010000000000800000000000000000000000
-      000000000000000000000000FFFFFF000000C003000000000000800100000000
+      000000000000000000000000FFFFFF00C0030000000000008001000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      00008001000000000000C0030000000000000000000000000000000000000000
+      8001000000000000C00300000000000000000000000000000000000000000000
       000000000000}
   end
   object mmMenu: TMainMenu
@@ -517,6 +831,7 @@ object Mainfrm: TMainfrm
       Caption = #24037#20855'(&T)'
       object mniDMSTool: TMenuItem
         Caption = '&DMS Tool'
+        OnClick = btnDMSClick
       end
     end
   end

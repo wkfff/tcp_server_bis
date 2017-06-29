@@ -19,39 +19,57 @@ uses
   qstring,
   SynEdit,
   Vcl.StdCtrls,
-  ShShareMemMap, BCEditor.Editor, Vcl.ExtCtrls;
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  ChromeTabs,
+  uShareMemServer,
+  JvPageList,
+  JvExControls,
+  SynHighlighterXML,
+  SynEditHighlighter,
+  SynHighlighterIni, Vcl.Buttons;
 
 type
-  TShareMemServer = class
-  private
-    FActive: Boolean;
-    FMap: TShareMapQueue;
-    procedure SetActive(const Value: Boolean);
-    procedure DoGetDebugData(AJob: PQJob);
-    procedure DoShowDebugData(AJob: PQJob);
-  public
-    constructor Create(AName: string; AMemorySize: Integer = CN_QUEUE_SIZE);
-    destructor Destroy; override;
-    property Active: Boolean read FActive write SetActive;
+  PDMSDebugInfo = ^TDMSDebugInfo;
+
+  TDMSDebugInfo = record
+    PostClient: QStringW;
+    PostMethod: QStringW;
+    PostTime: QStringW;
+    PostArgus: QStringW;
+    PostServer: QStringW;
+    ReceiveXML: WideString;
   end;
 
   TfrmDMSTool = class(TForm)
     chkActive: TCheckBox;
-    bce1: TBCEditor;
     pnlArgus: TPanel;
     pnlActive: TPanel;
     splMain: TSplitter;
+    pnlReturn: TPanel;
+    chrmtbReturn: TChromeTabs;
+    lstReturn: TJvPageList;
+    sedtArgus: TSynEdit;
+    sedtXML: TSynEdit;
+    SynIniSyn1: TSynIniSyn;
+    SynXMLSyn1: TSynXMLSyn;
+    btn1: TSpeedButton;
+    btn2: TSpeedButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure chkActiveClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure btn2Click(Sender: TObject);
   private
     { Private declarations }
+    FInfoList: TStringList;
     FShareMem: TShareMemServer;
     procedure DoFreeFormJob(AJob: PQJob);
     procedure DoShowFormJob(AJob: PQJob);
     procedure InitializBCEditer;
+    procedure DoGetShareMemData(AJob: PQJob);
   public
     { Public declarations }
   end;
@@ -70,7 +88,51 @@ procedure DoCreateFormJob(AJob: PQJob);
 begin
   if not Assigned(AForm) then
     AForm := TfrmDMSTool.Create(Application);
+  AForm.Tag := TQParams(AJob.Data).ByName('TabIndex').AsInteger;
   AForm.WindowState := wsMaximized;
+end;
+
+procedure TfrmDMSTool.btn2Click(Sender: TObject);
+var
+  I: Integer;
+begin
+  for I := 0 to FInfoList.Count - 1 do
+  begin
+    sedtXML.Text := PDMSDebugInfo(FInfoList.Objects[I]).PostArgus + #13 + #10 + #13 + #10 +  PDMSDebugInfo(FInfoList.Objects[I]).ReceiveXML;
+    ShowMessage('');
+  end;
+end;
+
+procedure TfrmDMSTool.Button1Click(Sender: TObject);
+var
+  AStatus: TQWorkerStatus;
+  I: Integer;
+  ASeconds: Int64;
+  S: String;
+begin
+  AStatus := Workers.EnumWorkerStatus;
+  for I := Low(AStatus) to High(AStatus) do
+  begin
+    S := S + '【工作者 ' + IntToStr(I) + '(ID=' + IntToStr(AStatus[I].ThreadId) +
+      ')】'#13#10 + ' 已处理:' + IntToStr(AStatus[I].Processed) + ' 状态:';
+    if AStatus[I].IsIdle then
+    begin
+      ASeconds := (GetTimeStamp - AStatus[I].LastActive) div Q1Second;
+      if ASeconds > 0 then
+        S := S + '空闲,末次工作时间:' + RollupTime(ASeconds) + '前)'#13#10#13#10
+      else
+        S := S + '空闲,末次工作时间:0秒前)'#13#10#13#10;
+    end
+    else
+    begin
+      S := S + '忙碌(作业:' + AStatus[I].ActiveJob + ')'#13#10;
+      if Length(AStatus[I].Stacks) > 0 then
+        S := S + ' 堆栈:'#13#10 + AStatus[I].Stacks + #13#10#13#10
+      else
+        S := S + #13#10;
+    end;
+  end;
+  ShowMessage(S);
 end;
 
 procedure TfrmDMSTool.chkActiveClick(Sender: TObject);
@@ -81,6 +143,117 @@ end;
 procedure TfrmDMSTool.DoFreeFormJob(AJob: PQJob);
 begin
   FreeAndNil(AForm);
+end;
+
+procedure TfrmDMSTool.DoGetShareMemData(AJob: PQJob);
+var
+  ADecode: QStringW;
+  ATemp: QStringW;
+  pReceive: PWideChar;
+  pArgus: PWideChar;
+  IsNew: Boolean;
+  I: Integer;
+  FData: PDMSDebugInfo;
+const
+  AscII_11: PWideChar = #11;
+  AscII_12: PWideChar = #12;
+  AscII_Enter: PWideChar = #13 + #10;
+begin
+  IsNew := True;
+  pReceive := PWideChar(AJob.Data);
+  if CharInW(AscII_12, pReceive) then
+    IsNew := False;
+
+  I := 0;
+  if IsNew then
+  begin
+    New(FData);
+    while pReceive^ <> #0 do
+    begin
+      ADecode := DecodeTokenW(pReceive, AscII_11, WideChar(0), True);
+      case I of
+        0:
+          begin
+            FData.PostTime := LeftStrW(ADecode, 19, False);
+          end;
+        1:
+          begin
+            FData.PostMethod := ADecode;
+            FInfoList.AddObject(FData.PostMethod,
+              FData);
+          end;
+        2:
+          begin
+            pArgus := PWideChar(ADecode);
+            ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
+            ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
+            FData.PostServer := ATemp;
+            FData.PostArgus := pArgus;
+          end;
+      end;
+      Inc(I);
+    end
+  end
+  else
+  begin
+    if FInfoList.Count < 1 then
+      Exit;
+    ATemp := DecodeTokenW(pReceive, AscII_12, WideChar(0), True);
+    ATemp := DecodeTokenW(pReceive, AscII_11, WideChar(0), True);
+    I := FInfoList.Count - 1;
+    while (I >= 0) do
+    begin
+      if SameText(ATemp, FInfoList.Strings[I]) then
+        Break;
+      Dec(I);
+    end;
+    FData := PDMSDebugInfo(FInfoList.Objects[I]);
+    FData.ReceiveXML := pReceive;
+  end;
+
+  if IsNew then
+  begin
+    sedtArgus.BeginUpdate;
+    pArgus := PWideChar(PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).PostArgus);
+    while pArgus^ <> #0 do
+    begin
+      ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
+      sedtArgus.Lines.Add(ATemp);
+    end;
+    I := 0;
+    while I < 2 do
+    begin
+      sedtArgus.Lines.Add('');
+      Inc(I);
+    end;
+    sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count);
+    sedtArgus.EndUpdate;
+  end
+  else
+  begin
+    sedtArgus.BeginUpdate;
+    pArgus := PWideChar(PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).ReceiveXML);
+    while pArgus^ <> #0 do
+    begin
+      ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
+      sedtArgus.Lines.Add(ATemp);
+    end;
+    I := 0;
+    while I < 2 do
+    begin
+      sedtArgus.Lines.Add('');
+      Inc(I);
+    end;
+//      sedtArgus.Lines.Text := (PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).ReceiveXML);
+//      I := 0;
+//      while I < 2 do
+//      begin
+//        sedtArgus.Lines.Add('');
+//        Inc(I);
+//      end;
+    sedtArgus.GotoLineAndCenter(sedtXML.Lines.Count);
+    sedtArgus.EndUpdate;
+  end;
 end;
 
 procedure TfrmDMSTool.DoShowFormJob(AJob: PQJob);
@@ -96,36 +269,39 @@ var
   AParams: TQParams;
 begin
   AParams := TQParams.Create;
-  AParams.Add('TabItemCaption', AForm.Caption);
+  AParams.Add('TabIndex', AForm.Tag);
   Workers.PostSignal(Workers.RegisterSignal('MainForm.DeleteTabItem'), AParams,
     jdfFreeAsObject);
+  FreeAndNil(AForm);
 end;
 
 procedure TfrmDMSTool.InitializBCEditer;
 begin
-  bce1.Highlighter.LoadFromFile('E:\WHTX\EvunTool\src\Highlighters\XML.json');
-  bce1.Highlighter.Colors.LoadFromFile('E:\WHTX\EvunTool\src\Colors\Visual Studio.json');
-  bce1.WordWrap.Enabled := True;
-  bce1.Font.Size := 10;
-  bce1.LeftMargin.Autosize := False;
-  bce1.LeftMargin.Width := 40;
-//  bce1.ReadOnly := True;
-
+  sedtArgus.Font.Size := 10;
+  sedtXML.Font.Size := 10;
+  sedtXML.ReadOnly := True;
 end;
 
 procedure TfrmDMSTool.FormCreate(Sender: TObject);
 begin
-  Workers.Wait(DoFreeFormJob, Workers.RegisterSignal('MDIChildForm.' +
-    ModuleSign + '.Free'), True);
-  Workers.Wait(DoShowFormJob, Workers.RegisterSignal('MDIChildForm.' +
-    ModuleSign + '.Show'), True);
+  Workers.Wait(DoFreeFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool +
+    '.Free'), True);
+  Workers.Wait(DoShowFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool +
+    '.Show'), True);
   FShareMem := TShareMemServer.Create(Debug_MapMem);
+  FShareMem.OnGetData := DoGetShareMemData;
   InitializBCEditer;
+  FInfoList := TStringList.Create;
 end;
 
 procedure TfrmDMSTool.FormDestroy(Sender: TObject);
+var
+  I: Integer;
 begin
-  Workers.Clear(FShareMem, -1, False);
+  for I := 0 to FInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FInfoList.Objects[I]));
+  FInfoList.Free;
+  Workers.Clear(FShareMem, -1, True);
   FShareMem.Free;
 end;
 
@@ -134,69 +310,9 @@ begin
   pnlArgus.Width := Width div 2 - 20;
 end;
 
-{ TShareMemServer }
-
-constructor TShareMemServer.Create(AName: string; AMemorySize: Integer);
-begin
-  FMap := TShareMapQueue.Create(AName, True, AMemorySize);
-  FActive := False;
-end;
-
-destructor TShareMemServer.Destroy;
-begin
-  FMap.Free;
-  inherited;
-end;
-
-procedure TShareMemServer.DoGetDebugData(AJob: PQJob);
-var
-  lstTemp: TStringList;
-  pData: Pointer;
-  dwSize: DWORD;
-  i: Integer;
-  strTemp: string;
-begin
-  lstTemp := TStringList.Create;
-
-  //每条日志区分符
-  lstTemp.LineBreak := #8;
-
-  //读取队列中数据，一次全部读完
-  dwSize := FMap.Pop(pData);
-  if (dwSize > 0) then
-  begin
-    try
-      SetString(strTemp, PAnsiChar(pData), dwSize);
-      lstTemp.Text := strTemp;
-      for i := 0 to lstTemp.Count - 1 do
-        Workers.Post(DoShowDebugData, PChar(lstTemp[i] + '  @@@@@'), True);
-    except
-    end;
-    FreeMem(pData, dwSize);
-  end;
-  lstTemp.Free;
-  if FActive then
-    Workers.Delay(DoGetDebugData, Q1Second, nil);
-end;
-
-procedure TShareMemServer.DoShowDebugData(AJob: PQJob);
-begin
-  if not Assigned(AForm) then
-    Exit;
-  AForm.bce1.Lines.Add(PChar(AJob.Data));
-end;
-
-procedure TShareMemServer.SetActive(const Value: Boolean);
-begin
-  FActive := Value;
-
-  if FActive then
-    Workers.Delay(DoGetDebugData, Q1Second, nil);
-end;
-
 initialization
-  Workers.Wait(DoCreateFormJob, Workers.RegisterSignal('MDIChildForm.' +
-    ModuleSign + '.Create'), True);
+  Workers.Wait(DoCreateFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool
+    + '.Create'), True);
 
 finalization
 
