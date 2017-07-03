@@ -82,9 +82,11 @@ begin
   ATab := FindTab(ASign);
   if Assigned(ATab) then
     Exit;
-
+  chrmtbTool.BeginUpdate;
   ATab := chrmtbTool.Tabs.Add;
   ATab.Caption := ASign;
+  ATab.ImageIndex := TToolButton(Sender).ImageIndex;
+  chrmtbTool.EndUpdate;
   AParams := TQParams.Create;
   AParams.Add('TabIndex', ATab.Index);
   Workers.PostSignal('MDIChildForm.' + ASign + '.Create', AParams, jdfFreeAsObject);

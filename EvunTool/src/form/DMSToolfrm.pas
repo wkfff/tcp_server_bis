@@ -15,6 +15,7 @@ uses
   JvTabBar,
   qplugins_base,
   qplugins_params,
+  qxml,
   QWorker,
   qstring,
   SynEdit,
@@ -22,12 +23,23 @@ uses
   Vcl.ExtCtrls,
   Vcl.ComCtrls,
   ChromeTabs,
+  ChromeTabsClasses,
   uShareMemServer,
   JvPageList,
   JvExControls,
   SynHighlighterXML,
   SynEditHighlighter,
-  SynHighlighterIni, Vcl.Buttons;
+  SynHighlighterIni,
+  Vcl.Buttons,
+  Vcl.Menus,
+  System.ImageList,
+  Vcl.ImgList,
+  VirtualTrees,
+  Vcl.Imaging.pngimage,
+  JvExExtCtrls,
+  JvNetscapeSplitter,
+  JvXPCore,
+  JvXPButtons;
 
 type
   PDMSDebugInfo = ^TDMSDebugInfo;
@@ -45,7 +57,6 @@ type
     chkActive: TCheckBox;
     pnlArgus: TPanel;
     pnlActive: TPanel;
-    splMain: TSplitter;
     pnlReturn: TPanel;
     chrmtbReturn: TChromeTabs;
     lstReturn: TJvPageList;
@@ -55,6 +66,25 @@ type
     SynXMLSyn1: TSynXMLSyn;
     btn1: TSpeedButton;
     btn2: TSpeedButton;
+    pmXML: TPopupMenu;
+    mniXML1: TMenuItem;
+    ilMenu: TImageList;
+    pnlList: TPanel;
+    vstMethodList: TVirtualStringTree;
+    btn3: TSpeedButton;
+    pmArgus: TPopupMenu;
+    mniClear: TMenuItem;
+    mniN1: TMenuItem;
+    mniN2: TMenuItem;
+    btn4: TSpeedButton;
+    splMain: TJvNetscapeSplitter;
+    pnlServer: TPanel;
+    btnClosePanel: TJvXPToolButton;
+    pmList: TPopupMenu;
+    mniN3: TMenuItem;
+    mniN4: TMenuItem;
+    mniN5: TMenuItem;
+    lblServer: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure chkActiveClick(Sender: TObject);
@@ -62,14 +92,44 @@ type
     procedure FormResize(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
+    procedure mniXML1Click(Sender: TObject);
+    procedure pnlListMouseMove(Sender: TObject; Shift: TShiftState; X, Y:
+      Integer);
+    procedure pnlListMouseDown(Sender: TObject; Button: TMouseButton; Shift:
+      TShiftState; X, Y: Integer);
+    procedure pnlListMouseUp(Sender: TObject; Button: TMouseButton; Shift:
+      TShiftState; X, Y: Integer);
+    procedure vstMethodListInitNode(Sender: TBaseVirtualTree; ParentNode, Node:
+      PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vstMethodListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure img1Click(Sender: TObject);
+    procedure vstMethodListInitChildren(Sender: TBaseVirtualTree; Node:
+      PVirtualNode; var ChildCount: Cardinal);
+    procedure vstMethodListFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node:
+      PVirtualNode; Column: TColumnIndex);
+    procedure mniClearClick(Sender: TObject);
+    procedure chrmtbReturnButtonCloseTabClick(Sender: TObject; ATab: TChromeTab;
+      var Close: Boolean);
+    procedure mniN1Click(Sender: TObject);
+    procedure mniN2Click(Sender: TObject);
+    procedure btnClosePanelClick(Sender: TObject);
+    procedure mniN3Click(Sender: TObject);
   private
     { Private declarations }
-    FInfoList: TStringList;
+    FWindow_X: Integer;
+    FWindow_Y: Integer;
+    FListDrag: Boolean;
+    FDMSInfoList: TStringList;
+    FDCSInfoList: TStringList;
     FShareMem: TShareMemServer;
     procedure DoFreeFormJob(AJob: PQJob);
     procedure DoShowFormJob(AJob: PQJob);
     procedure InitializBCEditer;
     procedure DoGetShareMemData(AJob: PQJob);
+    procedure DoClearDebugListenInfo;
+    procedure DoRefrashVST(AVST: TVirtualStringTree);
   public
     { Public declarations }
   end;
@@ -89,18 +149,16 @@ begin
   if not Assigned(AForm) then
     AForm := TfrmDMSTool.Create(Application);
   AForm.Tag := TQParams(AJob.Data).ByName('TabIndex').AsInteger;
-  AForm.WindowState := wsMaximized;
 end;
 
 procedure TfrmDMSTool.btn2Click(Sender: TObject);
-var
-  I: Integer;
 begin
-  for I := 0 to FInfoList.Count - 1 do
-  begin
-    sedtXML.Text := PDMSDebugInfo(FInfoList.Objects[I]).PostArgus + #13 + #10 + #13 + #10 +  PDMSDebugInfo(FInfoList.Objects[I]).ReceiveXML;
-    ShowMessage('');
-  end;
+  pnlList.Visible := True;
+end;
+
+procedure TfrmDMSTool.btnClosePanelClick(Sender: TObject);
+begin
+  pnlList.Visible := False;
 end;
 
 procedure TfrmDMSTool.Button1Click(Sender: TObject);
@@ -108,7 +166,7 @@ var
   AStatus: TQWorkerStatus;
   I: Integer;
   ASeconds: Int64;
-  S: String;
+  S: string;
 begin
   AStatus := Workers.EnumWorkerStatus;
   for I := Low(AStatus) to High(AStatus) do
@@ -140,6 +198,16 @@ begin
   FShareMem.Active := chkActive.Checked;
 end;
 
+procedure TfrmDMSTool.chrmtbReturnButtonCloseTabClick(Sender: TObject; ATab:
+  TChromeTab; var Close: Boolean);
+begin
+  if ATab.Caption = 'XML' then
+  begin
+    sedtXML.Clear;
+    Close := False;
+  end;
+end;
+
 procedure TfrmDMSTool.DoFreeFormJob(AJob: PQJob);
 begin
   FreeAndNil(AForm);
@@ -152,8 +220,10 @@ var
   pReceive: PWideChar;
   pArgus: PWideChar;
   IsNew: Boolean;
+  IsDms: Boolean;
   I: Integer;
-  FData: PDMSDebugInfo;
+  aData: PDMSDebugInfo;
+  aInfoList: TStringList;
 const
   AscII_11: PWideChar = #11;
   AscII_12: PWideChar = #12;
@@ -164,31 +234,37 @@ begin
   if CharInW(AscII_12, pReceive) then
     IsNew := False;
 
+  if Pos('DMS_I', pReceive) > 0 then
+    aInfoList := FDMSInfoList
+  else
+    aInfoList := FDCSInfoList;
+
+  IsDms := aInfoList = FDMSInfoList;
+
   I := 0;
   if IsNew then
   begin
-    New(FData);
+    New(aData);
     while pReceive^ <> #0 do
     begin
       ADecode := DecodeTokenW(pReceive, AscII_11, WideChar(0), True);
       case I of
         0:
           begin
-            FData.PostTime := LeftStrW(ADecode, 19, False);
+            aData.PostTime := LeftStrW(ADecode, 19, False);
           end;
         1:
           begin
-            FData.PostMethod := ADecode;
-            FInfoList.AddObject(FData.PostMethod,
-              FData);
+            aData.PostMethod := ADecode;
+            aInfoList.AddObject(aData.PostMethod, aData);
           end;
         2:
           begin
             pArgus := PWideChar(ADecode);
             ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
             ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
-            FData.PostServer := ATemp;
-            FData.PostArgus := pArgus;
+            aData.PostServer := ATemp;
+            aData.PostArgus := pArgus;
           end;
       end;
       Inc(I);
@@ -196,25 +272,34 @@ begin
   end
   else
   begin
-    if FInfoList.Count < 1 then
+    if aInfoList.Count < 1 then
       Exit;
     ATemp := DecodeTokenW(pReceive, AscII_12, WideChar(0), True);
     ATemp := DecodeTokenW(pReceive, AscII_11, WideChar(0), True);
-    I := FInfoList.Count - 1;
+    I := aInfoList.Count - 1;
     while (I >= 0) do
     begin
-      if SameText(ATemp, FInfoList.Strings[I]) then
+      if SameText(ATemp, aInfoList.Strings[I]) then
         Break;
       Dec(I);
     end;
-    FData := PDMSDebugInfo(FInfoList.Objects[I]);
-    FData.ReceiveXML := pReceive;
+    aData := PDMSDebugInfo(aInfoList.Objects[I]);
+    aData.ReceiveXML := pReceive;
+
+    DoRefrashVST(vstMethodList);
+    if IsDms then
+      vstMethodList.ScrollIntoView((vstMethodList.RootNode.LastChild.LastChild),
+        True)
+    else
+      vstMethodList.ScrollIntoView((vstMethodList.RootNode.FirstChild.LastChild),
+        True);
+
   end;
 
   if IsNew then
   begin
     sedtArgus.BeginUpdate;
-    pArgus := PWideChar(PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).PostArgus);
+    pArgus := PWideChar(PDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).PostArgus);
     while pArgus^ <> #0 do
     begin
       ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
@@ -231,28 +316,10 @@ begin
   end
   else
   begin
-    sedtArgus.BeginUpdate;
-    pArgus := PWideChar(PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).ReceiveXML);
-    while pArgus^ <> #0 do
-    begin
-      ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
-      sedtArgus.Lines.Add(ATemp);
-    end;
-    I := 0;
-    while I < 2 do
-    begin
-      sedtArgus.Lines.Add('');
-      Inc(I);
-    end;
-//      sedtArgus.Lines.Text := (PDMSDebugInfo(FInfoList.Objects[FInfoList.Count - 1]).ReceiveXML);
-//      I := 0;
-//      while I < 2 do
-//      begin
-//        sedtArgus.Lines.Add('');
-//        Inc(I);
-//      end;
-    sedtArgus.GotoLineAndCenter(sedtXML.Lines.Count);
-    sedtArgus.EndUpdate;
+    sedtXML.BeginUpdate;
+    sedtXML.Lines.Text := (PDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).ReceiveXML);
+    sedtXML.GotoLineAndCenter(sedtArgus.Lines.Count);
+    sedtXML.EndUpdate;
   end;
 end;
 
@@ -279,7 +346,222 @@ procedure TfrmDMSTool.InitializBCEditer;
 begin
   sedtArgus.Font.Size := 10;
   sedtXML.Font.Size := 10;
-  sedtXML.ReadOnly := True;
+end;
+
+procedure TfrmDMSTool.mniClearClick(Sender: TObject);
+begin
+  sedtArgus.Clear;
+end;
+
+procedure TfrmDMSTool.mniN1Click(Sender: TObject);
+begin
+  sedtXML.Clear;
+end;
+
+procedure TfrmDMSTool.DoClearDebugListenInfo;
+var
+  I: Integer;
+begin
+  sedtXML.Clear;
+  sedtArgus.Clear;
+  for I := 0 to FDCSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
+  FDCSInfoList.Clear;
+
+  for I := 0 to FDCSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
+  FDMSInfoList.Clear;
+
+  DoRefrashVST(vstMethodList);
+end;
+
+procedure TfrmDMSTool.DoRefrashVST(AVST: TVirtualStringTree);
+var
+  OldRootCount: Integer;
+begin
+  OldRootCount := AVST.RootNodeCount;
+  AVST.RootNodeCount := 0;
+  AVST.RootNodeCount := OldRootCount;
+end;
+
+procedure TfrmDMSTool.mniN2Click(Sender: TObject);
+begin
+  DoClearDebugListenInfo;
+end;
+
+procedure TfrmDMSTool.mniN3Click(Sender: TObject);
+begin
+  DoClearDebugListenInfo;
+end;
+
+procedure TfrmDMSTool.mniXML1Click(Sender: TObject);
+var
+  rootXML: TQXML;
+  BodyXML: TQXML;
+  I: Integer;
+
+begin
+  rootXML := nil;
+  try
+    rootXML := TQXML.Create;
+    rootXML.Parse(sedtXML.Text);
+    if rootXML.Count < 1 then
+      Exit;
+    BodyXML := rootXML.ItemByPath('RESPONSE.BODY');
+    if BodyXML.Count < 1 then
+      Exit;
+    for I := 0 to BodyXML.Count - 1 do
+    begin
+
+    end;
+  finally
+    FreeAndNil(rootXML);
+  end;
+//  rootXML := nil;
+//  vstData.BeginUpdate;
+//  vstData.Header.Columns.Clear;
+//  try
+//    rootXML := TQXML.Create;
+//    rootXML.Parse(sedtXML.Lines.Text);
+//    DataSetXML := rootXML.ItemByPath('RESPONSE.BODY.DATASET');
+//    MetaXML := rootXML.ItemByPath('RESPONSE.BODY.DATASET.META');
+//    for I := 0 to MetaXML.Attrs.Count - 1 do
+//    begin
+//      headCol := vstData.Header.Columns.Add;
+//      headCol.Text := MetaXML.Attrs[I].Name;
+//      headCol.Alignment := taCenter;
+//      headCol.Width := Canvas.TextWidth(headCol.Text) + 20;
+//    end;
+//
+//  finally
+//    vstData.EndUpdate;
+//    FreeAndNil(rootXML);
+//  end;
+end;
+
+procedure TfrmDMSTool.pnlListMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  FListDrag := True;
+  FWindow_X := X;
+  FWindow_Y := Y;
+end;
+
+procedure TfrmDMSTool.pnlListMouseMove(Sender: TObject; Shift: TShiftState; X, Y:
+  Integer);
+begin
+  if FListDrag then
+  begin
+    pnlList.Left := pnlList.Left + X - FWindow_X;
+    pnlList.Top := pnlList.Top + Y - FWindow_Y;
+  end;
+end;
+
+procedure TfrmDMSTool.pnlListMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  FListDrag := False;
+end;
+
+procedure TfrmDMSTool.vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node:
+  PVirtualNode; Column: TColumnIndex);
+var
+  aInfoList: TStringList;
+begin
+  if (Node <> nil) and (Node.Parent <> Sender.RootNode) then
+  begin
+    case Node.Parent.Index of
+      0:
+        aInfoList := FDCSInfoList;
+      1:
+        aInfoList := FDMSInfoList;
+    end;
+
+    sedtXML.Text := PDMSDebugInfo(aInfoList.Objects[Node.Index]).ReceiveXML;
+    sedtArgus.Text := sedtArgus.Text + PDMSDebugInfo(aInfoList.Objects[Node.Index]).PostArgus
+      + #13 + #10 + #13 + #10 + #13 + #10;
+    sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
+  end;
+end;
+
+procedure TfrmDMSTool.vstMethodListFreeNode(Sender: TBaseVirtualTree; Node:
+  PVirtualNode);
+var
+  Data: PDMSDebugInfo;
+begin
+  Data := Sender.GetNodeData(Node);
+  Finalize(Data^);
+end;
+
+procedure TfrmDMSTool.vstMethodListGetText(Sender: TBaseVirtualTree; Node:
+  PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText:
+  string);
+var
+  Data: PDMSDebugInfo;
+begin
+  case Column of
+    0:
+      if Node.Parent = Sender.RootNode then
+      begin
+        if Node.Index = 0 then
+          CellText := 'DCS'
+        else
+          CellText := 'DMS'
+      end
+      else
+        CellText := '';
+    1:
+      begin
+        if (not Assigned(FDCSInfoList)) or (not Assigned(FDMSInfoList)) then
+          Exit;
+        if Node.Parent = Sender.RootNode then
+        begin
+          CellText := '';
+          Exit;
+        end;
+        Data := Sender.GetNodeData(Node);
+        CellText := Data.PostMethod;
+      end;
+  end;
+end;
+
+procedure TfrmDMSTool.vstMethodListInitChildren(Sender: TBaseVirtualTree; Node:
+  PVirtualNode; var ChildCount: Cardinal);
+begin
+  //
+  if (not Assigned(FDCSInfoList)) or (not Assigned(FDMSInfoList)) then
+    Exit;
+  case Node.Index of
+    0:
+      ChildCount := FDCSInfoList.Count;
+    1:
+      ChildCount := FDMSInfoList.Count;
+  end;
+end;
+
+procedure TfrmDMSTool.vstMethodListInitNode(Sender: TBaseVirtualTree; ParentNode,
+  Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+var
+  aData: PDMSDebugInfo;
+  aInfoList: TStringList;
+begin
+  //
+  if ParentNode = nil then
+    InitialStates := InitialStates + [ivsHasChildren, ivsExpanded]
+  else
+  begin
+    if (not Assigned(FDCSInfoList)) or (not Assigned(FDMSInfoList)) then
+      Exit;
+
+    case Node.Parent.Index of
+      0:
+        aInfoList := FDCSInfoList;
+      1:
+        aInfoList := FDMSInfoList;
+    end;
+    PDMSDebugInfo(Sender.GetNodeData(Node)).PostMethod := PDMSDebugInfo(aInfoList.Objects
+      [Node.Index]).PostMethod;
+  end;
 end;
 
 procedure TfrmDMSTool.FormCreate(Sender: TObject);
@@ -288,19 +570,29 @@ begin
     '.Free'), True);
   Workers.Wait(DoShowFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool +
     '.Show'), True);
+
   FShareMem := TShareMemServer.Create(Debug_MapMem);
   FShareMem.OnGetData := DoGetShareMemData;
+
   InitializBCEditer;
-  FInfoList := TStringList.Create;
+  FDMSInfoList := TStringList.Create;
+  FDCSInfoList := TStringList.Create;
+
+  vstMethodList.NodeDataSize := SizeOf(TDMSDebugInfo);
+  vstMethodList.RootNodeCount := 2;
 end;
 
 procedure TfrmDMSTool.FormDestroy(Sender: TObject);
 var
   I: Integer;
 begin
-  for I := 0 to FInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FInfoList.Objects[I]));
-  FInfoList.Free;
+  for I := 0 to FDCSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
+  FDCSInfoList.Free;
+  for I := 0 to FDMSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
+  FDMSInfoList.Free;
+
   Workers.Clear(FShareMem, -1, True);
   FShareMem.Free;
 end;
@@ -308,6 +600,12 @@ end;
 procedure TfrmDMSTool.FormResize(Sender: TObject);
 begin
   pnlArgus.Width := Width div 2 - 20;
+  pnlList.Left := pnlArgus.Left + pnlArgus.Width + 10;
+end;
+
+procedure TfrmDMSTool.img1Click(Sender: TObject);
+begin
+  pnlList.Visible := False;
 end;
 
 initialization

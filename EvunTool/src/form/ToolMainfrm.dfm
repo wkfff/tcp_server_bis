@@ -2,7 +2,7 @@ object Mainfrm: TMainfrm
   Left = 0
   Top = 0
   Caption = 'Evun Tool'
-  ClientHeight = 284
+  ClientHeight = 244
   ClientWidth = 495
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -344,18 +344,19 @@ object Mainfrm: TMainfrm
   end
   object chrmtbTool: TChromeTabs
     Left = 0
-    Top = 254
+    Top = 214
     Width = 495
     Height = 30
     OnActiveTabChanged = chrmtbToolActiveTabChanged
     OnButtonCloseTabClick = chrmtbToolButtonCloseTabClick
     ActiveTabIndex = -1
+    Images = ilIcons
     Options.Display.CloseButton.Offsets.Vertical = 6
     Options.Display.CloseButton.Offsets.Horizontal = 2
     Options.Display.CloseButton.Height = 14
     Options.Display.CloseButton.Width = 14
     Options.Display.CloseButton.AutoHide = True
-    Options.Display.CloseButton.Visibility = bvAll
+    Options.Display.CloseButton.Visibility = bvActive
     Options.Display.CloseButton.AutoHideWidth = 20
     Options.Display.CloseButton.CrossRadialOffset = 4
     Options.Display.AddButton.Offsets.Vertical = 10
@@ -389,8 +390,8 @@ object Mainfrm: TMainfrm
     Options.Display.Tabs.OffsetRight = 0
     Options.Display.Tabs.OffsetBottom = 0
     Options.Display.Tabs.MinWidth = 30
-    Options.Display.Tabs.MaxWidth = 100
-    Options.Display.Tabs.TabWidthFromContent = False
+    Options.Display.Tabs.MaxWidth = 200
+    Options.Display.Tabs.TabWidthFromContent = True
     Options.Display.Tabs.PinnedWidth = 39
     Options.Display.Tabs.ImageOffsetLeft = 13
     Options.Display.Tabs.TextTrimType = tttFade
@@ -669,16 +670,13 @@ object Mainfrm: TMainfrm
     LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineAlpha = 200
     Align = alBottom
     TabOrder = 1
-    ExplicitLeft = 32
-    ExplicitTop = 192
-    ExplicitWidth = 300
   end
   object ilIcons: TImageList
     ColorDepth = cd32Bit
     Left = 233
     Top = 158
     Bitmap = {
-      494C01010100B000DC0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010100B000E40010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B
