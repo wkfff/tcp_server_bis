@@ -2,7 +2,7 @@ object Mainfrm: TMainfrm
   Left = 0
   Top = 0
   Caption = 'Evun Tool'
-  ClientHeight = 244
+  ClientHeight = 204
   ClientWidth = 495
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -320,31 +320,9 @@ object Mainfrm: TMainfrm
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object tlbTool: TToolBar
-    Left = 0
-    Top = 0
-    Width = 495
-    Height = 30
-    ButtonHeight = 25
-    ButtonWidth = 25
-    Caption = 'tlbTool'
-    EdgeBorders = [ebTop, ebBottom]
-    Images = ilIcons
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 0
-    object btnDMSTool: TToolButton
-      Left = 0
-      Top = 0
-      Hint = 'DMSTool'
-      Caption = 'DMSTool'
-      ImageIndex = 0
-      OnClick = btnDMSClick
-    end
-  end
   object chrmtbTool: TChromeTabs
     Left = 0
-    Top = 214
+    Top = 174
     Width = 495
     Height = 30
     OnActiveTabChanged = chrmtbToolActiveTabChanged
@@ -669,14 +647,42 @@ object Mainfrm: TMainfrm
     LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineSize = 1.000000000000000000
     LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineAlpha = 200
     Align = alBottom
+    TabOrder = 0
+  end
+  object tbrMain: TRzToolbar
+    Left = 0
+    Top = 0
+    Width = 495
+    Height = 29
+    Images = ilIcons
+    BorderInner = fsNone
+    BorderOuter = fsGroove
+    BorderSides = [sdTop]
+    BorderWidth = 0
     TabOrder = 1
+    VisualStyle = vsGradient
+    ToolbarControls = (
+      btnDMSTool
+      RzSpacer1)
+    object btnDMSTool: TRzToolButton
+      Left = 4
+      Top = 2
+      ImageIndex = 0
+      Caption = 'DMSTool'
+      OnClick = btnDMSClick
+    end
+    object RzSpacer1: TRzSpacer
+      Left = 29
+      Top = 2
+      Grooved = True
+    end
   end
   object ilIcons: TImageList
     ColorDepth = cd32Bit
     Left = 233
     Top = 158
     Bitmap = {
-      494C01010100B000E40010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010100B000EC0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B
@@ -816,6 +822,7 @@ object Mainfrm: TMainfrm
       000000000000}
   end
   object mmMenu: TMainMenu
+    Images = ilIcons
     Left = 291
     Top = 158
     object mniSystem: TMenuItem
@@ -829,7 +836,9 @@ object Mainfrm: TMainfrm
       Caption = #24037#20855'(&T)'
       object mniDMSTool: TMenuItem
         Caption = '&DMS Tool'
-        OnClick = btnDMSClick
+        Hint = 'DMSTool'
+        ImageIndex = 0
+        OnClick = mniDMSToolClick
       end
     end
   end

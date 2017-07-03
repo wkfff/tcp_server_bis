@@ -26,7 +26,7 @@ uses
   QWorker,
   qplugins_params,
   ChromeTabs,
-  ChromeTabsClasses;
+  ChromeTabsClasses, RzButton, RzPanel, RzTabs;
 
 type
   TMainfrm = class(TForm)
@@ -36,9 +36,10 @@ type
     mniQuit: TMenuItem;
     mniTool: TMenuItem;
     mniDMSTool: TMenuItem;
-    tlbTool: TToolBar;
-    btnDMSTool: TToolButton;
     chrmtbTool: TChromeTabs;
+    tbrMain: TRzToolbar;
+    btnDMSTool: TRzToolButton;
+    RzSpacer1: TRzSpacer;
     procedure FormCreate(Sender: TObject);
     procedure mniQuitClick(Sender: TObject);
     procedure btnDMSClick(Sender: TObject);
@@ -46,11 +47,13 @@ type
     procedure chrmtbToolButtonCloseTabClick(Sender: TObject; ATab: TChromeTab;
       var Close: Boolean);
     procedure chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
+    procedure mniDMSToolClick(Sender: TObject);
   private
     { Private declarations }
     procedure Initialize;
     procedure DoDeleteTabItemJob(AJob: PQJob);
     function FindTab(ACaption: string): TChromeTab;
+    procedure OpenChildByCaption(AImageIndex: Integer; ACaption: string);
   public
     { Public declarations }
   end;
@@ -73,23 +76,8 @@ begin
 end;
 
 procedure TMainfrm.btnDMSClick(Sender: TObject);
-var
-  ASign: string;
-  ATab: TChromeTab;
-  AParams: TQParams;
 begin
-  ASign := TToolButton(Sender).Caption;
-  ATab := FindTab(ASign);
-  if Assigned(ATab) then
-    Exit;
-  chrmtbTool.BeginUpdate;
-  ATab := chrmtbTool.Tabs.Add;
-  ATab.Caption := ASign;
-  ATab.ImageIndex := TToolButton(Sender).ImageIndex;
-  chrmtbTool.EndUpdate;
-  AParams := TQParams.Create;
-  AParams.Add('TabIndex', ATab.Index);
-  Workers.PostSignal('MDIChildForm.' + ASign + '.Create', AParams, jdfFreeAsObject);
+  OpenChildByCaption(TRzToolButton(Sender).ImageIndex, TRzToolButton(Sender).Caption);
 end;
 
 procedure TMainfrm.chrmtbToolActiveTabChanged(Sender: TObject;
@@ -138,9 +126,32 @@ begin
   WindowState := wsMaximized;
 end;
 
+procedure TMainfrm.mniDMSToolClick(Sender: TObject);
+begin
+  OpenChildByCaption(TMenuItem(Sender).ImageIndex, TMenuItem(Sender).Hint);
+end;
+
 procedure TMainfrm.mniQuitClick(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TMainfrm.OpenChildByCaption(AImageIndex: Integer; ACaption: string);
+var
+  ATab: TChromeTab;
+  AParams: TQParams;
+begin
+  ATab := FindTab(ACaption);
+  if Assigned(ATab) then
+    Exit;
+  chrmtbTool.BeginUpdate;
+  ATab := chrmtbTool.Tabs.Add;
+  ATab.Caption := ACaption;
+  ATab.ImageIndex := AImageIndex;
+  chrmtbTool.EndUpdate;
+  AParams := TQParams.Create;
+  AParams.Add('TabIndex', ATab.Index);
+  Workers.PostSignal('MDIChildForm.' + ACaption + '.Create', AParams, jdfFreeAsObject);
 end;
 
 end.
