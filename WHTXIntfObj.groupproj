@@ -15,6 +15,9 @@
         <Projects Include="EvunTool\src\EvunTool.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +62,23 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="EvunTool\src\EvunTool.dproj" Targets="Make"/>
     </Target>
+    <Target Name="RCDemo">
+        <MSBuild Projects="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj"/>
+    </Target>
+    <Target Name="RCDemo:Clean">
+        <MSBuild Projects="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RCDemo:Make">
+        <MSBuild Projects="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool;RCDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean;RCDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make;RCDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

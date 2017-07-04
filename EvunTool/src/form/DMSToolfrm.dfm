@@ -2,8 +2,8 @@ object frmDMSTool: TfrmDMSTool
   Left = 0
   Top = 0
   Caption = 'DMSTool'
-  ClientHeight = 512
-  ClientWidth = 838
+  ClientHeight = 429
+  ClientWidth = 624
   Color = clBtnFace
   DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
@@ -57,14 +57,14 @@ object frmDMSTool: TfrmDMSTool
   OnDestroy = FormDestroy
   OnResize = FormResize
   DesignSize = (
-    838
-    512)
+    624
+    429)
   PixelsPerInch = 96
   TextHeight = 13
   object splMain: TJvNetscapeSplitter
     Left = 345
     Top = 0
-    Height = 512
+    Height = 429
     Align = alLeft
     MinSize = 1
     Maximized = False
@@ -78,7 +78,7 @@ object frmDMSTool: TfrmDMSTool
     Left = 0
     Top = 0
     Width = 345
-    Height = 512
+    Height = 429
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -86,11 +86,12 @@ object frmDMSTool: TfrmDMSTool
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 512
     object sedtArgus: TSynEdit
       Left = 0
       Top = 29
       Width = 345
-      Height = 454
+      Height = 371
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 0
@@ -113,17 +114,17 @@ object frmDMSTool: TfrmDMSTool
       Gutter.ShowModification = True
       Highlighter = SynIniSyn1
       FontSmoothing = fsmNone
+      ExplicitHeight = 454
     end
     object pnlServer: TPanel
       Left = 0
-      Top = 483
+      Top = 400
       Width = 345
       Height = 29
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 423
-      ExplicitWidth = 289
+      ExplicitTop = 483
       DesignSize = (
         345
         29)
@@ -157,10 +158,10 @@ object frmDMSTool: TfrmDMSTool
       BorderOuter = fsGroove
       BorderSides = [sdTop]
       BorderWidth = 0
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 2
       VisualStyle = vsGradient
-      ExplicitLeft = 4
-      ExplicitTop = -3
       ToolbarControls = (
         chkActive
         RzSpacer2
@@ -172,6 +173,7 @@ object frmDMSTool: TfrmDMSTool
       object btnLog: TRzToolButton
         Left = 56
         Top = 2
+        Hint = #32447#31243#20449#24687
         ImageIndex = 3
         Images = ilMenu
         OnClick = Button1Click
@@ -179,7 +181,9 @@ object frmDMSTool: TfrmDMSTool
       object btnListVisible: TRzToolButton
         Left = 89
         Top = 2
+        Hint = #26174#31034#32467#26524#21015#34920
         ImageIndex = 1
+        OnClick = btnListVisibleClick
       end
       object RzSpacer1: TRzSpacer
         Left = 81
@@ -194,6 +198,7 @@ object frmDMSTool: TfrmDMSTool
       object btnExcute: TRzToolButton
         Left = 122
         Top = 2
+        Hint = #25191#34892#26041#27861
         ImageIndex = 5
       end
       object RzSpacer3: TRzSpacer
@@ -206,6 +211,7 @@ object frmDMSTool: TfrmDMSTool
         Top = 6
         Width = 44
         Height = 17
+        Hint = #24320#22987#30417#25511
         Caption = #24320#22987
         TabOrder = 0
         OnClick = chkActiveClick
@@ -215,21 +221,21 @@ object frmDMSTool: TfrmDMSTool
   object pnlReturn: TPanel
     Left = 355
     Top = 0
-    Width = 483
-    Height = 512
+    Width = 269
+    Height = 429
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 299
-    ExplicitWidth = 412
-    ExplicitHeight = 452
+    ExplicitWidth = 483
+    ExplicitHeight = 512
     object chrmtbReturn: TChromeTabs
       Left = 0
       Top = 0
-      Width = 483
+      Width = 269
       Height = 29
-      OnButtonCloseTabClick = chrmtbReturnButtonCloseTabClick
-      ActiveTabIndex = 0
+      OnActiveTabChanging = chrmtbReturnActiveTabChanging
+      OnChange = chrmtbReturnChange
+      ActiveTabIndex = -1
       Options.Display.CloseButton.Offsets.Vertical = 6
       Options.Display.CloseButton.Offsets.Horizontal = 2
       Options.Display.CloseButton.Height = 14
@@ -351,19 +357,7 @@ object frmDMSTool: TfrmDMSTool
       Options.Scrolling.DragScroll = True
       Options.Scrolling.DragScrollOffset = 50
       Options.Scrolling.MouseWheelScroll = True
-      Tabs = <
-        item
-          Caption = 'XML'
-          Active = True
-          Tag = 0
-          ImageIndex = -1
-          ImageIndexOverlay = -1
-          Pinned = False
-          Visible = True
-          Modified = False
-          SpinnerState = tssNone
-          HideCloseButton = False
-        end>
+      Tabs = <>
       LookAndFeel.TabsContainer.StartColor = 14586466
       LookAndFeel.TabsContainer.StopColor = 13201730
       LookAndFeel.TabsContainer.StartAlpha = 255
@@ -561,49 +555,22 @@ object frmDMSTool: TfrmDMSTool
       LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineAlpha = 200
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 412
+      ExplicitWidth = 483
     end
     object lstReturn: TJvPageList
       Left = 0
       Top = 29
-      Width = 483
-      Height = 483
+      Width = 269
+      Height = 400
       PropagateEnable = False
       Align = alClient
-      ExplicitWidth = 412
-      ExplicitHeight = 423
-      object sedtXML: TSynEdit
-        Left = 0
-        Top = 0
-        Width = 483
-        Height = 483
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        PopupMenu = pmXML
-        TabOrder = 0
-        BorderStyle = bsNone
-        Gutter.Font.Charset = DEFAULT_CHARSET
-        Gutter.Font.Color = clWindowText
-        Gutter.Font.Height = -11
-        Gutter.Font.Name = 'Courier New'
-        Gutter.Font.Style = []
-        Gutter.LeftOffset = 8
-        Gutter.ShowLineNumbers = True
-        Gutter.ShowModification = True
-        Highlighter = SynXMLSyn1
-        FontSmoothing = fsmNone
-        ExplicitWidth = 412
-        ExplicitHeight = 423
-      end
+      ExplicitWidth = 483
+      ExplicitHeight = 483
     end
   end
   object pnlList: TPanel
-    Left = 355
-    Top = 335
+    Left = -49
+    Top = 223
     Width = 394
     Height = 177
     Cursor = crArrow
@@ -613,6 +580,7 @@ object frmDMSTool: TfrmDMSTool
     OnMouseDown = pnlListMouseDown
     OnMouseMove = pnlListMouseMove
     OnMouseUp = pnlListMouseUp
+    ExplicitTop = 306
     DesignSize = (
       394
       177)
@@ -662,6 +630,30 @@ object frmDMSTool: TfrmDMSTool
       OnClick = btnClosePanelClick
     end
   end
+  object sedtXML: TSynEdit
+    Left = 377
+    Top = 192
+    Width = 393
+    Height = 209
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Style = []
+    PopupMenu = pmXML
+    TabOrder = 3
+    BorderStyle = bsNone
+    Gutter.Font.Charset = DEFAULT_CHARSET
+    Gutter.Font.Color = clWindowText
+    Gutter.Font.Height = -11
+    Gutter.Font.Name = 'Courier New'
+    Gutter.Font.Style = []
+    Gutter.LeftOffset = 8
+    Gutter.ShowLineNumbers = True
+    Gutter.ShowModification = True
+    Highlighter = SynXMLSyn1
+    FontSmoothing = fsmNone
+  end
   object SynIniSyn1: TSynIniSyn
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
@@ -671,21 +663,21 @@ object frmDMSTool: TfrmDMSTool
     KeyAttri.Foreground = clBlue
     NumberAttri.Foreground = clHighlight
     NumberAttri.Style = [fsBold]
-    Left = 410
-    Top = 191
+    Left = 521
+    Top = 213
   end
   object SynXMLSyn1: TSynXMLSyn
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
     WantBracesParsed = False
-    Left = 468
-    Top = 191
+    Left = 289
+    Top = 271
   end
   object pmXML: TPopupMenu
     Images = ilMenu
-    Left = 352
-    Top = 191
+    Left = 463
+    Top = 213
     object mniXML1: TMenuItem
       Caption = #35299#26512'XML'
       ImageIndex = 0
@@ -701,10 +693,10 @@ object frmDMSTool: TfrmDMSTool
     end
   end
   object ilMenu: TImageList
-    Left = 236
-    Top = 191
+    Left = 289
+    Top = 213
     Bitmap = {
-      494C01010A002400800010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A002400980010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1109,8 +1101,8 @@ object frmDMSTool: TfrmDMSTool
   end
   object pmArgus: TPopupMenu
     Images = ilMenu
-    Left = 294
-    Top = 191
+    Left = 347
+    Top = 213
     object mniClear: TMenuItem
       Caption = #28165#31354
       ImageIndex = 2
@@ -1128,8 +1120,8 @@ object frmDMSTool: TfrmDMSTool
   end
   object pmList: TPopupMenu
     Images = ilMenu
-    Left = 355
-    Top = 269
+    Left = 405
+    Top = 213
     object mniN3: TMenuItem
       Caption = #28165#31354#30417#25511
       ImageIndex = 4

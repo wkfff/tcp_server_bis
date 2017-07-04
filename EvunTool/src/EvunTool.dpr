@@ -1,6 +1,7 @@
 program EvunTool;
 
 uses
+  System.ShareMem,
   Vcl.Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -9,7 +10,9 @@ uses
   uResourceString in 'unit\uResourceString.pas',
   ShShareMemMap in 'unit\ShShareMemMap.pas',
   ShThread in 'unit\ShThread.pas',
-  uShareMemServer in 'unit\uShareMemServer.pas';
+  uShareMemServer in 'unit\uShareMemServer.pas',
+  virtualstringtreefram in 'frame\virtualstringtreefram.pas'
+    {frmvirtualstringtree: TFrame};
 
 {$R *.res}
 
@@ -20,7 +23,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown := True;
-  TStyleManager.TrySetStyle('Iceberg Classico');
   Application.CreateForm(TMainfrm, Mainfrm);
   Application.Run;
 end.
+

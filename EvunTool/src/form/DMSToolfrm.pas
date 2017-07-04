@@ -23,6 +23,7 @@ uses
   Vcl.ExtCtrls,
   Vcl.ComCtrls,
   ChromeTabs,
+  ChromeTabsTypes,
   ChromeTabsClasses,
   uShareMemServer,
   JvPageList,
@@ -64,7 +65,6 @@ type
     chrmtbReturn: TChromeTabs;
     lstReturn: TJvPageList;
     sedtArgus: TSynEdit;
-    sedtXML: TSynEdit;
     SynIniSyn1: TSynIniSyn;
     SynXMLSyn1: TSynXMLSyn;
     pmXML: TPopupMenu;
@@ -93,13 +93,13 @@ type
     RzSpacer2: TRzSpacer;
     btnExcute: TRzToolButton;
     RzSpacer3: TRzSpacer;
+    sedtXML: TSynEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure chkActiveClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure btn2Click(Sender: TObject);
     procedure mniXML1Click(Sender: TObject);
     procedure pnlListMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure pnlListMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -111,11 +111,15 @@ type
     procedure vstMethodListFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex);
     procedure mniClearClick(Sender: TObject);
-    procedure chrmtbReturnButtonCloseTabClick(Sender: TObject; ATab: TChromeTab; var Close: Boolean);
     procedure mniN1Click(Sender: TObject);
     procedure mniN2Click(Sender: TObject);
     procedure btnClosePanelClick(Sender: TObject);
     procedure mniN3Click(Sender: TObject);
+    procedure chrmtbReturnChange(Sender: TObject; ATab: TChromeTab;
+      TabChangeType: TTabChangeType);
+    procedure chrmtbReturnActiveTabChanging(Sender: TObject; AOldTab,
+      ANewTab: TChromeTab; var Allow: Boolean);
+    procedure btnListVisibleClick(Sender: TObject);
   private
     { Private declarations }
     FWindow_X: Integer;
@@ -130,6 +134,8 @@ type
     procedure DoGetShareMemData(AJob: PQJob);
     procedure DoClearDebugListenInfo;
     procedure DoRefrashVST(AVST: TVirtualStringTree);
+    procedure TabDelete(ATab: TChromeTab);
+    procedure ClearTabControl;
   public
     { Public declarations }
   end;
@@ -137,7 +143,8 @@ type
 implementation
 
 uses
-  uResourceString;
+  uResourceString,
+  virtualstringtreefram;
 
 var
   AForm: TfrmDMSTool;
@@ -151,14 +158,14 @@ begin
   AForm.Tag := TQParams(AJob.Data).ByName('TabIndex').AsInteger;
 end;
 
-procedure TfrmDMSTool.btn2Click(Sender: TObject);
-begin
-  pnlList.Visible := True;
-end;
-
 procedure TfrmDMSTool.btnClosePanelClick(Sender: TObject);
 begin
   pnlList.Visible := False;
+end;
+
+procedure TfrmDMSTool.btnListVisibleClick(Sender: TObject);
+begin
+  pnlList.Visible := True;
 end;
 
 procedure TfrmDMSTool.Button1Click(Sender: TObject);
@@ -197,12 +204,41 @@ begin
   FShareMem.Active := chkActive.Checked;
 end;
 
-procedure TfrmDMSTool.chrmtbReturnButtonCloseTabClick(Sender: TObject; ATab: TChromeTab; var Close: Boolean);
+procedure TfrmDMSTool.TabDelete(ATab: TChromeTab);
+var
+  addTab: TChromeTab;
 begin
-  if ATab.Caption = 'XML' then
+  if ATab.Index = 0 then
   begin
     sedtXML.Clear;
-    Close := False;
+    addTab := chrmtbReturn.Tabs.Add;
+    addTab.Caption := 'XML';
+    addTab.Data := Pointer(lstReturn.Pages[0]);
+  end
+  else
+    TJvCustomPage(ATab.Data).Free;
+end;
+
+procedure TfrmDMSTool.chrmtbReturnActiveTabChanging(Sender: TObject; AOldTab,
+  ANewTab: TChromeTab; var Allow: Boolean);
+begin
+  lstReturn.ActivePage := TJvCustomPage(ANewTab.Data);
+end;
+
+procedure TfrmDMSTool.chrmtbReturnChange(Sender: TObject; ATab: TChromeTab;
+  TabChangeType: TTabChangeType);
+begin
+  case TabChangeType of
+    tcAdded: ;
+    tcMoved: ;
+    tcDeleting: TabDelete(ATab);
+    tcDeleted: ;
+    tcPropertyUpdated: ;
+    tcActivated: ;
+    tcDeactivated: ;
+    tcPinned: ;
+    tcControlState: ;
+    tcVisibility: ;
   end;
 end;
 
@@ -357,6 +393,7 @@ procedure TfrmDMSTool.DoClearDebugListenInfo;
 var
   I: Integer;
 begin
+  ClearTabControl;
   sedtXML.Clear;
   sedtArgus.Clear;
   for I := 0 to FDCSInfoList.Count - 1 do
@@ -389,6 +426,24 @@ begin
   DoClearDebugListenInfo;
 end;
 
+procedure TfrmDMSTool.ClearTabControl;
+var
+  I: Integer;
+begin
+  chrmtbReturn.BeginUpdate;
+  try
+  if chrmtbReturn.Tabs.Count > 1 then
+    for I := chrmtbReturn.Tabs.Count - 1 downto 1 do
+      chrmtbReturn.Tabs.DeleteTab(I, True);
+
+  if lstReturn.PageCount > 1 then
+    for I := lstReturn.PageCount - 1 downto 1 do
+      lstReturn.Pages[I].Destroy;
+  finally
+    chrmtbReturn.EndUpdate;
+  end;
+end;
+
 procedure TfrmDMSTool.mniXML1Click(Sender: TObject);
 var
   rootXML: TQXML;
@@ -397,17 +452,10 @@ var
   I: Integer;
   ATab: TChromeTab;
   APage: TJvCustomPage;
-
+  AFrame: Tfrmvirtualstringtree;
 begin
   rootXML := nil;
-
-  if chrmtbReturn.Tabs.Count > 1 then
-    for I := chrmtbReturn.Tabs.Count - 1 downto 1 do
-      chrmtbReturn.Tabs.DeleteTab(I, True);
-
-  if lstReturn.PageCount > 1 then
-    for I := lstReturn.PageCount - 1 downto 1 do
-      lstReturn.Pages[I].Destroy;
+  ClearTabControl;
   chrmtbReturn.BeginUpdate;
   try
     rootXML := TQXML.Create;
@@ -420,38 +468,27 @@ begin
     for I := 0 to BodyXML.Count - 1 do
     begin
       DataSetXML := BodyXML.Items[I];
+      if (not Assigned(DataSetXML)) or (DataSetXML.Count < 1) or (DataSetXML.Attrs.Count < 1) then
+        Continue;
+
       ATab := chrmtbReturn.Tabs.Add;
       ATab.Caption := DataSetXML.Attrs.ItemByName('NAME').Value;
 
       APage := TJvCustomPage.Create(lstReturn);
       APage.PageList := lstReturn;
 
-
+      AFrame := Tfrmvirtualstringtree.Create(APage);
+      AFrame.Parent := APage;
+      AFrame.DataSetXML := DataSetXML;
+      ATab.Data := Pointer(APage);
     end;
+    chrmtbReturn.ActiveTabIndex := 0;
+    if BodyXML.Count - 1 > 0 then
+      chrmtbReturn.ActiveTabIndex := BodyXML.Count;
   finally
     chrmtbReturn.EndUpdate;
     FreeAndNil(rootXML);
   end;
-//  rootXML := nil;
-//  vstData.BeginUpdate;
-//  vstData.Header.Columns.Clear;
-//  try
-//    rootXML := TQXML.Create;
-//    rootXML.Parse(sedtXML.Lines.Text);
-//    DataSetXML := rootXML.ItemByPath('RESPONSE.BODY.DATASET');
-//    MetaXML := rootXML.ItemByPath('RESPONSE.BODY.DATASET.META');
-//    for I := 0 to MetaXML.Attrs.Count - 1 do
-//    begin
-//      headCol := vstData.Header.Columns.Add;
-//      headCol.Text := MetaXML.Attrs[I].Name;
-//      headCol.Alignment := taCenter;
-//      headCol.Width := Canvas.TextWidth(headCol.Text) + 20;
-//    end;
-//
-//  finally
-//    vstData.EndUpdate;
-//    FreeAndNil(rootXML);
-//  end;
 end;
 
 procedure TfrmDMSTool.pnlListMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -487,7 +524,7 @@ begin
       1:
         aInfoList := FDMSInfoList;
     end;
-
+    ClearTabControl;
     sedtXML.Text := PDMSDebugInfo(aInfoList.Objects[Node.Index]).ReceiveXML;
     sedtArgus.Text := sedtArgus.Text + PDMSDebugInfo(aInfoList.Objects[Node.Index]).PostArgus + #13 + #10 + #13 + #10 + #13 + #10;
     sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
@@ -550,7 +587,6 @@ var
   aData: PDMSDebugInfo;
   aInfoList: TStringList;
 begin
-  //
   if ParentNode = nil then
     InitialStates := InitialStates + [ivsHasChildren, ivsExpanded]
   else
@@ -569,6 +605,9 @@ begin
 end;
 
 procedure TfrmDMSTool.FormCreate(Sender: TObject);
+var
+  ATab: TChromeTab;
+  APage: TJvCustomPage;
 begin
   Workers.Wait(DoFreeFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool + '.Free'), True);
   Workers.Wait(DoShowFormJob, Workers.RegisterSignal('MDIChildForm.' + DMSTool + '.Show'), True);
@@ -582,6 +621,16 @@ begin
 
   vstMethodList.NodeDataSize := SizeOf(TDMSDebugInfo);
   vstMethodList.RootNodeCount := 2;
+
+  ATab := chrmtbReturn.Tabs.Add;
+  APage := TJvCustomPage.Create(lstReturn);
+  APage.PageList := lstReturn;
+  sedtXML.Parent := APage;
+  sedtXML.Align := alClient;
+  ATab.Data := Pointer(APage);
+  ATab.Caption := 'XML';
+  lstReturn.ActivePage := APage;
+
 end;
 
 procedure TfrmDMSTool.FormDestroy(Sender: TObject);
@@ -602,7 +651,7 @@ end;
 procedure TfrmDMSTool.FormResize(Sender: TObject);
 begin
   pnlArgus.Width := Width div 2 - 20;
-  pnlList.Left := pnlArgus.Left + pnlArgus.Width + 10;
+  pnlList.Left := pnlArgus.Left + pnlArgus.Width - pnlList.Width;
 end;
 
 procedure TfrmDMSTool.img1Click(Sender: TObject);

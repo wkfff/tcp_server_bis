@@ -2,8 +2,8 @@ object Mainfrm: TMainfrm
   Left = 0
   Top = 0
   Caption = 'Evun Tool'
-  ClientHeight = 204
-  ClientWidth = 495
+  ClientHeight = 414
+  ClientWidth = 557
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -322,11 +322,11 @@ object Mainfrm: TMainfrm
   TextHeight = 13
   object chrmtbTool: TChromeTabs
     Left = 0
-    Top = 174
-    Width = 495
+    Top = 384
+    Width = 557
     Height = 30
+    OnChange = chrmtbToolChange
     OnActiveTabChanged = chrmtbToolActiveTabChanged
-    OnButtonCloseTabClick = chrmtbToolButtonCloseTabClick
     ActiveTabIndex = -1
     Images = ilIcons
     Options.Display.CloseButton.Offsets.Vertical = 6
@@ -652,7 +652,7 @@ object Mainfrm: TMainfrm
   object tbrMain: TRzToolbar
     Left = 0
     Top = 0
-    Width = 495
+    Width = 557
     Height = 29
     Images = ilIcons
     BorderInner = fsNone
@@ -663,7 +663,8 @@ object Mainfrm: TMainfrm
     VisualStyle = vsGradient
     ToolbarControls = (
       btnDMSTool
-      RzSpacer1)
+      RzSpacer1
+      cmbTheme)
     object btnDMSTool: TRzToolButton
       Left = 4
       Top = 2
@@ -676,13 +677,21 @@ object Mainfrm: TMainfrm
       Top = 2
       Grooved = True
     end
+    object cmbTheme: TRzComboBox
+      Left = 37
+      Top = 4
+      Width = 76
+      Height = 21
+      TabOrder = 0
+      OnChange = cmbThemeChange
+    end
   end
   object ilIcons: TImageList
     ColorDepth = cd32Bit
     Left = 233
     Top = 158
     Bitmap = {
-      494C01010100B000EC0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010100B000040110001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B
@@ -841,5 +850,13 @@ object Mainfrm: TMainfrm
         OnClick = mniDMSToolClick
       end
     end
+    object mniH1: TMenuItem
+      Caption = #20027#39064'(&H)'
+    end
+  end
+  object aeMain: TApplicationEvents
+    OnException = aeMainException
+    Left = 296
+    Top = 72
   end
 end

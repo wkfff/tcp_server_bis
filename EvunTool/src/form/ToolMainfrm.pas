@@ -12,6 +12,7 @@ uses
   Vcl.Graphics,
   Vcl.Controls,
   Vcl.Forms,
+  Vcl.Themes,
   Vcl.Dialogs,
   System.ImageList,
   Vcl.ImgList,
@@ -25,8 +26,14 @@ uses
   qplugins_base,
   QWorker,
   qplugins_params,
+  qstring,
   ChromeTabs,
-  ChromeTabsClasses, RzButton, RzPanel, RzTabs;
+  ChromeTabsClasses,
+  ChromeTabsTypes,
+  RzButton,
+  RzPanel,
+  RzTabs,
+  Vcl.AppEvnts, Vcl.StdCtrls, RzCmboBx;
 
 type
   TMainfrm = class(TForm)
@@ -40,20 +47,26 @@ type
     tbrMain: TRzToolbar;
     btnDMSTool: TRzToolButton;
     RzSpacer1: TRzSpacer;
+    aeMain: TApplicationEvents;
+    mniH1: TMenuItem;
+    cmbTheme: TRzComboBox;
     procedure FormCreate(Sender: TObject);
     procedure mniQuitClick(Sender: TObject);
     procedure btnDMSClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure chrmtbToolButtonCloseTabClick(Sender: TObject; ATab: TChromeTab;
-      var Close: Boolean);
     procedure chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
     procedure mniDMSToolClick(Sender: TObject);
+    procedure chrmtbToolChange(Sender: TObject; ATab: TChromeTab; TabChangeType:
+      TTabChangeType);
+    procedure aeMainException(Sender: TObject; E: Exception);
+    procedure cmbThemeChange(Sender: TObject);
   private
     { Private declarations }
     procedure Initialize;
     procedure DoDeleteTabItemJob(AJob: PQJob);
     function FindTab(ACaption: string): TChromeTab;
     procedure OpenChildByCaption(AImageIndex: Integer; ACaption: string);
+    procedure DoThemeMenuClick(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -75,22 +88,52 @@ begin
     end;
 end;
 
+procedure TMainfrm.aeMainException(Sender: TObject; E: Exception);
+begin
+  ShowMessage(E.Message);
+end;
+
 procedure TMainfrm.btnDMSClick(Sender: TObject);
 begin
   OpenChildByCaption(TRzToolButton(Sender).ImageIndex, TRzToolButton(Sender).Caption);
 end;
 
-procedure TMainfrm.chrmtbToolActiveTabChanged(Sender: TObject;
-  ATab: TChromeTab);
+procedure TMainfrm.chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
 begin
   Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Show', nil);
 end;
 
-procedure TMainfrm.chrmtbToolButtonCloseTabClick(Sender: TObject;
-  ATab: TChromeTab; var Close: Boolean);
+procedure TMainfrm.chrmtbToolChange(Sender: TObject; ATab: TChromeTab;
+  TabChangeType: TTabChangeType);
 begin
-  Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Free', nil);
-  Close := True;
+  //
+  case TabChangeType of
+    tcAdded:
+      ;
+    tcMoved:
+      ;
+    tcDeleting:
+      Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Free', nil);
+    tcDeleted:
+      ;
+    tcPropertyUpdated:
+      ;
+    tcActivated:
+      ;
+    tcDeactivated:
+      ;
+    tcPinned:
+      ;
+    tcControlState:
+      ;
+    tcVisibility:
+      ;
+  end;
+end;
+
+procedure TMainfrm.cmbThemeChange(Sender: TObject);
+begin
+  TStyleManager.TrySetStyle(cmbTheme.Text)
 end;
 
 procedure TMainfrm.DoDeleteTabItemJob(AJob: PQJob);
@@ -120,10 +163,27 @@ begin
   Workers.Clear;
 end;
 
+procedure TMainfrm.DoThemeMenuClick(Sender: TObject);
+begin
+  TStyleManager.TrySetStyle(StringReplaceW(TMenuItem(Sender).Caption, '&', '', [rfReplaceAll]));
+end;
+
 procedure TMainfrm.Initialize;
+var
+  I: Integer;
+  mItem: TMenuItem;
 begin
   Position := poDesktopCenter;
   WindowState := wsMaximized;
+
+  for I := Low( TStyleManager.StyleNames ) to High( TStyleManager.StyleNames ) do
+  begin
+    mItem := TMenuItem.Create(mmMenu);
+    mItem.Caption := TStyleManager.StyleNames[I];
+    cmbTheme.Items.Add(TStyleManager.StyleNames[I]);
+    mItem.OnClick := DoThemeMenuClick;
+    mniH1.Add(mItem);
+  end;
 end;
 
 procedure TMainfrm.mniDMSToolClick(Sender: TObject);
@@ -151,7 +211,8 @@ begin
   chrmtbTool.EndUpdate;
   AParams := TQParams.Create;
   AParams.Add('TabIndex', ATab.Index);
-  Workers.PostSignal('MDIChildForm.' + ACaption + '.Create', AParams, jdfFreeAsObject);
+  Workers.PostSignal('MDIChildForm.' + ACaption + '.Create', AParams,
+    jdfFreeAsObject);
 end;
 
 end.
