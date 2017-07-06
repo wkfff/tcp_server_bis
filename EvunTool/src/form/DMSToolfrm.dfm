@@ -86,7 +86,6 @@ object frmDMSTool: TfrmDMSTool
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 512
     object sedtArgus: TSynEdit
       Left = 0
       Top = 29
@@ -114,7 +113,6 @@ object frmDMSTool: TfrmDMSTool
       Gutter.ShowModification = True
       Highlighter = SynIniSyn1
       FontSmoothing = fsmNone
-      ExplicitHeight = 454
     end
     object pnlServer: TPanel
       Left = 0
@@ -124,7 +122,6 @@ object frmDMSTool: TfrmDMSTool
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 483
       DesignSize = (
         345
         29)
@@ -226,8 +223,6 @@ object frmDMSTool: TfrmDMSTool
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 483
-    ExplicitHeight = 512
     object chrmtbReturn: TChromeTabs
       Left = 0
       Top = 0
@@ -555,7 +550,6 @@ object frmDMSTool: TfrmDMSTool
       LookAndFeel.ScrollButtons.Arrow.Disabled.OutlineAlpha = 200
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 483
     end
     object lstReturn: TJvPageList
       Left = 0
@@ -564,8 +558,6 @@ object frmDMSTool: TfrmDMSTool
       Height = 400
       PropagateEnable = False
       Align = alClient
-      ExplicitWidth = 483
-      ExplicitHeight = 483
     end
   end
   object pnlList: TPanel
@@ -580,7 +572,6 @@ object frmDMSTool: TfrmDMSTool
     OnMouseDown = pnlListMouseDown
     OnMouseMove = pnlListMouseMove
     OnMouseUp = pnlListMouseUp
-    ExplicitTop = 306
     DesignSize = (
       394
       177)
@@ -696,7 +687,7 @@ object frmDMSTool: TfrmDMSTool
     Left = 289
     Top = 213
     Bitmap = {
-      494C01010A002400980010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A002400A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

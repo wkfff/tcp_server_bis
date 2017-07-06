@@ -1,8 +1,8 @@
-object Mainfrm: TMainfrm
+object frmToolMain: TfrmToolMain
   Left = 0
   Top = 0
   Caption = 'Evun Tool'
-  ClientHeight = 414
+  ClientHeight = 394
   ClientWidth = 557
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -322,7 +322,7 @@ object Mainfrm: TMainfrm
   TextHeight = 13
   object chrmtbTool: TChromeTabs
     Left = 0
-    Top = 384
+    Top = 364
     Width = 557
     Height = 30
     OnChange = chrmtbToolChange
@@ -691,7 +691,7 @@ object Mainfrm: TMainfrm
     Left = 233
     Top = 158
     Bitmap = {
-      494C01010100B000040110001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010100B000080110001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0001272B1A396F7B4AA29DAE69E5ADC074FDADC074FD9DAE69E56F7B4AA2272B

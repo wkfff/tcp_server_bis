@@ -36,7 +36,7 @@ uses
   Vcl.AppEvnts, Vcl.StdCtrls, RzCmboBx;
 
 type
-  TMainfrm = class(TForm)
+  TfrmToolMain = class(TForm)
     ilIcons: TImageList;
     mmMenu: TMainMenu;
     mniSystem: TMenuItem;
@@ -75,7 +75,7 @@ implementation
 
 {$R *.dfm}
 
-function TMainfrm.FindTab(ACaption: string): TChromeTab;
+function TfrmToolMain.FindTab(ACaption: string): TChromeTab;
 var
   I: Integer;
 begin
@@ -88,22 +88,22 @@ begin
     end;
 end;
 
-procedure TMainfrm.aeMainException(Sender: TObject; E: Exception);
+procedure TfrmToolMain.aeMainException(Sender: TObject; E: Exception);
 begin
   ShowMessage(E.Message);
 end;
 
-procedure TMainfrm.btnDMSClick(Sender: TObject);
+procedure TfrmToolMain.btnDMSClick(Sender: TObject);
 begin
   OpenChildByCaption(TRzToolButton(Sender).ImageIndex, TRzToolButton(Sender).Caption);
 end;
 
-procedure TMainfrm.chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
+procedure TfrmToolMain.chrmtbToolActiveTabChanged(Sender: TObject; ATab: TChromeTab);
 begin
   Workers.PostSignal('MDIChildForm.' + ATab.Caption + '.Show', nil);
 end;
 
-procedure TMainfrm.chrmtbToolChange(Sender: TObject; ATab: TChromeTab;
+procedure TfrmToolMain.chrmtbToolChange(Sender: TObject; ATab: TChromeTab;
   TabChangeType: TTabChangeType);
 begin
   //
@@ -131,12 +131,12 @@ begin
   end;
 end;
 
-procedure TMainfrm.cmbThemeChange(Sender: TObject);
+procedure TfrmToolMain.cmbThemeChange(Sender: TObject);
 begin
   TStyleManager.TrySetStyle(cmbTheme.Text)
 end;
 
-procedure TMainfrm.DoDeleteTabItemJob(AJob: PQJob);
+procedure TfrmToolMain.DoDeleteTabItemJob(AJob: PQJob);
 var
   objTabItem: TChromeTab;
   AParams: TQParams;
@@ -150,7 +150,7 @@ begin
   chrmtbTool.EndUpdate;
 end;
 
-procedure TMainfrm.FormCreate(Sender: TObject);
+procedure TfrmToolMain.FormCreate(Sender: TObject);
 begin
   Initialize;
 
@@ -158,17 +158,17 @@ begin
     True);
 end;
 
-procedure TMainfrm.FormDestroy(Sender: TObject);
+procedure TfrmToolMain.FormDestroy(Sender: TObject);
 begin
   Workers.Clear;
 end;
 
-procedure TMainfrm.DoThemeMenuClick(Sender: TObject);
+procedure TfrmToolMain.DoThemeMenuClick(Sender: TObject);
 begin
   TStyleManager.TrySetStyle(StringReplaceW(TMenuItem(Sender).Caption, '&', '', [rfReplaceAll]));
 end;
 
-procedure TMainfrm.Initialize;
+procedure TfrmToolMain.Initialize;
 var
   I: Integer;
   mItem: TMenuItem;
@@ -186,17 +186,17 @@ begin
   end;
 end;
 
-procedure TMainfrm.mniDMSToolClick(Sender: TObject);
+procedure TfrmToolMain.mniDMSToolClick(Sender: TObject);
 begin
   OpenChildByCaption(TMenuItem(Sender).ImageIndex, TMenuItem(Sender).Hint);
 end;
 
-procedure TMainfrm.mniQuitClick(Sender: TObject);
+procedure TfrmToolMain.mniQuitClick(Sender: TObject);
 begin
   Application.Terminate;
 end;
 
-procedure TMainfrm.OpenChildByCaption(AImageIndex: Integer; ACaption: string);
+procedure TfrmToolMain.OpenChildByCaption(AImageIndex: Integer; ACaption: string);
 var
   ATab: TChromeTab;
   AParams: TQParams;
