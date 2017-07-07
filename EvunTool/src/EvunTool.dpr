@@ -12,7 +12,8 @@ uses
   ShThread in 'unit\ShThread.pas',
   uShareMemServer in 'unit\uShareMemServer.pas',
   virtualstringtreefram in 'frame\virtualstringtreefram.pas' {frmvirtualstringtree: TFrame},
-  Mainfrm in 'form\Mainfrm.pas' {frmMain};
+  Mainfrm in 'form\Mainfrm.pas' {frmMain},
+  uSystemModule in 'unit\uSystemModule.pas';
 
 {$R *.res}
 
@@ -24,10 +25,9 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown := True;
-//
-  TStyleManager.TrySetStyle('Windows10 SlateGray');
-//  Application.CreateForm(TfrmMain, MainForm);
-  Application.CreateForm(TfrmToolMain, ToolMainform);
+  TStyleManager.TrySetStyle('TabletDark');
+  Application.CreateForm(TfrmMain, MainForm);
+  //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;
 end.
 

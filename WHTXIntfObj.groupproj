@@ -18,6 +18,30 @@
         <Projects Include="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Menu2\TestMenu.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\notify.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\dllrecv.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delayhost.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delaydll.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\CustomLoad\customloadhost.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +95,86 @@
     <Target Name="RCDemo:Make">
         <MSBuild Projects="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="TestMenu">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Menu2\TestMenu.dproj"/>
+    </Target>
+    <Target Name="TestMenu:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Menu2\TestMenu.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestMenu:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Menu2\TestMenu.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="formservicehost">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj"/>
+    </Target>
+    <Target Name="formservicehost:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="formservicehost:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dll_static">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj"/>
+    </Target>
+    <Target Name="dll_static:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dll_static:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="notify">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\notify.dproj"/>
+    </Target>
+    <Target Name="notify:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\notify.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="notify:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\notify.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dllrecv">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\dllrecv.dproj"/>
+    </Target>
+    <Target Name="dllrecv:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\dllrecv.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dllrecv:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\Notify\dllrecv.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="delayhost">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delayhost.dproj"/>
+    </Target>
+    <Target Name="delayhost:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delayhost.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="delayhost:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delayhost.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="delaydll">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delaydll.dproj"/>
+    </Target>
+    <Target Name="delaydll:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delaydll.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="delaydll:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\DelayLoad\delaydll.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="customloadhost">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\CustomLoad\customloadhost.dproj"/>
+    </Target>
+    <Target Name="customloadhost:Clean">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\CustomLoad\customloadhost.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="customloadhost:Make">
+        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\CustomLoad\customloadhost.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool;RCDemo"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool;RCDemo;TestMenu;formservicehost;dll_static;notify;dllrecv;delayhost;delaydll;customloadhost"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean;RCDemo:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean;RCDemo:Clean;TestMenu:Clean;formservicehost:Clean;dll_static:Clean;notify:Clean;dllrecv:Clean;delayhost:Clean;delaydll:Clean;customloadhost:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make;RCDemo:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make;RCDemo:Make;TestMenu:Make;formservicehost:Make;dll_static:Make;notify:Make;dllrecv:Make;delayhost:Make;delaydll:Make;customloadhost:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
