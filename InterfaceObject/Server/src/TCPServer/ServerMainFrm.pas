@@ -21,13 +21,12 @@ uses
   Vcl.Menus,
   System.IniFiles,
   Vcl.StdCtrls,
-  BCEditor.Editor,
   diocp_tcp_server,
   diocp_coder_tcpServer,
   ServerMMonitorFrm,
   uDIOCPStreamCoder,
   uIntfTCPClientContext,
-  utils_safeLogger;
+  utils_safeLogger, SynEdit;
 
 type
   TfrmDIOCPTcpServer = class(TForm)
@@ -45,13 +44,13 @@ type
     actReopen: TAction;
     pnlMonitor: TPanel;
     tsLog: TTabSheet;
-    bceLog: TBCEditor;
     actOpen: TAction;
     actOpen1: TMenuItem;
     mmMain: TMainMenu;
     o1: TMenuItem;
     O2: TMenuItem;
     actClose1: TMenuItem;
+    sedtLog: TSynEdit;
     procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
       var Resize: Boolean);
     procedure actShowExecute(Sender: TObject);
@@ -139,8 +138,8 @@ end;
 
 procedure TfrmDIOCPTcpServer.FormCreate(Sender: TObject);
 begin
-  bceLog.ReadOnly := True;
-  bceLog.WordWrap.Enabled := True;
+  sedtLog.ReadOnly := True;
+  sedtLog.WordWrap := True;
 
   FTcpServer := TDiocpCoderTcpServer.Create(Self);
   SetServerPort;
@@ -153,7 +152,7 @@ begin
   TFMMonitor.createAsChild(pnlMonitor, FTcpServer);
   FTcpServer.LogicWorkerNeedCoInitialize := true;
 
-  __svrLogger.setAppender(TStringsAppender.Create(bceLog.Lines));
+  __svrLogger.setAppender(TStringsAppender.Create(sedtLog.Lines));
   TStringsAppender(__svrLogger.Appender).MaxLines := 5000;
 end;
 

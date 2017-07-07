@@ -4,7 +4,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #26381#21153#22120#20449#24687
-  ClientHeight = 441
+  ClientHeight = 421
   ClientWidth = 580
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -707,7 +707,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 10
     Top = 10
     Width = 560
-    Height = 421
+    Height = 401
     ActivePage = tsServerStaes
     Align = alClient
     MultiLine = True
@@ -718,7 +718,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
         Left = 0
         Top = 0
         Width = 552
-        Height = 393
+        Height = 373
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -727,53 +727,28 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     object tsLog: TTabSheet
       Caption = #30417#25511#20449#24687
       ImageIndex = 1
-      object bceLog: TBCEditor
+      object sedtLog: TSynEdit
         Left = 0
         Top = 0
         Width = 552
-        Height = 393
-        ActiveLine.Indicator.Visible = False
+        Height = 373
         Align = alClient
-        BorderStyle = bsNone
-        CompletionProposal.CloseChars = '()[]. '
-        CompletionProposal.Columns = <
-          item
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'Courier New'
-            Font.Style = []
-            Items = <>
-            Title.Font.Charset = DEFAULT_CHARSET
-            Title.Font.Color = clWindowText
-            Title.Font.Height = -11
-            Title.Font.Name = 'Courier New'
-            Title.Font.Style = []
-          end>
-        CompletionProposal.Trigger.Chars = '.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -12
+        Font.Height = -13
         Font.Name = 'Courier New'
         Font.Style = []
-        LeftMargin.Font.Charset = DEFAULT_CHARSET
-        LeftMargin.Font.Color = 13408665
-        LeftMargin.Font.Height = -11
-        LeftMargin.Font.Name = 'Courier New'
-        LeftMargin.Font.Style = []
-        LeftMargin.LineNumbers.DigitCount = 2
-        LeftMargin.Width = 41
         TabOrder = 0
-        TokenInfo.Font.Charset = DEFAULT_CHARSET
-        TokenInfo.Font.Color = clWindowText
-        TokenInfo.Font.Height = -11
-        TokenInfo.Font.Name = 'Courier New'
-        TokenInfo.Font.Style = []
-        TokenInfo.Title.Font.Charset = DEFAULT_CHARSET
-        TokenInfo.Title.Font.Color = clWindowText
-        TokenInfo.Title.Font.Height = -11
-        TokenInfo.Title.Font.Name = 'Courier New'
-        TokenInfo.Title.Font.Style = []
+        Gutter.Font.Charset = DEFAULT_CHARSET
+        Gutter.Font.Color = clWindowText
+        Gutter.Font.Height = -11
+        Gutter.Font.Name = 'Courier New'
+        Gutter.Font.Style = []
+        FontSmoothing = fsmNone
+        ExplicitLeft = 136
+        ExplicitTop = 80
+        ExplicitWidth = 200
+        ExplicitHeight = 150
       end
     end
   end
@@ -1117,7 +1092,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 247
     Top = 206
     Bitmap = {
-      494C010104000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

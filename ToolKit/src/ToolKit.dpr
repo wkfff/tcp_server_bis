@@ -13,7 +13,8 @@ uses
   uShareMemServer in 'unit\uShareMemServer.pas',
   virtualstringtreefram in 'frame\virtualstringtreefram.pas' {frmvirtualstringtree: TFrame},
   Mainfrm in 'form\Mainfrm.pas' {frmMain},
-  uSystemModule in 'unit\uSystemModule.pas';
+  uSystemModule in 'unit\uSystemModule.pas',
+  EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool};
 
 {$R *.res}
 
@@ -25,7 +26,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown := True;
-  TStyleManager.TrySetStyle('TabletDark');
+  TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.CreateForm(TfrmMain, MainForm);
   //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;
