@@ -158,13 +158,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="DIOCPTcpClient.dll" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="..\bin\DIOCPTcpClient.dll" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DIOCPTcpClient.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\bin\DIOCPTcpClient.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="DIOCPTcpClient.dll" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DIOCPTcpClient.dll</RemoteName>
                         <Overwrite>true</Overwrite>

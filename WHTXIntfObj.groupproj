@@ -12,7 +12,7 @@
         <Projects Include="InterfaceObject\Server\src\DIOCPTCPServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="EvunTool\src\EvunTool.dproj">
+        <Projects Include="ToolKit\src\ToolKit.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj">
@@ -77,14 +77,14 @@
     <Target Name="DIOCPTCPServer:Make">
         <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
     </Target>
-    <Target Name="EvunTool">
-        <MSBuild Projects="EvunTool\src\EvunTool.dproj"/>
+    <Target Name="ToolKit">
+        <MSBuild Projects="ToolKit\src\ToolKit.dproj"/>
     </Target>
-    <Target Name="EvunTool:Clean">
-        <MSBuild Projects="EvunTool\src\EvunTool.dproj" Targets="Clean"/>
+    <Target Name="ToolKit:Clean">
+        <MSBuild Projects="ToolKit\src\ToolKit.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="EvunTool:Make">
-        <MSBuild Projects="EvunTool\src\EvunTool.dproj" Targets="Make"/>
+    <Target Name="ToolKit:Make">
+        <MSBuild Projects="ToolKit\src\ToolKit.dproj" Targets="Make"/>
     </Target>
     <Target Name="RCDemo">
         <MSBuild Projects="E:\DelphiComment\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj"/>
@@ -168,13 +168,13 @@
         <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\CustomLoad\customloadhost.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;EvunTool;RCDemo;TestMenu;formservicehost;dll_static;notify;dllrecv;delayhost;delaydll;customloadhost"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;RCDemo;TestMenu;formservicehost;dll_static;notify;dllrecv;delayhost;delaydll;customloadhost"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;EvunTool:Clean;RCDemo:Clean;TestMenu:Clean;formservicehost:Clean;dll_static:Clean;notify:Clean;dllrecv:Clean;delayhost:Clean;delaydll:Clean;customloadhost:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;RCDemo:Clean;TestMenu:Clean;formservicehost:Clean;dll_static:Clean;notify:Clean;dllrecv:Clean;delayhost:Clean;delaydll:Clean;customloadhost:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;EvunTool:Make;RCDemo:Make;TestMenu:Make;formservicehost:Make;dll_static:Make;notify:Make;dllrecv:Make;delayhost:Make;delaydll:Make;customloadhost:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;RCDemo:Make;TestMenu:Make;formservicehost:Make;dll_static:Make;notify:Make;dllrecv:Make;delayhost:Make;delaydll:Make;customloadhost:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
