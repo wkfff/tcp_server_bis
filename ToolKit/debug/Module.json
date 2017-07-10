@@ -1,14 +1,8 @@
 [
   {
-    "Id":"{A941BD2C-71F2-487E-A27C-E55666C81AA7}",
-    "Path":"/Services/Math/Sum",
-    "Loader":"Loader_DLL",
-    "Module":"delaydll.dll"
-  },
-  {
-    "Id":"{A941BD2C-71F2-487E-A27C-E55666C81AA7}",
-    "Path":"/Services/Math/Sum",
-    "Loader":"Loader_DLL",
-    "Module":"delaydll.dll"
+    "Id":"{76397A4F-5350-498D-9CE3-AAF3F9CDAB31}",
+    "Path":"/Services/Docks/Forms/EvunTool",
+    "Loader":"Loader_BPL",
+    "Module":"EvunTool.bpl"
   }
 ]
