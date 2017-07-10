@@ -40,12 +40,12 @@ uses
 
 type
 
-  TModuleInfo = record
+  TModuleInfo = class
+    ServiceId: THandle;
     ID: string;
     Path: string;
     Loader: string;
     ModulePath: string;
-    ServiceId: THandle;
   end;
 
   TfrmMain = class(TForm)
@@ -78,10 +78,10 @@ type
     procedure actQuitExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure pgcMainClose(Sender: TObject; var AllowClose: Boolean);
+    procedure FormResize(Sender: TObject);
   private
     FModuleList: TDictionary<string, TModuleInfo>;
     FChangVCLStyleId: Cardinal;
-    FModuleId: THandle;
     /// <summary>
     /// Hook主题菜单单击事件
     /// </summary>
@@ -160,8 +160,7 @@ begin
     end;
   end;
   AFilePath := ExtractFilePath(Application.ExeName) + Module.ModulePath;
-  FModuleId := ALoader.LoadServices(PWideChar(AFilePath));
-  Module.ServiceId := FModuleId;
+  Module.ServiceId := ALoader.LoadServices(PWideChar(AFilePath));
 end;
 
 procedure TfrmMain.pgcMainClose(Sender: TObject; var AllowClose: Boolean);
@@ -191,8 +190,7 @@ begin
       PluginsManager.Loaders.Add(ALoader);
     end;
   end;
-//  ALoader := PluginsManager.ByPath('/Loaders/Loader_BPL') as IQLoader;
-  ALoader.UnLoadServices(FModuleId, False);
+  ALoader.UnLoadServices(AModule.ServiceId, False);
 
   AllowClose := True;
 end;
@@ -263,6 +261,8 @@ procedure TfrmMain.DoThemeSubMenuItemClick(Sender: TObject);
 var
   AItem: TMenuItem;
   I: Integer;
+  AFormService: IQFormService;
+  AParams: TQParams;
 begin
   if not (Sender is TMenuItem) then
     Exit;
@@ -273,8 +273,10 @@ begin
     mniThemes.Items[I].Checked := mniThemes.Items[I].Hint = AItem.Hint;
     pmTheme.Items[I].Checked := mniThemes.Items[I].Checked;
   end;
+  AParams := TQParams.Create;
+  AParams.Add('VCLStyleName', ptUnicodeString).AsString := AItem.Hint;
 
-  (PluginsManager as IQNotifyManager).Send(FChangVCLStyleId, NewParams([AItem.Hint]));
+  (PluginsManager as IQNotifyManager).Send(FChangVCLStyleId, AParams);
 
   btnTheme.Caption := AItem.Hint;
   btnThemeB.Caption := AItem.Hint;
@@ -327,6 +329,7 @@ begin
   ModuleListJson.LoadFromFile(ExtractFilePath(Application.ExeName) + MODULE_JSON_FILE);
   for I := 0 to ModuleListJson.Count - 1 do
   begin
+    Module := TModuleInfo.Create;
     ItemJson := ModuleListJson.Items[I];
     Module.ID := ItemJson.ValueByName('Id', '');
     Module.Path := ItemJson.ValueByName('Path', '');
@@ -360,6 +363,18 @@ end;
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
   FreeObject(FModuleList);
+end;
+
+procedure TfrmMain.FormResize(Sender: TObject);
+var
+  AFormService: IQFormService;
+  I: Integer;
+begin
+  for I := 0 to pgcMain.PageCount - 1 do
+  begin
+    AFormService := IQFormService(Pointer(pgcMain.Pages[I].Tag));
+    AFormService.DockTo(pgcMain.Pages[I].Handle, faContent);
+  end;
 end;
 
 end.

@@ -1,9 +1,9 @@
-object frmEvunTool: TfrmEvunTool
+object panel: Tpanel
   Left = 0
   Top = 0
   Caption = 'EvunTool'
-  ClientHeight = 300
-  ClientWidth = 440
+  ClientHeight = 506
+  ClientWidth = 672
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -52,13 +52,4 @@ object frmEvunTool: TfrmEvunTool
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object btn1: TButton
-    Left = 184
-    Top = 72
-    Width = 75
-    Height = 25
-    Caption = 'btn1'
-    TabOrder = 0
-    OnClick = btn1Click
-  end
 end

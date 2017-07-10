@@ -108,7 +108,7 @@
         <DCC_BplOutput>..\..\debug</DCC_BplOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Debugger_HostApplication>E:\WHTX\ToolKit\debug\ToolKit.exe</Debugger_HostApplication>
+        <Debugger_HostApplication>..\..\debug\ToolKit.exe</Debugger_HostApplication>
         <DCC_UnitSearchPath>..\resource;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -132,8 +132,9 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="dbrtl.dcp"/>
+        <DCCReference Include="QDAC3.dcp"/>
         <DCCReference Include="form\EvunToolfrm.pas">
-            <Form>frmEvunTool</Form>
+            <Form>panel</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">

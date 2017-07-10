@@ -1,7 +1,7 @@
 package EvunTool;
 
 {$R *.res}
-{$R VCLStyles.res}
+{$R 'VCLStyles.res'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -32,9 +32,10 @@ package EvunTool;
 requires
   rtl,
   vcl,
-  dbrtl;
+  dbrtl,
+  QDAC3;
 
 contains
-  EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool};
+  EvunToolfrm in 'form\EvunToolfrm.pas' {panel};
 
 end.

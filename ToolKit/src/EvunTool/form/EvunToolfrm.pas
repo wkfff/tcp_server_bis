@@ -25,8 +25,7 @@ uses
   Vcl.StdCtrls;
 
 type
-  TfrmEvunTool = class(TForm, IQNotify)
-    btn1: TButton;
+  Tpanel = class(TForm, IQNotify)
     procedure btn1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -50,12 +49,12 @@ implementation
 
 {$R *.dfm}
 
-procedure TfrmEvunTool.btn1Click(Sender: TObject);
+procedure Tpanel.btn1Click(Sender: TObject);
 begin
   Self.Close;
 end;
 
-destructor TfrmEvunTool.Destroy;
+destructor Tpanel.Destroy;
 var
   ANotifyMgr: IQNotifyManager;
 begin
@@ -65,13 +64,12 @@ begin
   inherited;
 end;
 
-procedure TfrmEvunTool.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure Tpanel.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
-
 end;
 
-procedure TfrmEvunTool.FormCreate(Sender: TObject);
+procedure Tpanel.FormCreate(Sender: TObject);
 var
   ANotifyMgr: IQNotifyManager;
 begin
@@ -83,17 +81,17 @@ begin
   ANotifyMgr.Subscribe(FNotifyIds.Items[NOTIFY_ID_CHANGE_VCL_STYLE], Self);
 end;
 
-procedure TfrmEvunTool.Notify(const AId: Cardinal; AParams: IQParams;
+procedure Tpanel.Notify(const AId: Cardinal; AParams: IQParams;
   var AFireNext: Boolean);
 begin
   if AId = FNotifyIds.Items[NOTIFY_ID_CHANGE_VCL_STYLE] then
   begin
-    TStyleManager.TrySetStyle(AParams.Items[0].AsString.Value);
+    TStyleManager.TrySetStyle(AParams.ByName('VCLStyleName').AsString.Value);
   end;
 end;
 
 initialization
-  RegisterFormService('/Services/Docks/Forms', 'EvunTool', TfrmEvunTool, False);
+  RegisterFormService('/Services/Docks/Forms', 'EvunTool', Tpanel, False);
 
 finalization
   UnregisterServices('/Services/Docks/Forms', ['EvunTool']);
