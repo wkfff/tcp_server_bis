@@ -3,6 +3,7 @@ unit Mainfrm;
 interface
 
 uses
+  System.Rtti,
   Winapi.Windows,
   Winapi.Messages,
   System.SysUtils,
@@ -36,7 +37,10 @@ uses
   qplugins_base,
   qplugins_params,
   qplugins_vcl_Messages,
-  qplugins_formsvc;
+  qplugins_formsvc,
+  Progressfrm,
+  RzPrgres,
+  qworker, RzStatus;
 
 type
 
@@ -48,7 +52,7 @@ type
     ModulePath: string;
   end;
 
-  TfrmMain = class(TForm)
+  TfrmMain = class(TForm, IQNotify)
     szpnlMenuButtons: TRzSizePanel;
     gbrMenuButtons: TRzGroupBar;
     tlbrMenuButtons: TRzToolbar;
@@ -73,6 +77,12 @@ type
     grpSystem: TRzGroup;
     btnThemeB: TRzMenuButton;
     actQuit: TAction;
+    RzProgressBar1: TRzProgressBar;
+    rzsbrMain: TRzStatusBar;
+    RzGlyphStatus1: TRzGlyphStatus;
+    RzProgressStatus1: TRzProgressStatus;
+    RzStatusPane1: TRzStatusPane;
+    RzClockStatus1: TRzClockStatus;
     procedure FormCreate(Sender: TObject);
     procedure actEvunToolExecute(Sender: TObject);
     procedure actQuitExecute(Sender: TObject);
@@ -80,6 +90,7 @@ type
     procedure pgcMainClose(Sender: TObject; var AllowClose: Boolean);
     procedure FormResize(Sender: TObject);
   private
+    FPrgFrm: TfrmPrg;
     FModuleList: TDictionary<string, TModuleInfo>;
     FChangVCLStyleId: Cardinal;
     /// <summary>
@@ -114,8 +125,10 @@ type
     /// <summary>
     /// 按路径加载模块
     /// </summary>
-    procedure LoadModule(AModulePath: string);
-    function LoadFormServiceByCaption(ACaption: string): IQFormService;
+    procedure LoadModule(AJob: PQJob);
+    function LoadFormServiceByCaption(ACaption: string; AImageIndex: Integer): IQFormService;
+    procedure Notify(const AId: Cardinal; AParams: IQParams;
+      var AFireNext: Boolean); stdcall;
   public
     { Public declarations }
   end;
@@ -127,41 +140,33 @@ const
 
 {$R *.dfm}
 
-procedure TfrmMain.LoadModule(AModulePath: string);
-var
-  ALoader: IQLoader;
-  AFilePath: string;
-  Module: TModuleInfo;
+procedure TfrmMain.Notify(const AId: Cardinal; AParams: IQParams;
+  var AFireNext: Boolean);
 begin
-  try
-    Module := FModuleList.Items[AModulePath];
-  except
-    On E: EListError do
-    begin
-      ShowMessage('错误: 未找到服务，检查Module.json配置文件');
-    end;
-  end;
-
-  if Pos('.dll', Module.ModulePath) > 0 then
+  if not Assigned(FPrgFrm) then
+    FPrgFrm := TfrmPrg.Create(Application);
+  if AId = NID_PLUGIN_LOADING then    //开始加载  插件
   begin
-    ALoader := PluginsManager.ByPath('/Loaders/Loader_DLL') as IQLoader;
-    if not Assigned(ALoader) then
-    begin
-      ALoader := TQDLLLoader.Create('', '.dll');
-      PluginsManager.Loaders.Add(ALoader);
-    end;
+//    repeat
+//      Sleep(50);
+//      RzProgressBar1.Percent := RzProgressBar1.Percent + 1;
+//      Application.ProcessMessages;
+//      AFireNext := True;
+//    until RzProgressBar1.Percent = 100;
   end
-  else // BPL
+  else if AId = NID_PLUGIN_LOADED then    //结束加载 插件
   begin
-    ALoader := PluginsManager.ByPath('/Loaders/Loader_BPL') as IQLoader;
-    if not Assigned(ALoader) then
-    begin
-      ALoader := TQBPLLoader.Create('', '.bpl');
-      PluginsManager.Loaders.Add(ALoader);
-    end;
+    RzProgressBar1.Percent := 100;
+//    FPrgFrm.Close;
+  end
+  else if AId = NID_PLUGIN_UNLOADING then   // 开始卸载 插件
+  begin
+//    FPrgFrm.Show;
+  end
+  else if AId = NID_PLUGIN_UNLOADED then   // 结束卸载 插件
+  begin
+//    FPrgFrm.Close;
   end;
-  AFilePath := ExtractFilePath(Application.ExeName) + Module.ModulePath;
-  Module.ServiceId := ALoader.LoadServices(PWideChar(AFilePath));
 end;
 
 procedure TfrmMain.pgcMainClose(Sender: TObject; var AllowClose: Boolean);
@@ -192,11 +197,58 @@ begin
     end;
   end;
   ALoader.UnLoadServices(AModule.ServiceId, False);
-
   AllowClose := True;
 end;
 
-function TfrmMain.LoadFormServiceByCaption(ACaption: string): IQFormService;
+procedure TfrmMain.LoadModule(AJob: PQJob);
+var
+  AModulePath: string;
+  ALoader: IQLoader;
+  AFilePath: string;
+  AName: string;
+  AImageIndex: Integer;
+  Module: TModuleInfo;
+begin
+  AModulePath := TQParams(AJob.Data).ByName('Path').AsString;
+  AName := TQParams(AJob.Data).ByName('Name').AsString;
+  try
+    Module := FModuleList.Items[AModulePath];
+  except
+    On E: EListError do
+    begin
+      ShowMessage('错误: 未找到服务，检查Module.json配置文件');
+    end;
+  end;
+
+  if Pos('.dll', Module.ModulePath) > 0 then
+  begin
+    ALoader := PluginsManager.ByPath('/Loaders/Loader_DLL') as IQLoader;
+    if not Assigned(ALoader) then
+    begin
+      ALoader := TQDLLLoader.Create('', '.dll');
+      PluginsManager.Loaders.Add(ALoader);
+    end;
+  end
+  else // BPL
+  begin
+    ALoader := PluginsManager.ByPath('/Loaders/Loader_BPL') as IQLoader;
+    if not Assigned(ALoader) then
+    begin
+      ALoader := TQBPLLoader.Create('', '.bpl');
+      PluginsManager.Loaders.Add(ALoader);
+    end;
+  end;
+  AFilePath := ExtractFilePath(Application.ExeName) + Module.ModulePath;
+  Application.ProcessMessages;
+  Module.ServiceId := ALoader.LoadServices(PWideChar(AFilePath));
+  RzProgressBar1.Percent := 100;
+  RzGlyphStatus1.Caption := AName;
+  TryStrToInt(TQParams(AJob.Data).ByName('ImageIndex').AsString, AImageIndex);
+  RzGlyphStatus1.ImageIndex := AImageIndex;
+  LoadFormServiceByCaption(AName, AImageIndex);
+end;
+
+function TfrmMain.LoadFormServiceByCaption(ACaption: string; AImageIndex: Integer): IQFormService;
 var
   I: Integer;
 begin
@@ -207,18 +259,29 @@ begin
       if pgcMain.Pages[I].Tag = intPtr(Result) then     //确保单例打开
         Exit;
 //    Result.Show;
-    DockPage(Result, 6);
+    DockPage(Result, AImageIndex);
   end
   else
     ShowMessage('错误: 未找到服务，检查Module.json配置文件');
 end;
 
 procedure TfrmMain.actEvunToolExecute(Sender: TObject);
+var
+  AParams: TQParams;
+  ctx: TRttiContext;
+  rttitype: TRttiType;
+  rttiprop: TRttiProperty;
+  value: TValue;
 begin
-  LoadModule('/Services/Docks/Forms/EvunTool');
-
-  LoadFormServiceByCaption('EvunTool');
-
+  AParams := TQParams.Create;
+  AParams.Add('Path', '/Services/Docks/Forms/EvunTool');
+  AParams.Add('Name', 'EvunTool');
+  ctx := TRttiContext.Create;
+  rttitype := ctx.GetType(Sender.ClassType);
+  rttiprop := rttitype.GetProperty('ImageIndex');
+  value := rttiprop.GetValue(Sender);
+  AParams.Add('ImageIndex', value.ToString);
+  Workers.Post(LoadModule, AParams, True);
 end;
 
 procedure TfrmMain.DockPage(AFormService: IQFormService; AImageIndex: Integer;
@@ -348,9 +411,16 @@ begin
 end;
 
 procedure TfrmMain.InitializeQplugins;
+var
+  ANotifyMgr: IQNotifyManager;
 begin
   //获取 主题变化 Notify ID
   FChangVCLStyleId := (PluginsManager as IQNotifyManager).IdByName('CHANGE_VCL_STYLE');
+  ANotifyMgr := PluginsManager as IQNotifyManager;
+  ANotifyMgr.Subscribe(NID_PLUGIN_LOADED, Self);
+  ANotifyMgr.Subscribe(NID_PLUGIN_LOADING, Self);
+  ANotifyMgr.Subscribe(NID_PLUGIN_UNLOADED, Self);
+  ANotifyMgr.Subscribe(NID_PLUGIN_UNLOADING, Self);
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);

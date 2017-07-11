@@ -18,7 +18,7 @@
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="E:\Virtual-TreeView\Demos\Advanced\Advanced.dproj">
+        <Projects Include="F:\DelphiFramework\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -74,23 +74,23 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Advanced">
-        <MSBuild Projects="E:\Virtual-TreeView\Demos\Advanced\Advanced.dproj"/>
+    <Target Name="RCDemo">
+        <MSBuild Projects="F:\DelphiFramework\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj"/>
     </Target>
-    <Target Name="Advanced:Clean">
-        <MSBuild Projects="E:\Virtual-TreeView\Demos\Advanced\Advanced.dproj" Targets="Clean"/>
+    <Target Name="RCDemo:Clean">
+        <MSBuild Projects="F:\DelphiFramework\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Advanced:Make">
-        <MSBuild Projects="E:\Virtual-TreeView\Demos\Advanced\Advanced.dproj" Targets="Make"/>
+    <Target Name="RCDemo:Make">
+        <MSBuild Projects="F:\DelphiFramework\Raize Components Full Source 6.2.2\Demo\RCDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Advanced"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;RCDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Advanced:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;RCDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Advanced:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;RCDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

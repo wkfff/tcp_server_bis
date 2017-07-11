@@ -13,7 +13,8 @@ uses
   uShareMemServer in 'unit\uShareMemServer.pas',
   virtualstringtreefram in 'frame\virtualstringtreefram.pas' {frmvirtualstringtree: TFrame},
   Mainfrm in 'form\Mainfrm.pas' {frmMain},
-  uSystemModule in 'unit\uSystemModule.pas';
+  uSystemModule in 'unit\uSystemModule.pas',
+  Progressfrm in 'form\Progressfrm.pas' {frmPrg};
 
 {$R *.res}
 {$R VCLStyles.res}
@@ -28,6 +29,7 @@ begin
   ReportMemoryLeaksOnShutdown := True;
   TStyleManager.TrySetStyle('Iceberg Classico');
   Application.CreateForm(TfrmMain, MainForm);
+  Application.CreateForm(TfrmPrg, frmPrg);
   //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;
 end.

@@ -133,6 +133,10 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="unit\uSystemModule.pas"/>
+        <DCCReference Include="form\Progressfrm.pas">
+            <Form>frmPrg</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -159,7 +163,7 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\debug\ToolKit.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\debug\ToolKit.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ToolKit.exe</RemoteName>
                         <Overwrite>true</Overwrite>
