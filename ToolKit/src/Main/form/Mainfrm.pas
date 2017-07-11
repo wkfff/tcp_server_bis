@@ -66,7 +66,7 @@ type
     mniTools: TMenuItem;
     mniDMSTool: TMenuItem;
     actMenu: TActionList;
-    btnDMSTool: TRzToolButton;
+    btnEvunTool: TRzToolButton;
     scrTools: TRzSpacer;
     grpTools: TRzGroup;
     actEvunTool: TAction;
@@ -115,6 +115,7 @@ type
     /// 按路径加载模块
     /// </summary>
     procedure LoadModule(AModulePath: string);
+    function LoadFormServiceByCaption(ACaption: string): IQFormService;
   public
     { Public declarations }
   end;
@@ -195,23 +196,29 @@ begin
   AllowClose := True;
 end;
 
-procedure TfrmMain.actEvunToolExecute(Sender: TObject);
+function TfrmMain.LoadFormServiceByCaption(ACaption: string): IQFormService;
 var
   I: Integer;
-  AFormService: IQFormService;
 begin
-  LoadModule('/Services/Docks/Forms/EvunTool');
-
-  if Supports(PluginsManager.ByPath('Services/Docks/Forms/EvunTool'), IQFormService,
-    AFormService) then
+  if Supports(PluginsManager.ByPath(PWideChar('Services/Docks/Forms/'+ ACaption)), IQFormService,
+    Result) then
   begin
     for I := 0 to pgcMain.PageCount - 1 do
-      if pgcMain.Pages[I].Tag = intPtr(AFormService) then     //确保单例打开
+      if pgcMain.Pages[I].Tag = intPtr(Result) then     //确保单例打开
         Exit;
-    DockPage(AFormService, 6);
+//    Result.Show;
+    DockPage(Result, 6);
   end
   else
     ShowMessage('错误: 未找到服务，检查Module.json配置文件');
+end;
+
+procedure TfrmMain.actEvunToolExecute(Sender: TObject);
+begin
+  LoadModule('/Services/Docks/Forms/EvunTool');
+
+  LoadFormServiceByCaption('EvunTool');
+
 end;
 
 procedure TfrmMain.DockPage(AFormService: IQFormService; AImageIndex: Integer;
@@ -276,6 +283,7 @@ begin
   AParams := TQParams.Create;
   AParams.Add('VCLStyleName', ptUnicodeString).AsString := AItem.Hint;
 
+  //广播主题变化信息
   (PluginsManager as IQNotifyManager).Send(FChangVCLStyleId, AParams);
 
   btnTheme.Caption := AItem.Hint;
@@ -341,9 +349,7 @@ end;
 
 procedure TfrmMain.InitializeQplugins;
 begin
-//  PluginsManager.Loaders.Add(TQBPLLoader.Create(ExtractFilePath(Application.ExeName), '.bpl'));
-//  PluginsManager.Start;
-
+  //获取 主题变化 Notify ID
   FChangVCLStyleId := (PluginsManager as IQNotifyManager).IdByName('CHANGE_VCL_STYLE');
 end;
 

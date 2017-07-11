@@ -33,9 +33,21 @@ requires
   rtl,
   vcl,
   dbrtl,
-  QDAC3;
+  QDAC3,
+  RaizeComponentsVcl,
+  SynEdit_R,
+  dxCoreRS25,
+  cxLibraryRS25,
+  dxGDIPlusRS25,
+  dxThemeRS25,
+  vclimg,
+  VirtualTreesR;
 
 contains
-  EvunToolfrm in 'form\EvunToolfrm.pas' {panel};
+  EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool},
+  ShShareMemMap in 'unit\ShShareMemMap.pas',
+  ShThread in 'unit\ShThread.pas',
+  uShareMemServer in 'unit\uShareMemServer.pas',
+  uSystemModule in 'unit\uSystemModule.pas';
 
 end.

@@ -26,7 +26,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown := True;
-  TStyleManager.TrySetStyle('Windows10 SlateGray');
+  TStyleManager.TrySetStyle('Iceberg Classico');
   Application.CreateForm(TfrmMain, MainForm);
   //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;
