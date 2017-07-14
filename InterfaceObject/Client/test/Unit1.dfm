@@ -37,38 +37,25 @@ object Form1: TForm1
     TabOrder = 1
     OnClick = btn1Click
   end
-  object BCEditor1: TBCEditor
+  object sedt1: TSynEdit
     Left = 8
     Top = 8
-    Width = 585
+    Width = 604
     Height = 457
-    ActiveLine.Indicator.Visible = False
-    CompletionProposal.CloseChars = '()[]. '
-    CompletionProposal.Columns = <
-      item
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Courier New'
-        Font.Style = []
-        Items = <>
-        Title.Font.Charset = DEFAULT_CHARSET
-        Title.Font.Color = clWindowText
-        Title.Font.Height = -11
-        Title.Font.Name = 'Courier New'
-        Title.Font.Style = []
-      end>
-    CompletionProposal.Trigger.Chars = '.'
+    Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -12
+    Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
-    LeftMargin.Font.Charset = DEFAULT_CHARSET
-    LeftMargin.Font.Color = 13408665
-    LeftMargin.Font.Height = -11
-    LeftMargin.Font.Name = 'Courier New'
-    LeftMargin.Font.Style = []
     TabOrder = 2
+    Gutter.Font.Charset = DEFAULT_CHARSET
+    Gutter.Font.Color = clWindowText
+    Gutter.Font.Height = -11
+    Gutter.Font.Name = 'Courier New'
+    Gutter.Font.Style = []
+    Lines.Strings = (
+      'sedt1')
+    FontSmoothing = fsmNone
   end
 end

@@ -29,7 +29,6 @@ begin
   ReportMemoryLeaksOnShutdown := True;
   TStyleManager.TrySetStyle('Iceberg Classico');
   Application.CreateForm(TfrmMain, MainForm);
-  Application.CreateForm(TfrmPrg, frmPrg);
   //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;
 end.

@@ -4,7 +4,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #26381#21153#22120#20449#24687
-  ClientHeight = 421
+  ClientHeight = 381
   ClientWidth = 580
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -707,7 +707,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 10
     Top = 10
     Width = 560
-    Height = 401
+    Height = 361
     ActivePage = tsServerStaes
     Align = alClient
     MultiLine = True
@@ -718,7 +718,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
         Left = 0
         Top = 0
         Width = 552
-        Height = 373
+        Height = 333
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -727,6 +727,10 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     object tsLog: TTabSheet
       Caption = #30417#25511#20449#24687
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sedtLog: TSynEdit
         Left = 0
         Top = 0
@@ -1092,7 +1096,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 247
     Top = 206
     Bitmap = {
-      494C010104000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040008004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

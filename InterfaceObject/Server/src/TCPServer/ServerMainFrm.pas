@@ -26,7 +26,9 @@ uses
   ServerMMonitorFrm,
   uDIOCPStreamCoder,
   uIntfTCPClientContext,
-  utils_safeLogger, SynEdit;
+  utils_safeLogger,
+  SynEdit,
+  uResource;
 
 type
   TfrmDIOCPTcpServer = class(TForm)
@@ -128,7 +130,7 @@ procedure TfrmDIOCPTcpServer.SetServerPort;
 var
   ServerIni: TIniFile;
 begin
-  ServerIni := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'DIOCPTcpServer.ini');
+  ServerIni := TIniFile.Create(ExtractFilePath(ParamStr(0)) + DIOCP_TCP_SERVER_INI_FILE);
   try
     FTcpServer.Port := ServerIni.ReadInteger('Server','Port', 8923);
   finally

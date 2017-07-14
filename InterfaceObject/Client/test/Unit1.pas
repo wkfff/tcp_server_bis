@@ -3,15 +3,24 @@ unit Unit1;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, BCEditor.Editor,
-  qxml;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  qxml,
+  SynEdit;
 
 type
   TForm1 = class(TForm)
     btnSend: TButton;
     btn1: TButton;
-    BCEditor1: TBCEditor;
+    sedt1: TSynEdit;
     procedure btnSendClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
@@ -20,8 +29,9 @@ type
   public
     { Public declarations }
   end;
-  function IntfGetHisInfo(const ASendData:PWideChar): PChar;
-     stdcall; external 'DIOCPTcpClient.dll' name 'IntfGetHisInfo';
+
+function IntfGetHisInfo(const ASendData: PWideChar): PChar; stdcall; external
+  'DIOCPTcpClient.dll' name 'IntfGetHisInfo';
 
 var
   Form1: TForm1;
@@ -42,7 +52,7 @@ begin
   FChildNode := FXmlNode.ItemByPath('results');
   FChildNode := FChildNode.AddNode('message');
   FChildNode.Text := 'Erro';
-  BCEditor1.Text := FXmlNode.AsXML;
+  sedt1.Text := FXmlNode.AsXML;
 end;
 
 procedure TForm1.btnSendClick(Sender: TObject);
@@ -51,19 +61,18 @@ var
   ASend: PWideChar;
 begin
   //
-  sSend := BCEditor1.Text;
-  ASend := IntfGetHisInfo(PWideChar(sSend)) ;
-  BCEditor1.Text := ASend;
+  sSend := sedt1.Text;
+  ASend := IntfGetHisInfo(PWideChar(sSend));
+  sedt1.Text := ASend;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BCEditor1.Text := '<?xml version="1.0" encoding="utf-8"?>'+
-                      '<interfacemessage>'+
-                        '<hospitalcode>hospitalcode</hospitalcode>'+
-                        '<interfacename>getwardinfos</interfacename>'+
-                        '<interfaceparms>none</interfaceparms>'+
-                      '</interfacemessage>';
+  sedt1.Text := '<?xml version="1.0" encoding="utf-8"?>' + '<interfacemessage>'
+    + '<hospitalcode>hospitalcode</hospitalcode>' +
+    '<interfacename>getwardinfos</interfacename>' +
+    '<interfaceparms>none</interfaceparms>' + '</interfacemessage>';
 end;
 
 end.
+

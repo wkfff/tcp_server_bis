@@ -11,7 +11,8 @@ uses
   qxml,
   QPlugins,
   qstring,
-  uTCPServerIntf;
+  uTCPServerIntf,
+  uResource;
 
 type
   TMyTCPClientContext = class(TIOCPCoderClientContext)
@@ -21,8 +22,6 @@ type
     procedure OnConnected; override;
     function GetRemoteInfo: string;
     procedure GenerateErrorXML(AErrorMsg: string; AErrorXML: TQXMLNode);
-  protected
-
   public
     /// <summary>
     ///   接收、处理数据
@@ -32,12 +31,6 @@ type
   end;
 
 implementation
-
-const
-  HospitalCodeXmlPath = 'interfacemessage.hospitalcode';
-  HospitalCodeError = '未传入医院代码【hospitalcode】';
-  HospitalInterfaceError = '未注册对应医院接口，HospitalCode【%s】';
-  HospitalIntfExcutError = '接口逻辑处理错误，错误信息：%s';
 
 { TMyTCPClientContext }
 
@@ -74,11 +67,11 @@ begin
 
     sfLogger.logMessage(GetRemoteInfo + recvXMLNode.Encode(False));
 
-    HospitalCode := recvXMLNode.TextByPath(HospitalCodeXmlPath, '-1');
+    HospitalCode := recvXMLNode.TextByPath(HOSPITAL_CODE_XMLPATH, '-1');
     if HospitalCode = '-1' then      //检查医院代码是否传入
     begin
-      GenerateErrorXML(HospitalCodeError, sendXMLNode);
-      sfLogger.logMessage(HospitalCodeError,'', lgvError);
+      GenerateErrorXML(HOSPITAL_CODE_ERROR, sendXMLNode);
+      sfLogger.logMessage(HOSPITAL_CODE_ERROR,'', lgvError);
     end
     else
     begin
@@ -90,15 +83,15 @@ begin
         except
           on E: Exception do
           begin
-            GenerateErrorXML(Format(HospitalIntfExcutError, [E.Message]), sendXMLNode);
-            sfLogger.logMessage(Format(HospitalIntfExcutError, [E.Message]), '', lgvError);
+            GenerateErrorXML(Format(HOSPITAL_INTFEXCUT_ERROR, [E.Message]), sendXMLNode);
+            sfLogger.logMessage(Format(HOSPITAL_INTFEXCUT_ERROR, [E.Message]), '', lgvError);
           end;
         end;
       end
       else
       begin
-        GenerateErrorXML(Format(HospitalInterfaceError, [HospitalCode]), sendXMLNode);
-        sfLogger.logMessage(Format(HospitalInterfaceError, [HospitalCode]), '', lgvError);
+        GenerateErrorXML(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]), sendXMLNode);
+        sfLogger.logMessage(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]), '', lgvError);
       end;
     end;
 

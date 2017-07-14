@@ -40,7 +40,8 @@ uses
   qplugins_formsvc,
   Progressfrm,
   RzPrgres,
-  qworker, RzStatus;
+  qworker,
+  RzStatus;
 
 type
 
@@ -90,6 +91,7 @@ type
     procedure pgcMainClose(Sender: TObject; var AllowClose: Boolean);
     procedure FormResize(Sender: TObject);
   private
+    FLock: Boolean;
     FPrgFrm: TfrmPrg;
     FModuleList: TDictionary<string, TModuleInfo>;
     FChangVCLStyleId: Cardinal;
@@ -125,8 +127,12 @@ type
     /// <summary>
     /// 按路径加载模块
     /// </summary>
-    procedure LoadModule(AJob: PQJob);
+    procedure LoadModule(AParams: TQParams);
+
+    procedure LoadServices(AQjob: PQJob);
+
     function LoadFormServiceByCaption(ACaption: string; AImageIndex: Integer): IQFormService;
+
     procedure Notify(const AId: Cardinal; AParams: IQParams;
       var AFireNext: Boolean); stdcall;
   public
@@ -147,12 +153,7 @@ begin
     FPrgFrm := TfrmPrg.Create(Application);
   if AId = NID_PLUGIN_LOADING then    //开始加载  插件
   begin
-//    repeat
-//      Sleep(50);
-//      RzProgressBar1.Percent := RzProgressBar1.Percent + 1;
-//      Application.ProcessMessages;
-//      AFireNext := True;
-//    until RzProgressBar1.Percent = 100;
+
   end
   else if AId = NID_PLUGIN_LOADED then    //结束加载 插件
   begin
@@ -200,7 +201,7 @@ begin
   AllowClose := True;
 end;
 
-procedure TfrmMain.LoadModule(AJob: PQJob);
+procedure TfrmMain.LoadModule(AParams: TQParams);
 var
   AModulePath: string;
   ALoader: IQLoader;
@@ -209,8 +210,8 @@ var
   AImageIndex: Integer;
   Module: TModuleInfo;
 begin
-  AModulePath := TQParams(AJob.Data).ByName('Path').AsString;
-  AName := TQParams(AJob.Data).ByName('Name').AsString;
+  AModulePath := AParams.ByName('Path').AsString;
+  AName := AParams.ByName('Name').AsString;
   try
     Module := FModuleList.Items[AModulePath];
   except
@@ -219,7 +220,29 @@ begin
       ShowMessage('错误: 未找到服务，检查Module.json配置文件');
     end;
   end;
+  FLock := False;
+  Workers.Post(LoadServices, Pointer(Module), False, jdfFreeByUser);
 
+  repeat
+    Sleep(50);
+    if RzProgressBar1.Percent < 100 then
+      RzProgressBar1.Percent := RzProgressBar1.Percent + 1;
+  until FLock;
+
+  RzGlyphStatus1.Caption := AName;
+  TryStrToInt(AParams.ByName('ImageIndex').AsString, AImageIndex);
+  RzGlyphStatus1.ImageIndex := AImageIndex;
+
+  LoadFormServiceByCaption(AName, AImageIndex);
+end;
+
+procedure TfrmMain.LoadServices(AQjob: PQJob);
+var
+  Module: TModuleInfo;
+  ALoader: IQLoader;
+  AFilePath: string;
+begin
+  Module := TModuleInfo(AQjob.Data);
   if Pos('.dll', Module.ModulePath) > 0 then
   begin
     ALoader := PluginsManager.ByPath('/Loaders/Loader_DLL') as IQLoader;
@@ -239,13 +262,9 @@ begin
     end;
   end;
   AFilePath := ExtractFilePath(Application.ExeName) + Module.ModulePath;
-  Application.ProcessMessages;
+
   Module.ServiceId := ALoader.LoadServices(PWideChar(AFilePath));
-  RzProgressBar1.Percent := 100;
-  RzGlyphStatus1.Caption := AName;
-  TryStrToInt(TQParams(AJob.Data).ByName('ImageIndex').AsString, AImageIndex);
-  RzGlyphStatus1.ImageIndex := AImageIndex;
-  LoadFormServiceByCaption(AName, AImageIndex);
+  FLock := True;
 end;
 
 function TfrmMain.LoadFormServiceByCaption(ACaption: string; AImageIndex: Integer): IQFormService;
@@ -272,6 +291,7 @@ var
   rttitype: TRttiType;
   rttiprop: TRttiProperty;
   value: TValue;
+  AJob: TQJob;
 begin
   AParams := TQParams.Create;
   AParams.Add('Path', '/Services/Docks/Forms/EvunTool');
@@ -281,7 +301,7 @@ begin
   rttiprop := rttitype.GetProperty('ImageIndex');
   value := rttiprop.GetValue(Sender);
   AParams.Add('ImageIndex', value.ToString);
-  Workers.Post(LoadModule, AParams, True);
+  LoadModule(AParams);
 end;
 
 procedure TfrmMain.DockPage(AFormService: IQFormService; AImageIndex: Integer;
@@ -414,6 +434,7 @@ procedure TfrmMain.InitializeQplugins;
 var
   ANotifyMgr: IQNotifyManager;
 begin
+  PluginsManager.Stop;
   //获取 主题变化 Notify ID
   FChangVCLStyleId := (PluginsManager as IQNotifyManager).IdByName('CHANGE_VCL_STYLE');
   ANotifyMgr := PluginsManager as IQNotifyManager;

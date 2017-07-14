@@ -14,7 +14,10 @@ uses
   uEHSBIntf in 'IntfModule\uEHSBIntf.pas',
   uTCPServerIntf in 'IntfModule\uTCPServerIntf.pas',
   untWaterEffect in 'lib\untWaterEffect.pas',
-  uEwellMqExpts in 'IntfModule\uEwellMqExpts.pas';
+  uEwellMqExpts in 'IntfModule\uEwellMqExpts.pas',
+  uBaseIntf in 'IntfModule\uBaseIntf.pas',
+  uResource in 'lib\uResource.pas',
+  EHSBdfrm in 'IntfModule\EHSBdfrm.pas' {dfrmEHSB: TDataModule};
 
 {$R *.res}
 var
@@ -23,7 +26,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Carbon');
+  TStyleManager.TrySetStyle('Slate Classico');
   Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
   Application.Run;
 end.
