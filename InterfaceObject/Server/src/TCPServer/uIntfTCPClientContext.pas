@@ -103,10 +103,10 @@ begin
     WriteObject(sendStream);
   finally
     excuIntf := nil;
-    FreeAndNil(sendXMLNode);
-    FreeAndNil(recvXMLNode);
-    FreeAndNil(unzipStream);
-    FreeAndNil(sendStream);
+    FreeAndNilObject(sendXMLNode);
+    FreeAndNilObject(recvXMLNode);
+    FreeAndNilObject(unzipStream);
+    FreeAndNilObject(sendStream);
   end;
 end;
 

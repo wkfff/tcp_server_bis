@@ -27,8 +27,9 @@ uses
   uDIOCPStreamCoder,
   uIntfTCPClientContext,
   utils_safeLogger,
-  SynEdit,
-  uResource;
+  uResource,
+  uLogAppender,
+  cxGraphics;
 
 type
   TfrmDIOCPTcpServer = class(TForm)
@@ -36,7 +37,6 @@ type
     tsServerStaes: TTabSheet;
     traMain: TTrayIcon;
     pmTray: TPopupMenu;
-    ilPop: TImageList;
     actShow1: TMenuItem;
     actHide1: TMenuItem;
     actQuit1: TMenuItem;
@@ -45,16 +45,15 @@ type
     actHide: TAction;
     actReopen: TAction;
     pnlMonitor: TPanel;
-    tsLog: TTabSheet;
     actOpen: TAction;
     actOpen1: TMenuItem;
     mmMain: TMainMenu;
     o1: TMenuItem;
     O2: TMenuItem;
     actClose1: TMenuItem;
-    sedtLog: TSynEdit;
-    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
-      var Resize: Boolean);
+    mniClose: TMenuItem;
+    ilPop: TcxImageList;
+    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
     procedure actShowExecute(Sender: TObject);
     procedure actHideExecute(Sender: TObject);
     procedure actReopenExecute(Sender: TObject);
@@ -62,6 +61,7 @@ type
     procedure traMainDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
+    procedure mniCloseClick(Sender: TObject);
   private
     { Private declarations }
     FTcpServer: TDiocpCoderTcpServer;
@@ -113,8 +113,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TfrmDIOCPTcpServer.FormCanResize(Sender: TObject; var NewWidth, NewHeight:
-  Integer; var Resize: Boolean);
+procedure TfrmDIOCPTcpServer.FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
 begin
   Resize := False;
 end;
@@ -132,17 +131,25 @@ var
 begin
   ServerIni := TIniFile.Create(ExtractFilePath(ParamStr(0)) + DIOCP_TCP_SERVER_INI_FILE);
   try
-    FTcpServer.Port := ServerIni.ReadInteger('Server','Port', 8923);
+    FTcpServer.Port := ServerIni.ReadInteger('Server', 'Port', 8923);
   finally
     ServerIni.Free;
   end;
 end;
 
 procedure TfrmDIOCPTcpServer.FormCreate(Sender: TObject);
+var
+  errNo: Integer;
 begin
-  sedtLog.ReadOnly := True;
-  sedtLog.WordWrap := True;
-
+  CreateMutex(nil, False, PChar(application.Title));
+  errNo := GetLastError;
+  if errNo = ERROR_ALREADY_EXISTS then
+  begin
+    ShowMessage('程序已经在运行了');
+    Application.Terminate;
+    self.Close(); //关闭重复启动的程序
+  end;
+  sfLogger.setAppender(TMyLogFileAppender.Create(True));
   FTcpServer := TDiocpCoderTcpServer.Create(Self);
   SetServerPort;
   FTcpServer.Name := 'WHTX_TCPServer';
@@ -153,9 +160,11 @@ begin
 
   TFMMonitor.createAsChild(pnlMonitor, FTcpServer);
   FTcpServer.LogicWorkerNeedCoInitialize := true;
+end;
 
-  __svrLogger.setAppender(TStringsAppender.Create(sedtLog.Lines));
-  TStringsAppender(__svrLogger.Appender).MaxLines := 5000;
+procedure TfrmDIOCPTcpServer.mniCloseClick(Sender: TObject);
+begin
+  Application.Terminate;
 end;
 
 procedure TfrmDIOCPTcpServer.traMainDblClick(Sender: TObject);

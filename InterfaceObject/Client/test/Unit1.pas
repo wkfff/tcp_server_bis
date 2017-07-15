@@ -14,13 +14,15 @@ uses
   Vcl.Dialogs,
   Vcl.StdCtrls,
   qxml,
-  SynEdit;
+  SynEdit, SynEditHighlighter, SynHighlighterXML;
 
 type
   TForm1 = class(TForm)
     btnSend: TButton;
     btn1: TButton;
     sedt1: TSynEdit;
+    SynXMLSyn1: TSynXMLSyn;
+    SynEdit1: TSynEdit;
     procedure btnSendClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
@@ -42,17 +44,16 @@ implementation
 
 procedure TForm1.btn1Click(Sender: TObject);
 var
-  FXmlNode: TQXML;
-  FChildNode: TQXML;
+  sSend: string;
+  ASend: PWideChar;
+  I: Integer;
 begin
-  FXmlNode := TQXML.Create;
-  FChildNode := FXmlNode.AddNode('results');
-  FChildNode := FChildNode.AddNode('resultcode');
-  FChildNode.Text := '-1';
-  FChildNode := FXmlNode.ItemByPath('results');
-  FChildNode := FChildNode.AddNode('message');
-  FChildNode.Text := 'Erro';
-  sedt1.Text := FXmlNode.AsXML;
+  //
+  for I := 0 to 100 do
+  begin
+    sSend := SynEdit1.Text;
+    ASend := IntfGetHisInfo(PWideChar(sSend));
+  end;
 end;
 
 procedure TForm1.btnSendClick(Sender: TObject);

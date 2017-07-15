@@ -59,8 +59,8 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>DIOCPTCPServer</SanitizedProjectName>
-        <Custom_Styles>&quot;Slate Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\SlateClassico.vsf&quot;</Custom_Styles>
         <VerInfo_Locale>2052</VerInfo_Locale>
+        <Custom_Styles>&quot;Windows10 SlateGray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10SlateGray.vsf&quot;</Custom_Styles>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -89,8 +89,8 @@
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Icon_MainIcon>Server.ico</Icon_MainIcon>
         <DCC_ExeOutput>..\bin</DCC_ExeOutput>
+        <Icon_MainIcon>Server.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -111,27 +111,24 @@
         </DelphiCompile>
         <DCCReference Include="TCPServer\ServerMMonitorFrm.pas">
             <Form>FMMonitor</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="TCPServer\ServerMainFrm.pas">
             <Form>frmDIOCPTcpServer</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="TCPServer\uDIOCPStreamCoder.pas"/>
         <DCCReference Include="TCPServer\uIntfTCPClientContext.pas"/>
         <DCCReference Include="TCPServer\uRunTimeINfoTools.pas"/>
         <DCCReference Include="IntfModule\uEHSBIntf.pas"/>
         <DCCReference Include="IntfModule\uTCPServerIntf.pas"/>
-        <DCCReference Include="lib\untWaterEffect.pas"/>
         <DCCReference Include="IntfModule\uEwellMqExpts.pas"/>
         <DCCReference Include="IntfModule\uBaseIntf.pas"/>
         <DCCReference Include="lib\uResource.pas"/>
         <DCCReference Include="IntfModule\EHSBdfrm.pas">
             <Form>dfrmEHSB</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="lib\uLogAppender.pas"/>
         <RcItem Include="Server.ico">
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>

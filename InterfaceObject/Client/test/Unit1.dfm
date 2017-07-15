@@ -54,8 +54,48 @@ object Form1: TForm1
     Gutter.Font.Height = -11
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
+    Highlighter = SynXMLSyn1
     Lines.Strings = (
       'sedt1')
+    WordWrap = True
     FontSmoothing = fsmNone
+  end
+  object SynEdit1: TSynEdit
+    Left = 669
+    Top = 360
+    Width = 24
+    Height = 14
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Style = []
+    TabOrder = 3
+    Gutter.Font.Charset = DEFAULT_CHARSET
+    Gutter.Font.Color = clWindowText
+    Gutter.Font.Height = -11
+    Gutter.Font.Name = 'Courier New'
+    Gutter.Font.Style = []
+    Lines.Strings = (
+      '<?xml version="1.0" encoding="utf-8"?>'
+      '<interfacemessage>'
+      '    <hospitalcode>00001</hospitalcode>'
+      '    <interfacename>getpateintinfos</interfacename>'
+      '    <interfaceparms>'
+      '        <patienttype></patienttype>'
+      '        <patientid></patientid>'
+      '        <patientnumber></patientnumber>'
+      '        <inpatientid>10002971001</inpatientid>'
+      '    </interfaceparms>'
+      '</interfacemessage>')
+    FontSmoothing = fsmNone
+  end
+  object SynXMLSyn1: TSynXMLSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
+    WantBracesParsed = False
+    Left = 200
+    Top = 120
   end
 end

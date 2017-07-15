@@ -8,6 +8,7 @@ uses
   System.Generics.Collections,
   qplugins_params,
   qxml,
+  qstring,
   utils_safeLogger;
 
 type
@@ -16,13 +17,9 @@ type
   end;
   
   TCALLBACK_FUN = procedure(AMsgID, AMsg: PAnsiChar);
-  TMessageId = array[0..49] of AnsiChar;
-  TErrorMessage = array[0..1024] of AnsiChar;
 
   TMQClass = class(TObject)
   private
-    FLastError: TErrorMessage;
-    FMessageId: TMessageId; 
     FActive: Boolean;
     FServiceId: string;
     FUserName: string;
@@ -35,9 +32,9 @@ type
     FSourceSysCode: string;
     function GetActive: Boolean;
     procedure SetActive(const Value: Boolean);
-    function GetLastErro: TErrorMessage;
     procedure SetWaitInterval(const Value: Integer);
     function CreateQueryParamsMsg: string;
+    function ConvertStringToAnsiChar(AData: string): PAnsiChar;
   public
     constructor Create;
     destructor Destroy; override;
@@ -48,8 +45,6 @@ type
   public
     property respMsg : TQXML read FrespMsg;
     property WaitInterval: Integer read FWaitInterval write SetWaitInterval;
-    property LastErro: TErrorMessage read GetLastErro;
-    property MessageId: TMessageId read FMessageId;
     property QueryItems: TList<TQParams> read FQueryItems write FQueryItems;
     property OrderItems: TList<TQParams> read FOrderItems write FOrderItems;
     property Active: Boolean read GetActive write SetActive;
@@ -164,16 +159,20 @@ procedure TMQClass.Connect(AServerName: string);
 var
   iReturn: Integer;
 begin
-  iReturn := ConnectMQX(PAnsiChar(AServerName));
+  iReturn := ConnectMQX(PAnsiChar(AnsiString(AServerName)));
   if iReturn <> 1 then
     raise MQException.Create('连接队列管理器 '+ AServerName +' 失败!');
   FActive := True;
 end;
 
+function TMQClass.ConvertStringToAnsiChar(AData: string): PAnsiChar;
+begin
+  Result := PAnsiChar(AnsiString(AData));
+end;
+
 constructor TMQClass.Create;
 begin
   inherited;
-
   FWaitInterval := 10000;
   FActive := False;
   FQueryItems := TList<TQParams>.Create;
@@ -182,10 +181,16 @@ begin
 end;
 
 destructor TMQClass.Destroy;
+var
+  I: Integer;
 begin
-  FreeAndNil(FrespMsg);
-  FreeAndNil(FQueryItems);
-  FreeAndNil(FOrderItems);
+  FreeAndNilObject(FrespMsg);
+  for I := 0 to FQueryItems.Count - 1 do
+    FQueryItems.Items[I].Free;
+  FreeAndNilObject(FQueryItems);
+  for I := 0 to FOrderItems.Count - 1 do
+    FOrderItems.Items[I].Free;
+  FreeAndNilObject(FOrderItems);
   if Active then
     DisConnect;
   inherited;
@@ -196,19 +201,14 @@ var
   iReturn: Integer;
 begin
   iReturn := DisConnectMQ;
-  FActive := False;
   if iReturn <> 1 then
     raise MQException.Create('断开连接队列管理器失败!');
+  FActive := False;
 end;
 
 function TMQClass.GetActive: Boolean;
 begin
   Result := FActive;
-end;
-
-function TMQClass.GetLastErro: TErrorMessage;
-begin
-  Result := FLastError;
 end;
 
 function TMQClass.CreateQueryParamsMsg: string;
@@ -265,44 +265,59 @@ begin
     end;
     Result := AMsgXML.Encode(False);
   finally
-    FreeAndNil(AMsgXML);
+    FreeAndNilObject(AMsgXML);
   end;
 end;
 
 function TMQClass.Query: Integer;
 var
   iReturn: Integer;
-  PSecId: PAnsiChar;
-  pMsgid: PAnsiChar;
+  pSecId: PAnsiChar;
+  pMsgId: PAnsiChar;
   pErrorMsg: PAnsiChar;
+
   pPutMsg: PAnsiChar;
   pGetMsg: PAnsiChar;
+
 begin
   if not Active then
     raise MQException.Create('队列管理器未连接');
   Result := 0;
-  PSecId := PAnsiChar(ServiceId);
-  pMsgid := @FMessageId;
-  pErrorMsg := @FLastError;
-  pPutMsg := PAnsiChar(CreateQueryParamsMsg);
-  iReturn := PutMsgMQ(PSecId, pMsgid, pPutMsg, pErrorMsg);
-  if iReturn <> 1 then
-  begin
-    raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s',
-      [ServiceId, iReturn, pErrorMsg]));
-  end;
 
-  GetMem(pGetMsg, 1024 * 20);
+  pSecId := ConvertStringToAnsiChar(ServiceId);
+  sfLogger.logMessage('服务ID:' + string(pSecId));
+
+  GetMem(pMsgId, 49);
+  GetMem(pErrorMsg, 2048);
+  GetMem(pGetMsg, 1024 * 1024);
   try
-    iReturn := GetMsgMQ(PSecId, 10000, pMsgid, pGetMsg, pErrorMsg);
+    FillChar(pMsgId[0], 49, #0);
+    FillChar(pErrorMsg[0], 2048, #0);
+
+    pPutMsg := ConvertStringToAnsiChar(CreateQueryParamsMsg);
+    sfLogger.logMessage('MQ Put消息内容:' + string(pPutMsg));
+
+    iReturn := PutMsgMQ(PAnsiChar(AnsiString(ServiceId)), @pMsgId[0], pPutMsg, @pErrorMsg[0]);
+    sfLogger.logMessage('消息ID:' + string(pMsgId));
+
+    if iReturn <> 1 then
+    begin
+      raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s',
+        [ServiceId, iReturn, pErrorMsg]));
+    end;
+
+    iReturn := GetMsgMQ(PAnsiChar(AnsiString(ServiceId)), 10000, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
     if iReturn <> 1 then
     begin
       raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s',
         [ServiceId, iReturn, pErrorMsg]));
     end;
-    FrespMsg.Parse(pGetMsg);
+    sfLogger.logMessage('MQ Get消息内容:' + string(pGetMsg));
+    FrespMsg.Parse(PWideChar(string(pGetMsg)));
     Result := iReturn;
   finally
+    FreeMem(pMsgId);
+    FreeMem(pErrorMsg);
     FreeMem(pGetMsg);
   end;
 end;

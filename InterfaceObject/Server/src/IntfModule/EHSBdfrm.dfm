@@ -5,48 +5,47 @@ object dfrmEHSB: TdfrmEHSB
   Height = 278
   Width = 371
   object msdlBIS: TFDPhysMSSQLDriverLink
-    Left = 94
+    Left = 112
     Top = 16
   end
   object conBIS: TFDConnection
+    Params.Strings = (
+      'Pooled=False'
+      'DriverID=MSSQL')
     LoginPrompt = False
     Left = 16
     Top = 16
   end
-  object qryWard: TFDQuery
+  object qryBIS: TFDQuery
     Connection = conBIS
     SQL.Strings = (
-      
-        'INSERT INTO His_Ward_Info(WardCode, WardName, SpellCode, Telepho' +
-        'neNumber, Remark, Registered) VALUES (:WardCode, :WardName, :Spe' +
-        'llCode, :TelephoneNumber, :Remark, :Registered'
-      ');')
-    Left = 172
+      'select &field_list from &table_name where &condition_list')
+    Left = 160
     Top = 16
-    ParamData = <
+    MacroData = <
       item
-        Name = 'WARDCODE'
-        ParamType = ptInput
+        Value = Null
+        Name = 'FIELD_LIST'
+        DataType = mdIdentifier
       end
       item
-        Name = 'WARDNAME'
-        ParamType = ptInput
+        Value = Null
+        Name = 'TABLE_NAME'
+        DataType = mdIdentifier
       end
       item
-        Name = 'SPELLCODE'
-        ParamType = ptInput
-      end
-      item
-        Name = 'TELEPHONENUMBER'
-        ParamType = ptInput
-      end
-      item
-        Name = 'REMARK'
-        ParamType = ptInput
-      end
-      item
-        Name = 'REGISTERED'
-        ParamType = ptInput
+        Value = Null
+        Name = 'CONDITION_LIST'
+        DataType = mdIdentifier
       end>
+  end
+  object fdmBIS: TFDManager
+    WaitCursor = gcrHourGlass
+    FormatOptions.AssignedValues = [fvMapRules]
+    FormatOptions.OwnMapRules = True
+    FormatOptions.MapRules = <>
+    Active = True
+    Left = 64
+    Top = 16
   end
 end

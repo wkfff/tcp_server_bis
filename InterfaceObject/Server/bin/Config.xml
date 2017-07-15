@@ -1,0 +1,68 @@
+<root>
+    <getdeptinfos>
+        <serviceid name="MS02001"/>
+        <query item="STAFF_CODE" compy="=" value="' jp' or 1= 1" splice="and"/>
+        <order item="" sort=""/>
+        <correspond key="DeptCode" value="DEPT_CODE" flag="key" datatype="string"/>
+        <correspond key="DeptName" value="DEPT_NAME"/>
+        <correspond key="SpellCode" value="PINYIN_CODE"/>
+        <correspond key="TelephoneNumber" value="DEPT_PHONE_NO"/>
+        <correspond key="Remark" value="NOTE"/>
+        <correspond key="Registered" value="0"/>
+    </getdeptinfos>
+    <getwardinfos>
+        <serviceid name="MS02002"/>
+        <query item="WARD_INDEX_NO" compy="=" value="400201 or 1= 11" splice="and"/>
+        <order item="" sort=""/>
+        <correspond key="WardName" value="WARD_NAME" />
+        <correspond key="WardCode" value="WARD_CODE" flag="key" datatype="string"/>
+        <correspond key="SpellCode" value="PINYIN_CODE" />
+        <correspond key="Remark" value="MEMO" />
+        <correspond key="Registered" value="0" opertype="const"/>
+    </getwardinfos>
+    <getstaffinfos>
+        <serviceid name="MS02003"/>
+        <query item="STAFF_INDEX_NO" compy="=" value="' jp' or 1= 1" splice="and"/>
+        <order item="" sort=""/>
+        <correspond key="User_Name" value="STAFF_NAME" />
+        <correspond key="SpellCode" value="PINYIN_CODE" />
+        <correspond key="User_Sex" value="PHYSI_SEX_CODE" />
+        <correspond key="User_Phone" value="PHONE_NO" />
+        <correspond key="User_Email" value="EMAIL" />
+        <correspond key="User_Ward" value="WARD_CODE" />
+        <correspond key="User_Dept" value="SUBOR_DEPT_CODE" />
+        <correspond key="User_Level" value="TITLE_LEVEL_CODE" />
+        <correspond key="User_Type" value="STAFF_CATEG_CODE" />
+        <correspond key="User_Id" value="LOGIN_NAME" flag="key" datatype="string"/>
+        <correspond key="User_No" value="STAFF_CODE" flag="key" datatype="string"/>
+        <correspond key="Registered" value="0" opertype="const"/>
+    </getstaffinfos>
+    <getpateintinfos>
+        <serviceid name="BS10001"/>
+        <query item="MR_NO" compy="=" value="" splice="and" cover="patientid"/>
+        <query item="INHOSP_INDEX_NO" compy="=" value="" splice="and" cover="inpatientid"/>
+        <query item="VISIT_CARD_NO" compy="=" value="" splice="and" cover="patientnumber"/>
+        <order item="" sort=""/>
+        <correspond key="GetId" value="INHOSP_NO" flag="key" datatype="string"/>
+        <correspond key="PatientId" value="MR_NO" />
+        <correspond key="PatientNumber" value="PAT_INDEX_NO" />
+        <correspond key="PatientName" value="PAT_NAME" />
+        <correspond key="PatientSex" value="PHYSI_SEX_CODE" />
+        <correspond key="PatientAge" value="AGE" />
+        <correspond key="IdCardNo" value="ID_NUMBER" />
+        <correspond key="Address" value="CONTACT_ADDR" />
+        <correspond key="MobilePhoneNo" value="PHONE_NO"/>
+        <correspond key="TelePhoneNo" value="PHONE_NO_HOME" />
+        <correspond key="CompanyName" value="COMPANY" />
+        <correspond key="DiagnosesID" value="ADMIT_DIAG_CODE" />
+        <correspond key="Diagnoses" value="ADMIT_DIAG_NAME" />
+        <correspond key="InHospitalTime" value="ADMIT_DATE" />
+        <correspond key="DeptCode" value="CURR_DEPT_CODE" />
+        <correspond key="DeptName" value="CURR_DEPT_NAME" />
+        <correspond key="WardCode" value="CURR_WARD_CODE" />
+        <correspond key="WardName" value="CURR_WARD_NAME"/>
+        <correspond key="BedNo" value="CURR_BED_INDEX_NO" />
+        <correspond key="InPatientId" value="INHOSP_INDEX_NO" />
+        <correspond key="Registered" value="0" opertype="const"/>
+    </getpateintinfos>
+</root>

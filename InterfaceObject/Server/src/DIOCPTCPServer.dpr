@@ -1,5 +1,7 @@
 program DIOCPTCPServer;
 
+
+
 {$R *.dres}
 
 uses
@@ -13,20 +15,24 @@ uses
   uRunTimeINfoTools in 'TCPServer\uRunTimeINfoTools.pas',
   uEHSBIntf in 'IntfModule\uEHSBIntf.pas',
   uTCPServerIntf in 'IntfModule\uTCPServerIntf.pas',
-  untWaterEffect in 'lib\untWaterEffect.pas',
   uEwellMqExpts in 'IntfModule\uEwellMqExpts.pas',
   uBaseIntf in 'IntfModule\uBaseIntf.pas',
   uResource in 'lib\uResource.pas',
-  EHSBdfrm in 'IntfModule\EHSBdfrm.pas' {dfrmEHSB: TDataModule};
+  EHSBdfrm in 'IntfModule\EHSBdfrm.pas' {dfrmEHSB: TDataModule},
+  uLogAppender in 'lib\uLogAppender.pas';
 
 {$R *.res}
 var
   ServerMain: TfrmDIOCPTcpServer;
 
 begin
+  {$IFDEF DEBUG}
+    ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Slate Classico');
+  TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
   Application.Run;
 end.
+

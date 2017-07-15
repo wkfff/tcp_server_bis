@@ -6,7 +6,8 @@ uses
   System.SysUtils,
   QPlugins,
   qxml,
-  uTCPServerIntf;
+  uTCPServerIntf,
+  uResource;
 
 type
   TBaseIntf = class(TQService, ITCPServerInterface)
@@ -21,6 +22,7 @@ type
     function GetStaffInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetDeptInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
+
   public
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
   end;
@@ -32,82 +34,84 @@ implementation
 function TBaseIntf.ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean;
 var
   intfName: string;
+
 begin
+  Result := False;
   intfName := ARecvXML.TextByPath('interfacemessage.interfacename','');
   if intfName = '' then
     raise Exception.Create('interfacemessage.interfacename 为空，无法执行相应服务');
   if intfName = 'getwardinfos' then
-    GetWardInfos(ARecvXML, ASendXML)
+    Result := GetWardInfos(ARecvXML, ASendXML)
   else if intfName = 'getdeptinfos' then
-    GetDeptInfos(ARecvXML, ASendXML)
+    Result := GetDeptInfos(ARecvXML, ASendXML)
   else if intfName = 'getstaffinfos' then
-    GetStaffInfos(ARecvXML, ASendXML)
+    Result := GetStaffInfos(ARecvXML, ASendXML)
   else if intfName = 'getchargeiteminfos' then
-    GetChargeItemInfos(ARecvXML, ASendXML)
+    Result := GetChargeItemInfos(ARecvXML, ASendXML)
   else if intfName = 'gettreatmentiteminfos' then
-    GetTreatmentItemInfos(ARecvXML, ASendXML)
+    Result := GetTreatmentItemInfos(ARecvXML, ASendXML)
   else if intfName = 'getsurgeryinfos' then
-    GetSurgeryInfos(ARecvXML, ASendXML)
+    Result := GetSurgeryInfos(ARecvXML, ASendXML)
   else if intfName = 'getdiagnosesinfos' then
-    GetDiagnosesInfos(ARecvXML, ASendXML)
+    Result := GetDiagnosesInfos(ARecvXML, ASendXML)
   else if intfName = 'gettestiteminfos' then
-    GetTestItemInfos(ARecvXML, ASendXML)
+    Result := GetTestItemInfos(ARecvXML, ASendXML)
   else if intfName = 'getpateintinfos' then
-    GetPateintInfos(ARecvXML, ASendXML)
+    Result := GetPateintInfos(ARecvXML, ASendXML)
   else if intfName = 'gettestitemresultinfos' then
-    GetTestItemResultInfos(ARecvXML, ASendXML);
+    Result := GetTestItemResultInfos(ARecvXML, ASendXML);
 end;
 
 function TBaseIntf.GetChargeItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetDeptInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetDiagnosesInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetPateintInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetStaffInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetSurgeryInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetTestItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetTestItemResultInfos(ARecvXML,
   ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetTreatmentItemInfos(ARecvXML,
   ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 function TBaseIntf.GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
-  ASendXML.Assign(ARecvXML);
+  Result := False;
 end;
 
 end.
