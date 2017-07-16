@@ -45,18 +45,17 @@ type
   private
     FFieldList: TQParams;
     FTableName: string;
-    FValueList: TQParams;
     FConditionList: TQParams;
     procedure SetConditionList(const Value: TQParams);
     procedure SetFieldList(const Value: TQParams);
-    procedure SetValueList(const Value: TQParams);
+    function GetConditionList: TQParams;
+    function GetFieldList: TQParams;
   public
     { Public declarations }
     procedure PutDataIntoDatabase;
-    property FieldList: TQParams read FFieldList write SetFieldList;
+    property FieldList: TQParams read GetFieldList write SetFieldList;
     property TableName: string read FTableName write FTableName;
-    property ValueList: TQParams read FValueList write SetValueList;
-    property ConditionList: TQParams read FConditionList write SetConditionList;
+    property ConditionList: TQParams read GetConditionList write SetConditionList;
   end;
 
 implementation
@@ -106,13 +105,26 @@ begin
     conBIS.Connected := False;
   FreeAndNilObject(FFieldList);
   FreeAndNilObject(FConditionList);
-  FreeAndNilObject(FValueList);
+end;
+
+function TdfrmEHSB.GetConditionList: TQParams;
+begin
+  if not Assigned(FConditionList) then
+    FConditionList := TQParams.Create;
+  Result := FConditionList;
+end;
+
+function TdfrmEHSB.GetFieldList: TQParams;
+begin
+  if not Assigned(FFieldList) then
+    FFieldList := TQParams.Create;
+  Result := FFieldList;
 end;
 
 procedure TdfrmEHSB.PutDataIntoDatabase;
 var
-  AParam: IQParam;
-  AValueName: string;
+  AParam: TQParam;
+  AFieldName: string;
   AFDField: TField;
   AField: string;
   AValue: string;
@@ -121,9 +133,6 @@ begin
   if (FieldList.Count <= 0) or (ConditionList.Count <= 0)
     or (Trim(TableName) = '') then
     raise Exception.Create('无法生成SQL语句');
-
-  if FieldList.Count <> ValueList.Count then
-    raise Exception.Create('无法生成SQL语句, 检查接口键值对');
 
   qryBIS.Macros.MacroByName('table_name').AsRaw := TableName;
 
@@ -156,52 +165,53 @@ begin
 
   for I := 0 to FieldList.Count - 1 do
   begin
-    AValueName := FieldList.Items[I].AsString;
-    AField := FieldList.Items[I].Name;
-    AFDField := qryBIS.FieldByName(AField);
-    AParam := ValueList.ByName(PWideChar(AValueName));
-    sfLogger.logMessage('FieldName:' + AField + ';FieldValue:'
-      + AParam.AsString.Value + ';FieldType:'
+    AFieldName := FieldList.Items[I].Name;
+    AFDField := qryBIS.FieldByName(AFieldName);
+    AParam := FieldList.Items[I];
+    sfLogger.logMessage('FieldName:' + AFieldName + ';FieldValue:'
+      + AParam.AsString + ';FieldType:'
       + GetEnumname(TypeInfo(TFieldType), Ord(AFDField.DataType)));
     case AFDField.DataType of
       ftFloat:
         AFDField.AsFloat := AParam.AsFloat;
       ftDateTime:
       begin
-        if Pos('-', AParam.AsString.Value) > 0 then
-          AFDField.AsDateTime := StrToDateTime(AParam.AsString.Value)
+        if Pos('-', AParam.AsString) > 0 then
+          AFDField.AsDateTime := StrToDateTime(AParam.AsString)
         else
-          AFDField.AsDateTime := StrToDateTime((LeftStr(AParam.AsString.Value, 4)
-            + '-' + MidStr(AParam.AsString.Value, 5, 2) + '-'
-            + MidStr(AParam.AsString.Value, 7, 2) + ' '
-            + MidStr(AParam.AsString.Value, 9, 2) + ':'
-            + MidStr(AParam.AsString.Value, 11, 2) + ':'
-            + RightStr(AParam.AsString.Value, 2)));
+          AFDField.AsDateTime := StrToDateTime((LeftStr(AParam.AsString, 4)
+            + '-' + MidStr(AParam.AsString, 5, 2) + '-'
+            + MidStr(AParam.AsString, 7, 2) + ' '
+            + MidStr(AParam.AsString, 9, 2) + ':'
+            + MidStr(AParam.AsString, 11, 2) + ':'
+            + RightStr(AParam.AsString, 2)));
       end;
       ftInteger:
-        AFDField.AsInteger := StrToInt(AParam.AsString.Value);
+        AFDField.AsInteger := StrToIntDef(AParam.AsString, 0);
       ftString:
-        AFDField.AsString := AParam.AsString.Value;
+        AFDField.AsString := AParam.AsString;
       ftLargeint:
-        AFDField.AsLargeInt := StrToInt64(AParam.AsString.Value);
+        AFDField.AsLargeInt := StrToInt64Def(AParam.AsString, 0);
       ftBoolean:
-        AFDField.AsBoolean := StrToBool(AParam.AsString.Value);
+        AFDField.AsBoolean := StrToBoolDef(AParam.AsString, False);
       ftTimeStamp:
       begin
-        if Pos('-', AParam.AsString.Value) > 0 then
-          AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AParam.AsString.Value))
+        if AParam.AsString = '' then
+          Exit;
+        if Pos('-', AParam.AsString) > 0 then
+          AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AParam.AsString))
         else
           AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(
-            StrToDateTime((LeftStr(AParam.AsString.Value, 4)
-            + '-' + MidStr(AParam.AsString.Value, 5, 2) + '-'
-            + MidStr(AParam.AsString.Value, 7, 2) + ' '
-            + MidStr(AParam.AsString.Value, 9, 2) + ':'
-            + MidStr(AParam.AsString.Value, 11, 2) + ':'
-            + RightStr(AParam.AsString.Value, 2)))
+            StrToDateTime((LeftStr(AParam.AsString, 4)
+            + '-' + MidStr(AParam.AsString, 5, 2) + '-'
+            + MidStr(AParam.AsString, 7, 2) + ' '
+            + MidStr(AParam.AsString, 9, 2) + ':'
+            + MidStr(AParam.AsString, 11, 2) + ':'
+            + RightStr(AParam.AsString, 2)))
             );
       end
     else
-      AFDField.AsString := AParam.AsString.Value;
+      AFDField.AsString := AParam.AsString;
     end;
   end;
   qryBIS.Post;
@@ -219,12 +229,6 @@ procedure TdfrmEHSB.SetFieldList(const Value: TQParams);
 begin
   FreeAndNilObject(FFieldList);
   FFieldList := Value;
-end;
-
-procedure TdfrmEHSB.SetValueList(const Value: TQParams);
-begin
-  FreeAndNilObject(FValueList);
-  FValueList := Value;
 end;
 
 end.

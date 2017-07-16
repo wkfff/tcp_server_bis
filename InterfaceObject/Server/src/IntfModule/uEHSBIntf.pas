@@ -1,5 +1,4 @@
-
-  {*------------------------------------------------------------------------------
+{*------------------------------------------------------------------------------
   福州市二与MQ平台接口
 
   @author  YU
@@ -13,7 +12,9 @@ interface
 
 uses
   System.SysUtils,
+  System.Generics.Collections,
   System.IniFiles,
+  qplugins_base,
   QPlugins,
   qplugins_params,
   qxml,
@@ -21,6 +22,7 @@ uses
   uBaseIntf,
   uResource,
   uEwellMqExpts,
+  utils_safeLogger,
   qstring,
   EHSBdfrm;
 
@@ -32,7 +34,6 @@ type
     FPassword: string;
     FUserName: string;
     FTargetSysCode: string;
-    function AddParams(AName, AValue: array of string): TQParams;
     procedure QueryInfo(ARecvXML, ASendXML: TQXMLNode);
   protected
     function GetTestItemResultInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
@@ -65,6 +66,7 @@ type
     property SourceSysCode: string read FSourceSysCode write FSourceSysCode;
     property TargetSysCode: string read FTargetSysCode write FTargetSysCode;
   public
+    destructor Destroy; override;
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
   end;
 
@@ -73,7 +75,12 @@ implementation
 const
   HospitalCode = '00001';
 
-{ TEHSBInterfaceObject }
+destructor TEHSBInterfaceObject.Destroy;
+begin
+  FreeAndNilObject(FConfig);
+  sfLogger.logMessage('InterFace.Destroy.00001');
+  inherited;
+end;
 
 function TEHSBInterfaceObject.ExecuteIntf(ARecvXML,
   ASendXML: TQXMLNode): Boolean;
@@ -82,17 +89,22 @@ var
 begin
   Result := False;
   MQInifile := nil;
+  if not Assigned(FConfig) then
+    FConfig := TQXML.Create;
+
   try
     MQInifile := TIniFile.Create(ExtractFilePath(ParamStr(0)) + DIOCP_TCP_SERVER_INI_FILE);
     UserName := MQInifile.ReadString(MQSection, 'UserName', '');
     PassWord := MQInifile.ReadString(MQSection, 'PassWord', '');
     SourceSysCode := MQInifile.ReadString(MQSection, 'SourceSysCode', '');
     TargetSysCode := MQInifile.ReadString(MQSection, 'TargetSysCode', '');
+
+    FConfig.LoadFromFile(ExtractFilePath(ParamStr(0))  + '\Config.xml');
+    QueryInfo(ARecvXML, ASendXML);
   finally
     FreeAndNilObject(MQInifile);
   end;
   Result := True;
-  inherited;
 end;
 
 function TEHSBInterfaceObject.GetChargeItemInfos(ARecvXML, ASendXML: TQXMLNode):
@@ -104,92 +116,193 @@ end;
 procedure TEHSBInterfaceObject.QueryInfo(ARecvXML, ASendXML: TQXMLNode);
 var
   AMQ: TMQClass;
-begin
-
-end;
-
-function TEHSBInterfaceObject.GetDeptInfos(ARecvXML, ASendXML: TQXMLNode):
-  Boolean;
-var
-  AMQ: TMQClass;
-  ASendItem: TQXML;
-
+  AConfig: TQXMLNode;
+  ASendItem: TQXMLNode;
   dtSQL: TdfrmEHSB;
-  AItemXML: TQXML;
+  AItemXML: TQXMLNode;
   ACData: TQXML;
   I: Integer;
+  AFieldList: TQXMLNodeList;
+  ATemp: TQParams;
+  AValue: TQXMLNode;
+  AFieldCount: Integer;
+  ACDataType: TQParams;
+  AOperType: TQParams;
+  k: Integer;
+
+  procedure AddParams(AItemName: string; AList: TList<TQParams>);
+  var
+    ANodeList: TQXMLNodeList;
+    I: Integer;
+    k: Integer;
+    AParams: TQParams;
+    ACover: string;
+    ATmpList: TQXMLNodeList;
+
+  begin
+    ANodeList := nil;
+    ATmpList := nil;
+    try
+      ANodeList := TQXMLNodeList.Create;
+      ATmpList := TQXMLNodeList.Create;
+      AConfig.ItemByRegex(AItemName ,ANodeList, False);
+      for I := 0 to ANodeList.Count - 1 do
+      begin
+        AParams := TQParams.Create;
+        if (ANodeList.Items[I].Attrs.ItemByName('cover') <> nil) then
+        begin
+          ACover := ANodeList.Items[I].Attrs.ItemByName('cover').Value;
+          ATmpList.Clear;
+          ARecvXML.ItemByRegex(ACover, ATmpList, True);
+          if (ATmpList.Count > 0 ) and (ATmpList[0].Text <> '') then
+            AParams.Add('value', ATmpList[0].Text )
+          else
+          begin
+            AParams.Free;
+            Continue;
+          end;
+        end;
+        for k := 0 to ANodeList.Items[I].Attrs.Count - 1 do
+        begin
+          AParams.Add(ANodeList.Items[I].Attrs[k].Name, ANodeList.Items[I].Attrs[k].Value);
+        end;
+        AList.Add(AParams);
+      end;
+    finally
+      FreeAndNilObject(ATmpList);
+      FreeAndNilObject(ANodeList);
+    end;
+  end;
 begin
+  AConfig := FConfig.ItemByPath('root.' + (ARecvXML.ItemByPath('interfacemessage.interfacename').Text));
+  sfLogger.logMessage(AConfig.Encode(False));
   AMQ := nil;
   try
     AMQ := TMQClass.Create;
-    AMQ.ServiceId := 'MS02001';
+    AMQ.ServiceId := AConfig.TextByPath('serviceid', '');
     AMQ.UserName := UserName;
     AMQ.PassWord := Password;
     AMQ.SourceSysCode := SourceSysCode;
     AMQ.TargetSysCode := TargetSysCode;
 
-    AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['DEPT_INDEX_NO','=','100 or 1= 1','and']));
-
-    AMQ.OrderItems.Add(AddParams(['item', 'sort'],[]));
+    AddParams('query', AMQ.QueryItems);
+    AddParams('order', AMQ.OrderItems);
 
     AMQ.Connect;
     try
       AMQ.Query;
-
+      sfLogger.logMessage(AMQ.respMsg.Encode(False));
       if AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '') <> '1' then
       begin
-        raise Exception.Create(Format('平台错误 RetCode：%s，RetCon：%s',
+        raise Exception.Create(Format('平台发生错误 - RetCode：%s，RetCon：%s',
           [AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode','0'),
             AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCon','错误')]));
       end;
 
       dtSQL := nil;
       ACData := nil;
+      AFieldList := nil;
+      ACDataType := nil;
+      AOperType := nil;
+      ATemp := nil;
       try
         dtSQL:= TdfrmEHSB.Create(nil);
         ACData := TQXML.Create;
-        AItemXML := AMQ.respMsg.ItemByPath('ESBEntry.MsgInfo');
+        sfLogger.logMessage(ARecvXML.ItemByPath('interfacemessage.interfacename').Text);
+        dtSQL.TableName := AConfig.TextByPath('tablename', '');
+        sfLogger.logMessage(dtSQL.TableName);
+        ACDataType := TQParams.Create;
+        AOperType := TQParams.Create;
+        ATemp := TQParams.Create;
+        AFieldList := TQXMLNodeList.Create;
+
+        AFieldCount := AConfig.ItemByRegex('correspond', AFieldList, False);
+        sfLogger.logMessage(IntToStr(AFieldCount));
+        if AFieldCount = 0  then
+          raise Exception.Create('Config.xml 缺少correspond节点, 接口:'
+            + ARecvXML.ItemByPath('interfacemessage.interfacename').Text);
 
         with dtSQL do
         begin
-          FieldList := AddParams(['DeptCode','DeptName','SpellCode','TelephoneNumber','Remark','Registered'],
-                                       ['DeptCode','DeptName','SpellCode','TelephoneNumber','Remark','Registered']);
-          TableName := 'His_Dept_Info';
+          try
+            for I := 0 to AFieldCount - 1 do
+            begin
+              if AFieldList.Items[I].Attrs.ItemByName('flag') <> nil then
+              begin
+                ConditionList.Add(AFieldList.Items[I].Attrs.ItemByName('key').Value,
+                  AFieldList.Items[I].Attrs.ItemByName('value').Value);
+
+                ACDataType.Add(AFieldList.Items[I].Attrs.ItemByName('key').Value,
+                  AFieldList.Items[I].Attrs.ItemByName('datatype').Value)
+              end;
+
+              FieldList.Add(AFieldList.Items[I].Attrs.ItemByName('key').Value,
+                  AFieldList.Items[I].Attrs.ItemByName('value').Value);
+
+              ATemp.Add(AFieldList.Items[I].Attrs.ItemByName('key').Value,
+                  AFieldList.Items[I].Attrs.ItemByName('value').Value);
+
+              if AFieldList.Items[I].Attrs.ItemByName('opertype') <> nil then
+                AOperType.Add(AFieldList.Items[I].Attrs.ItemByName('key').Value,
+                  AFieldList.Items[I].Attrs.ItemByName('opertype').Value)
+            end;
+          except
+            raise Exception.Create('Config.xml 检查 correspond节点 key value 属性, 接口:' +
+               ARecvXML.ItemByPath('interfacemessage.interfacename').Text);
+          end;
+
+          AItemXML := AMQ.respMsg.ItemByPath('ESBEntry.MsgInfo');
           for I := 0 to AItemXML.Count - 1 do
           begin
-            ACData.Parse(AItemXML.Items[I].Items[0].Text);
+            ACData.Parse(AItemXML.Items[I].Text);
+            for k := 0 to ATemp.Count - 1 do
+            begin
+              AValue := ACData.ItemByPath('msg.body.row.' + ATemp.Items[k].AsString);
+              if (AValue = nil) and (AOperType.ByName(PChar(ATemp.Items[k].Name)) = nil) then
+                raise Exception.Create('Config.xml 检查 correspond节点 value 属性, 接口:'
+                  + ARecvXML.ItemByPath('interfacemessage.interfacename').Text
+                  + ', key:' + ATemp.Items[k].AsString);
 
-            ConditionList := AddParams(['DeptCode'],
-              [ APOSTROPHE + ACData.TextByPath('msg.body.row.DEPT_CODE', '') + APOSTROPHE]);
+              if AOperType.ByName(PChar(ATemp.Items[k].Name)) = nil then
+                FieldList.Items[k].AsString := AValue.Text;
 
-            ValueList := AddParams(['DeptCode','DeptName','SpellCode','TelephoneNumber','Remark','Registered'],
-              [
-                ACData.TextByPath('msg.body.row.DEPT_CODE', ''),
-                ACData.TextByPath('msg.body.row.DEPT_NAME', ''),
-                ACData.TextByPath('msg.body.row.PINYIN_CODE', ''),
-                ACData.TextByPath('msg.body.row.DEPT_PHONE_NO', ''),
-                ACData.TextByPath('msg.body.row.NOTE', ''),
-                '0'
-              ]);
+              if ConditionList.ByName(ATemp.Items[k].Name) <> nil then
+              begin
+                if ACDataType.ByName(ATemp.Items[k].Name).AsString = 'string' then
+                  ConditionList.ByName(ATemp.Items[k].Name).AsString := APOSTROPHE + AValue.Text + APOSTROPHE
+                else
+                  ConditionList.ByName(ATemp.Items[k].Name).AsString := AValue.Text;
+              end;
+            end;
             PutDataIntoDatabase;
           end;
+
+          ASendItem := ASendXML.AddNode('root');
+          ASendItem.AddNode('resultcode').Text := '0';
+          ASendItem.AddNode('resultmessage').Text := '成功';
+          ASendItem.AddNode('results').Text := '';
         end;
 
       finally
-        FreeAndNilObject(ACData);
+        FreeAndNilObject(ATemp);
+        FreeAndNilObject(AOperType);
+        FreeAndNilObject(ACDataType);
+        FreeAndNilObject(AFieldList);
         FreeAndNilObject(dtSQL);
+        FreeAndNilObject(ACData);
       end;
-      ASendItem := ASendXML.AddNode('root');
-      ASendItem.AddNode('resultcode').Text := '0';
-      ASendItem.AddNode('resultmessage').Text := '成功';
-      ASendItem.AddNode('results').Text := '';
+
     finally
       AMQ.DisConnect;
     end;
   finally
     FreeAndNilObject(AMQ);
   end;
+end;
+
+function TEHSBInterfaceObject.GetDeptInfos(ARecvXML, ASendXML: TQXMLNode):
+  Boolean;
+begin
   Result := True;
 end;
 
@@ -201,227 +314,13 @@ end;
 
 function TEHSBInterfaceObject.GetPateintInfos(ARecvXML, ASendXML: TQXMLNode):
   Boolean;
-var
-  AMQ: TMQClass;
-  ASendItem: TQXML;
-  AParams: TQParams;
-  AValue: string;
-
-  dtSQL: TdfrmEHSB;
-  AItemXML: TQXML;
-  ACData: TQXML;
-  I: Integer;
 begin
-  AMQ := nil;
-  try
-    AMQ := TMQClass.Create;
-    AMQ.ServiceId := 'BS10001';
-    AMQ.UserName := UserName;
-    AMQ.PassWord := Password;
-    AMQ.SourceSysCode := SourceSysCode;
-    AMQ.TargetSysCode := TargetSysCode;
-
-    AValue := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid','');
-    if AValue <> '' then
-      AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['MR_NO','=',APOSTROPHE + AValue + APOSTROPHE,'and']));
-
-    AValue := ARecvXML.TextByPath('interfacemessage.interfaceparms.inpatientid','');
-    if AValue <> '' then
-      AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['INHOSP_INDEX_NO','=',APOSTROPHE + AValue + APOSTROPHE,'and']));
-
-    AValue := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber','');
-    if AValue <> '' then
-      AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['VISIT_CARD_NO','=',APOSTROPHE + AValue + APOSTROPHE,'and']));
-
-
-    AMQ.OrderItems.Add(AddParams(['item', 'sort'],[]));
-
-    AMQ.Connect;
-    try
-      AMQ.Query;
-
-      if AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '') <> '1' then
-      begin
-        raise Exception.Create(Format('平台错误 RetCode：%s，RetCon：%s',
-          [AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode','0'),
-            AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCon','错误')]));
-      end;
-
-      dtSQL := nil;
-      ACData := nil;
-      try
-        dtSQL:= TdfrmEHSB.Create(nil);
-        ACData := TQXML.Create;
-        AItemXML := AMQ.respMsg.ItemByPath('ESBEntry.MsgInfo');
-
-        with dtSQL do
-        begin
-          FieldList := AddParams(['PatientId','GetId','PatientNumber','PatientName',
-            'PatientSex','PatientAge','IdCardNo','Address','MobilePhoneNo','TelePhoneNo',
-            'CompanyName','DiagnosesID','Diagnoses','InHospitalTime','DeptCode',
-            'DeptName','WardCode','WardName','BedNo','InPatientId','GetTime'],
-            ['PatientId','GetId','PatientNumber','PatientName',
-            'PatientSex','PatientAge','IdCardNo','Address','MobilePhoneNo','TelePhoneNo',
-            'CompanyName','DiagnosesID','Diagnoses','InHospitalTime','DeptCode',
-            'DeptName','WardCode','WardName','BedNo','InPatientId','GetTime']);
-
-          TableName := 'Patient_GetInterface_List_Info';
-
-          for I := 0 to AItemXML.Count - 1 do
-          begin
-            ACData.Parse(AItemXML.Items[I].Items[0].Text);
-
-            ConditionList := AddParams(['GetId'],
-              [ APOSTROPHE + ACData.TextByPath('msg.body.row.INHOSP_NO', '') + APOSTROPHE]);
-
-            ValueList := AddParams(['PatientId','GetId','PatientNumber','PatientName',
-            'PatientSex','PatientAge','IdCardNo','Address','MobilePhoneNo','TelePhoneNo',
-            'CompanyName','DiagnosesID','Diagnoses','InHospitalTime','DeptCode',
-            'DeptName','WardCode','WardName','BedNo','InPatientId','GetTime'],
-              [
-                ACData.TextByPath('msg.body.row.MR_NO', ''),
-                ACData.TextByPath('msg.body.row.INHOSP_NO', ''),
-                ACData.TextByPath('msg.body.row.PAT_INDEX_NO', ''),
-                ACData.TextByPath('msg.body.row.PAT_NAME', ''),
-                ACData.TextByPath('msg.body.row.PHYSI_SEX_CODE', ''),
-                ACData.TextByPath('msg.body.row.AGE', ''),
-                ACData.TextByPath('msg.body.row.ID_NUMBER', ''),
-                ACData.TextByPath('msg.body.row.CONTACT_ADDR', ''),
-                ACData.TextByPath('msg.body.row.PHONE_NO', ''),
-                ACData.TextByPath('msg.body.row.PHONE_NO_HOME', ''),
-                ACData.TextByPath('msg.body.row.COMPANY', ''),
-                ACData.TextByPath('msg.body.row.ADMIT_DIAG_CODE', ''),
-                ACData.TextByPath('msg.body.row.ADMIT_DIAG_NAME', ''),
-                ACData.TextByPath('msg.body.row.ADMIT_DATE', ''),
-                ACData.TextByPath('msg.body.row.CURR_DEPT_CODE', ''),
-                ACData.TextByPath('msg.body.row.CURR_DEPT_NAME', ''),
-                ACData.TextByPath('msg.body.row.CURR_WARD_CODE', ''),
-                ACData.TextByPath('msg.body.row.CURR_WARD_NAME', ''),
-                ACData.TextByPath('msg.body.row.CURR_BED_INDEX_NO', ''),
-                ACData.TextByPath('msg.body.row.INHOSP_INDEX_NO', ''),
-                FormatDateTime('yyyymmddhhmmss', Now)
-              ]);
-            PutDataIntoDatabase;
-          end;
-        end;
-
-      finally
-        FreeAndNilObject(ACData);
-        FreeAndNilObject(dtSQL);
-      end;
-
-      ASendItem := ASendXML.AddNode('root');
-      ASendItem.AddNode('resultcode').Text := '0';
-      ASendItem.AddNode('resultmessage').Text := '成功';
-      ASendItem.AddNode('results').Text := '';
-    finally
-      AMQ.DisConnect;
-    end;
-  finally
-    FreeAndNilObject(AMQ);
-  end;
   Result := True;
 end;
 
 function TEHSBInterfaceObject.GetStaffInfos(ARecvXML, ASendXML: TQXMLNode):
   Boolean;
-var
-  AMQ: TMQClass;
-  ASendItem: TQXML;
-
-  dtSQL: TdfrmEHSB;
-  AItemXML: TQXML;
-  ACData: TQXML;
-  I: Integer;
 begin
-  AMQ := nil;
-  try
-    AMQ := TMQClass.Create;
-    AMQ.ServiceId := 'MS02003';
-    AMQ.UserName := UserName;
-    AMQ.PassWord := Password;
-    AMQ.SourceSysCode := SourceSysCode;
-    AMQ.TargetSysCode := TargetSysCode;
-
-    AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['STAFF_INDEX_NO','=','''jp'' or 1= 1','and']));
-
-    AMQ.OrderItems.Add(AddParams(['item', 'sort'],[]));
-
-    AMQ.Connect;
-    try
-      AMQ.Query;
-
-      if AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '') <> '1' then
-      begin
-        raise Exception.Create(Format('平台错误 RetCode：%s，RetCon：%s',
-          [AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode','0'),
-            AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCon','错误')]));
-      end;
-
-      dtSQL := nil;
-      ACData := nil;
-      try
-        dtSQL:= TdfrmEHSB.Create(nil);
-        ACData := TQXML.Create;
-        AItemXML := AMQ.respMsg.ItemByPath('ESBEntry.MsgInfo');
-
-        with dtSQL do
-        begin
-          FieldList := AddParams(['User_Name','SpellCode','User_Sex','User_Phone','User_Email','User_Ward',
-                          'User_Dept','User_Level','User_Type','User_Id'
-                          ,'User_No'],
-                          ['STAFF_NAME','PINYIN_CODE','PHYSI_SEX_CODE','PHONE_NO','EMAIL','WARD_CODE',
-                          'SUBOR_DEPT_CODE','TITLE_LEVEL_CODE','STAFF_CATEG_CODE','LOGIN_NAME'
-                          ,'STAFF_CODE']);
-
-          TableName := 'His_Staff_Info';
-
-          for I := 0 to AItemXML.Count - 1 do
-          begin
-            ACData.Parse(AItemXML.Items[I].Items[0].Text);
-
-            ConditionList := AddParams(['User_No', 'User_Id'],
-              [ APOSTROPHE + ACData.TextByPath('msg.body.row.STAFF_CODE', '') + APOSTROPHE,
-                APOSTROPHE + ACData.TextByPath('msg.body.row.LOGIN_NAME', '') + APOSTROPHE]);
-
-            ValueList := AddParams(['STAFF_NAME','PINYIN_CODE','PHYSI_SEX_CODE','PHONE_NO','EMAIL','WARD_CODE',
-                          'SUBOR_DEPT_CODE','TITLE_LEVEL_CODE','STAFF_CATEG_CODE','LOGIN_NAME'
-                          ,'STAFF_CODE'],
-              [
-                ACData.TextByPath('msg.body.row.STAFF_NAME', ''),
-                ACData.TextByPath('msg.body.row.PINYIN_CODE', ''),
-                ACData.TextByPath('msg.body.row.PHYSI_SEX_CODE', ''),
-                ACData.TextByPath('msg.body.row.PHONE_NO', ''),
-                ACData.TextByPath('msg.body.row.EMAIL', ''),
-                ACData.TextByPath('msg.body.row.WARD_CODE', ''),
-                ACData.TextByPath('msg.body.row.SUBOR_DEPT_CODE', ''),
-                ACData.TextByPath('msg.body.row.TITLE_LEVEL_CODE', ''),
-                ACData.TextByPath('msg.body.row.STAFF_CATEG_CODE', ''),
-                ACData.TextByPath('msg.body.row.LOGIN_NAME', ''),
-                ACData.TextByPath('msg.body.row.STAFF_CODE', '')
-              ]);
-            PutDataIntoDatabase;
-          end;
-        end;
-
-      finally
-        FreeAndNilObject(ACData);
-        FreeAndNilObject(dtSQL);
-      end;
-      ASendItem := ASendXML.AddNode('root');
-      ASendItem.AddNode('resultcode').Text := '0';
-      ASendItem.AddNode('resultmessage').Text := '成功';
-      ASendItem.AddNode('results').Text := '';
-    finally
-      AMQ.DisConnect;
-    end;
-  finally
-    FreeAndNilObject(AMQ);
-  end;
   Result := True;
 end;
 
@@ -449,102 +348,9 @@ begin
   Result := True;
 end;
 
-function TEHSBInterfaceObject.AddParams(AName, AValue: array of string): TQParams;
-var
-  AParams: TQParams;
-  I: Integer;
-begin
-  AParams := TQParams.Create;
-  for I := 0 to High(AName) do
-  begin
-    if I <= High(AValue) then
-      AParams.Add(AName[I], AValue[I])
-    else
-      AParams.Add(AName[I], '');
-  end;
-  Result := AParams;
-end;
-
 function TEHSBInterfaceObject.GetWardInfos(ARecvXML, ASendXML: TQXMLNode):
   Boolean;
-var
-  AMQ: TMQClass;
-  ASendItem: TQXML;
-
-  dtSQL: TdfrmEHSB;
-  AItemXML: TQXML;
-  ACData: TQXML;
-  I: Integer;
 begin
-  AMQ := nil;
-  try
-    AMQ := TMQClass.Create;
-    AMQ.ServiceId := 'MS02002';
-    AMQ.UserName := UserName;
-    AMQ.PassWord := Password;
-    AMQ.SourceSysCode := SourceSysCode;
-    AMQ.TargetSysCode := TargetSysCode;
-
-    AMQ.QueryItems.Add(AddParams(['item', 'compy', 'value', 'splice'],
-                                ['WARD_INDEX_NO','=','400201 or 1= 1','and']));
-
-    AMQ.OrderItems.Add(AddParams(['item', 'sort'],[]));
-
-    AMQ.Connect;
-    try
-      AMQ.Query;
-
-      if AMQ.respMsg.TextByPath('ESBEntry.MsgCount', '') = '0' then
-      begin
-        raise Exception.Create(Format('平台错误 RetCode：%s，RetCon：%s',
-          [AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode','0'),
-            AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCon','错误')]));
-      end;
-
-      dtSQL := nil;
-      ACData := nil;
-      try
-        dtSQL:= TdfrmEHSB.Create(nil);
-        ACData := TQXML.Create;
-        AItemXML := AMQ.respMsg.ItemByPath('ESBEntry.MsgInfo');
-
-        with dtSQL do
-        begin
-          FieldList := AddParams(['WardName','WardCode','SpellCode','Remark','Registered'],
-                                       ['WardName','WardCode','SpellCode','Remark','Registered']);
-          TableName := 'His_Ward_Info';
-
-          for I := 0 to AItemXML.Count - 1 do
-          begin
-            ACData.Parse(AItemXML.Items[I].Items[0].Text);
-            ConditionList := AddParams(['WardCode'],
-              [ APOSTROPHE + ACData.TextByPath('msg.body.row.WARD_CODE', '') + APOSTROPHE]);
-            ValueList := AddParams(['WardName','WardCode','SpellCode','Remark','Registered'],
-              [
-                ACData.TextByPath('msg.body.row.WARD_NAME', ''),
-                ACData.TextByPath('msg.body.row.WARD_CODE', ''),
-                ACData.TextByPath('msg.body.row.PINYIN_CODE', ''),
-                ACData.TextByPath('msg.body.row.MEMO', ''),
-                '0'
-              ]);
-            PutDataIntoDatabase;
-          end;
-        end;
-
-      finally
-        FreeAndNilObject(ACData);
-        FreeAndNilObject(dtSQL);
-      end;
-      ASendItem := ASendXML.AddNode('root');
-      ASendItem.AddNode('resultcode').Text := '0';
-      ASendItem.AddNode('resultmessage').Text := '成功';
-      ASendItem.AddNode('results').Text := '';
-    finally
-      AMQ.DisConnect;
-    end;
-  finally
-    FreeAndNilObject(AMQ);
-  end;
   Result := True;
 end;
 
@@ -558,5 +364,6 @@ finalization
   UnregisterServices('Services/Interface', [HospitalCode]);
 
 end.
+
 
 

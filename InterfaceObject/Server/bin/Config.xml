@@ -1,17 +1,19 @@
 <root>
     <getdeptinfos>
-        <serviceid name="MS02001"/>
-        <query item="STAFF_CODE" compy="=" value="' jp' or 1= 1" splice="and"/>
+        <serviceid>MS02001</serviceid>
+        <tablename>His_Dept_Info</tablename>
+        <query item="DEPT_INDEX_NO" compy="=" value="'1001' or 1= 1" splice="and"/>
         <order item="" sort=""/>
         <correspond key="DeptCode" value="DEPT_CODE" flag="key" datatype="string"/>
         <correspond key="DeptName" value="DEPT_NAME"/>
         <correspond key="SpellCode" value="PINYIN_CODE"/>
         <correspond key="TelephoneNumber" value="DEPT_PHONE_NO"/>
         <correspond key="Remark" value="NOTE"/>
-        <correspond key="Registered" value="0"/>
+        <correspond key="Registered" value="0" opertype="const"/>
     </getdeptinfos>
     <getwardinfos>
-        <serviceid name="MS02002"/>
+        <serviceid>MS02002</serviceid>
+        <tablename>His_Ward_Info</tablename>
         <query item="WARD_INDEX_NO" compy="=" value="400201 or 1= 11" splice="and"/>
         <order item="" sort=""/>
         <correspond key="WardName" value="WARD_NAME" />
@@ -21,7 +23,8 @@
         <correspond key="Registered" value="0" opertype="const"/>
     </getwardinfos>
     <getstaffinfos>
-        <serviceid name="MS02003"/>
+        <serviceid>MS02003</serviceid>
+        <tablename>His_Staff_Info</tablename>
         <query item="STAFF_INDEX_NO" compy="=" value="' jp' or 1= 1" splice="and"/>
         <order item="" sort=""/>
         <correspond key="User_Name" value="STAFF_NAME" />
@@ -38,10 +41,11 @@
         <correspond key="Registered" value="0" opertype="const"/>
     </getstaffinfos>
     <getpateintinfos>
-        <serviceid name="BS10001"/>
-        <query item="MR_NO" compy="=" value="" splice="and" cover="patientid"/>
-        <query item="INHOSP_INDEX_NO" compy="=" value="" splice="and" cover="inpatientid"/>
-        <query item="VISIT_CARD_NO" compy="=" value="" splice="and" cover="patientnumber"/>
+        <serviceid>BS10001</serviceid>
+        <tablename>patient_getinterface_list_info</tablename>
+        <query item="MR_NO" compy="=" cover="patientid" splice="and" />
+        <query item="INHOSP_INDEX_NO" compy="=" cover="inpatientid" splice="and" />
+        <query item="VISIT_CARD_NO" compy="=" cover="patientnumber" splice="and" />
         <order item="" sort=""/>
         <correspond key="GetId" value="INHOSP_NO" flag="key" datatype="string"/>
         <correspond key="PatientId" value="MR_NO" />
@@ -65,4 +69,5 @@
         <correspond key="InPatientId" value="INHOSP_INDEX_NO" />
         <correspond key="Registered" value="0" opertype="const"/>
     </getpateintinfos>
+    
 </root>

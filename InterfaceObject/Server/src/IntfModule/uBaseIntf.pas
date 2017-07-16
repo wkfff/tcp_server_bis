@@ -22,14 +22,11 @@ type
     function GetStaffInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetDeptInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
-
   public
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
   end;
 
 implementation
-
-{ TBaseIntf }
 
 function TBaseIntf.ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean;
 var
