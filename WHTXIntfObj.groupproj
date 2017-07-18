@@ -18,7 +18,7 @@
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="C:\Users\YU\Desktop\testDll\test.dproj">
+        <Projects Include="ToolBox\Toolbox.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -74,23 +74,23 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
-    <Target Name="test">
-        <MSBuild Projects="C:\Users\YU\Desktop\testDll\test.dproj"/>
+    <Target Name="Toolbox">
+        <MSBuild Projects="ToolBox\Toolbox.dproj"/>
     </Target>
-    <Target Name="test:Clean">
-        <MSBuild Projects="C:\Users\YU\Desktop\testDll\test.dproj" Targets="Clean"/>
+    <Target Name="Toolbox:Clean">
+        <MSBuild Projects="ToolBox\Toolbox.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="test:Make">
-        <MSBuild Projects="C:\Users\YU\Desktop\testDll\test.dproj" Targets="Make"/>
+    <Target Name="Toolbox:Make">
+        <MSBuild Projects="ToolBox\Toolbox.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;test"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;test:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;test:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

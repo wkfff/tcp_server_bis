@@ -1,7 +1,6 @@
 program ToolKit;
 
 uses
-  System.ShareMem,
   Vcl.Forms,
   Vcl.Themes,
   Vcl.Styles,
@@ -27,7 +26,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   ReportMemoryLeaksOnShutdown := True;
-  TStyleManager.TrySetStyle('Iceberg Classico');
   Application.CreateForm(TfrmMain, MainForm);
   //  Application.CreateForm(TfrmToolMain, ToolMainform);
   Application.Run;

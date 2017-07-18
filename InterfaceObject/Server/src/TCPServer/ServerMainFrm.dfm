@@ -4,7 +4,7 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #26381#21153#22120#20449#24687
-  ClientHeight = 410
+  ClientHeight = 390
   ClientWidth = 619
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -332,22 +332,18 @@ object frmDIOCPTcpServer: TfrmDIOCPTcpServer
     Left = 10
     Top = 10
     Width = 599
-    Height = 390
+    Height = 370
     ActivePage = tsServerStaes
     Align = alClient
     MultiLine = True
     TabOrder = 0
     object tsServerStaes: TTabSheet
       Caption = 'TCP'#26381#21153#29366#24577
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object pnlMonitor: TPanel
         Left = 0
         Top = 0
         Width = 591
-        Height = 362
+        Height = 342
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0

@@ -138,17 +138,7 @@ begin
 end;
 
 procedure TfrmDIOCPTcpServer.FormCreate(Sender: TObject);
-var
-  errNo: Integer;
 begin
-  CreateMutex(nil, False, PChar(application.Title));
-  errNo := GetLastError;
-  if errNo = ERROR_ALREADY_EXISTS then
-  begin
-    ShowMessage('程序已经在运行了');
-    Application.Terminate;
-    self.Close(); //关闭重复启动的程序
-  end;
   sfLogger.setAppender(TMyLogFileAppender.Create(True));
   FTcpServer := TDiocpCoderTcpServer.Create(Self);
   SetServerPort;

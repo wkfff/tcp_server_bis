@@ -42,6 +42,7 @@ type
     procedure Connect(AServerName:string); overload;
     procedure DisConnect;
     function Query: Integer;
+    function PutMQMessage: Integer;
   public
     property respMsg : TQXML read FrespMsg;
     property WaitInterval: Integer read FWaitInterval write SetWaitInterval;

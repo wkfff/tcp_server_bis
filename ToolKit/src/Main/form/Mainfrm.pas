@@ -223,11 +223,11 @@ begin
   FLock := False;
   Workers.Post(LoadServices, Pointer(Module), False, jdfFreeByUser);
 
-  repeat
-    Sleep(50);
-    if RzProgressBar1.Percent < 100 then
-      RzProgressBar1.Percent := RzProgressBar1.Percent + 1;
-  until FLock;
+//  repeat
+//    Sleep(50);
+//    if RzProgressBar1.Percent < 100 then
+//      RzProgressBar1.Percent := RzProgressBar1.Percent + 1;
+//  until FLock;
 
   RzGlyphStatus1.Caption := AName;
   TryStrToInt(AParams.ByName('ImageIndex').AsString, AImageIndex);
