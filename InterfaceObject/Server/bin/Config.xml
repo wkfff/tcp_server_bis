@@ -1,7 +1,7 @@
 <root>
     <getdeptinfos>
-        <serviceid>MS02001</serviceid>
-        <tablename>His_Dept_Info</tablename>
+        <MQInfo servername="MQMGR1" fid="MS02001"/>
+        <tablename>his_dept_info</tablename>
         <query item="DEPT_INDEX_NO" compy="=" value="'1001' or 1= 1" splice="and"/>
         <order item="" sort=""/>
         <correspond key="DeptCode" value="DEPT_CODE" flag="key" datatype="string"/>
@@ -12,8 +12,8 @@
         <correspond key="Registered" value="0" opertype="const"/>
     </getdeptinfos>
     <getwardinfos>
-        <serviceid>MS02002</serviceid>
-        <tablename>His_Ward_Info</tablename>
+        <MQInfo servername="MQMGR1" fid="MS02002"/>
+        <tablename>his_ward_info</tablename>
         <query item="WARD_INDEX_NO" compy="=" value="400201 or 1= 11" splice="and"/>
         <order item="" sort=""/>
         <correspond key="WardName" value="WARD_NAME" />
@@ -23,8 +23,8 @@
         <correspond key="Registered" value="0" opertype="const"/>
     </getwardinfos>
     <getstaffinfos>
-        <serviceid>MS02003</serviceid>
-        <tablename>His_Staff_Info</tablename>
+        <MQInfo servername="MQMGR1" fid="MS02003"/>
+        <tablename>his_staff_info</tablename>
         <query item="STAFF_INDEX_NO" compy="=" value="' jp' or 1= 1" splice="and"/>
         <order item="" sort=""/>
         <correspond key="User_Name" value="STAFF_NAME" />
@@ -41,7 +41,7 @@
         <correspond key="Registered" value="0" opertype="const"/>
     </getstaffinfos>
     <getpateintinfos>
-        <serviceid>BS10001</serviceid>
+        <MQInfo servername="MQMGR1" fid="BS10001"/>
         <tablename>patient_getinterface_list_info</tablename>
         <query item="MR_NO" compy="=" cover="patientid" splice="and" />
         <query item="INHOSP_INDEX_NO" compy="=" cover="inpatientid" splice="and" />
@@ -69,5 +69,4 @@
         <correspond key="InPatientId" value="INHOSP_INDEX_NO" />
         <correspond key="Registered" value="0" opertype="const"/>
     </getpateintinfos>
-    
 </root>
