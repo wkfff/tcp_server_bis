@@ -175,7 +175,6 @@ var
   end;
 begin
   AConfig := FConfig.ItemByPath('root.' + (ARecvXML.ItemByPath('interfacemessage.interfacename').Text));
-  sfLogger.logMessage(AConfig.Encode(False));
   AMQ := nil;
   try
     AMQ := TMQClass.Create;
@@ -188,10 +187,9 @@ begin
     AddParams('query', AMQ.QueryItems);
     AddParams('order', AMQ.OrderItems);
 
-    AMQ.Connect;
+    AMQ.Connect(AConfig.AttrValueByPath('MQInfo', 'servername', 'MQMGR1'));
     try
       AMQ.Query;
-      sfLogger.logMessage(AMQ.respMsg.Encode(False));
       if AMQ.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '') <> '1' then
       begin
         raise Exception.Create(Format('平台发生错误 - RetCode：%s，RetCon：%s',
@@ -208,16 +206,13 @@ begin
       try
         dtSQL:= TdfrmEHSB.Create(nil);
         ACData := TQXML.Create;
-        sfLogger.logMessage(ARecvXML.ItemByPath('interfacemessage.interfacename').Text);
         dtSQL.TableName := AConfig.TextByPath('tablename', '');
-        sfLogger.logMessage(dtSQL.TableName);
         ACDataType := TQParams.Create;
         AOperType := TQParams.Create;
         ATemp := TQParams.Create;
         AFieldList := TQXMLNodeList.Create;
 
         AFieldCount := AConfig.ItemByRegex('correspond', AFieldList, False);
-        sfLogger.logMessage(IntToStr(AFieldCount));
         if AFieldCount = 0  then
           raise Exception.Create('Config.xml 缺少correspond节点, 接口:'
             + ARecvXML.ItemByPath('interfacemessage.interfacename').Text);

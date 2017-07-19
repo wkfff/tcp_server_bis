@@ -18,7 +18,16 @@
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ToolBox\Toolbox.dproj">
+        <Projects Include="Toolbox\src\Toolbox.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Toolbox\src\EvunTool\EvunTool1.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -75,22 +84,49 @@
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
     <Target Name="Toolbox">
-        <MSBuild Projects="ToolBox\Toolbox.dproj"/>
+        <MSBuild Projects="Toolbox\src\Toolbox.dproj"/>
     </Target>
     <Target Name="Toolbox:Clean">
-        <MSBuild Projects="ToolBox\Toolbox.dproj" Targets="Clean"/>
+        <MSBuild Projects="Toolbox\src\Toolbox.dproj" Targets="Clean"/>
     </Target>
     <Target Name="Toolbox:Make">
-        <MSBuild Projects="ToolBox\Toolbox.dproj" Targets="Make"/>
+        <MSBuild Projects="Toolbox\src\Toolbox.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EvunTool1">
+        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj"/>
+    </Target>
+    <Target Name="EvunTool1:Clean">
+        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EvunTool1:Make">
+        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dll_static">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj"/>
+    </Target>
+    <Target Name="dll_static:Clean">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dll_static:Make">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="formservicehost">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj"/>
+    </Target>
+    <Target Name="formservicehost:Clean">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="formservicehost:Make">
+        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox;EvunTool1;dll_static;formservicehost"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean;EvunTool1:Clean;dll_static:Clean;formservicehost:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make;EvunTool1:Make;dll_static:Make;formservicehost:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

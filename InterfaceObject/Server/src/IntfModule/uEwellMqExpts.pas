@@ -212,6 +212,11 @@ begin
   Result := FActive;
 end;
 
+function TMQClass.PutMQMessage: Integer;
+begin
+
+end;
+
 function TMQClass.CreateQueryParamsMsg: string;
 var
   AMsgXML: TQXML;
