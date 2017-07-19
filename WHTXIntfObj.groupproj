@@ -24,12 +24,6 @@
         <Projects Include="Toolbox\src\EvunTool\EvunTool1.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -101,32 +95,14 @@
     <Target Name="EvunTool1:Make">
         <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dll_static">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj"/>
-    </Target>
-    <Target Name="dll_static:Clean">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="dll_static:Make">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\dll_static.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="formservicehost">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj"/>
-    </Target>
-    <Target Name="formservicehost:Clean">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="formservicehost:Make">
-        <MSBuild Projects="F:\DelphiFramework\QDAC3\Demos\Delphi\VCL\QPlugins\FormService\formservicehost.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox;EvunTool1;dll_static;formservicehost"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox;EvunTool1"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean;EvunTool1:Clean;dll_static:Clean;formservicehost:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean;EvunTool1:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make;EvunTool1:Make;dll_static:Make;formservicehost:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make;EvunTool1:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
