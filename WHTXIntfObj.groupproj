@@ -18,12 +18,6 @@
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Toolbox\src\Toolbox.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Toolbox\src\EvunTool\EvunTool1.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -77,32 +71,14 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Toolbox">
-        <MSBuild Projects="Toolbox\src\Toolbox.dproj"/>
-    </Target>
-    <Target Name="Toolbox:Clean">
-        <MSBuild Projects="Toolbox\src\Toolbox.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Toolbox:Make">
-        <MSBuild Projects="Toolbox\src\Toolbox.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="EvunTool1">
-        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj"/>
-    </Target>
-    <Target Name="EvunTool1:Clean">
-        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="EvunTool1:Make">
-        <MSBuild Projects="Toolbox\src\EvunTool\EvunTool1.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Toolbox;EvunTool1"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Toolbox:Clean;EvunTool1:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Toolbox:Make;EvunTool1:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
