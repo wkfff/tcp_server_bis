@@ -1,33 +1,27 @@
 program ToolKit;
 
+{ Reduce EXE size by disabling as much of RTTI as possible (delphi XE10.1 }
+{$IF CompilerVersion >= 21.0}
+{$WEAKLINKRTTI ON}
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$ENDIF}
+
 uses
   Vcl.Forms,
-  Vcl.Themes,
-  Vcl.Styles,
-  ToolMainfrm in 'form\ToolMainfrm.pas' {frmToolMain},
-  DMSToolfrm in 'form\DMSToolfrm.pas' {frmDMSTool},
-  uResourceString in 'unit\uResourceString.pas',
-  ShShareMemMap in 'unit\ShShareMemMap.pas',
-  ShThread in 'unit\ShThread.pas',
-  uShareMemServer in 'unit\uShareMemServer.pas',
-  virtualstringtreefram in 'frame\virtualstringtreefram.pas' {frmvirtualstringtree: TFrame},
-  Mainfrm in 'form\Mainfrm.pas' {frmMain},
-  uSystemModule in 'unit\uSystemModule.pas',
-  Progressfrm in 'form\Progressfrm.pas' {frmPrg};
+  Mainfrm in 'form\Mainfrm.pas' {frmToolBox},
+  Logfrm in 'form\Logfrm.pas' {frmLogger};
 
 {$R *.res}
-{$R VCLStyles.res}
 
 var
-  ToolMainform: TfrmToolMain;
-  MainForm: TfrmMain;
+  frmToolBox: TfrmToolBox;
 
 begin
+  ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  ReportMemoryLeaksOnShutdown := True;
-  Application.CreateForm(TfrmMain, MainForm);
-  //  Application.CreateForm(TfrmToolMain, ToolMainform);
+  Application.CreateForm(TfrmToolBox, frmToolBox);
+  Application.CreateForm(TfrmLogger, frmLogger);
+  frmLogger.Hide;
   Application.Run;
 end.
-

@@ -1,5 +1,0 @@
-<Groups>
-	<Group GroupName="" GroupCaption="工具箱" GroupIndex="0" ImageIndex="267">
-		<GroupItem ItemName="DMSTool" ItemCaption="" ImageIndex="278" Hint="DMS监控工具" PluginPath="" ></GroupItem>
-	</Group>
-</Groups>

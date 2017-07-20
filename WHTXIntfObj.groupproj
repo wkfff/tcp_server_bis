@@ -18,12 +18,6 @@
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\mdihost.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\dock_test.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -77,32 +71,14 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
-    <Target Name="mdihost">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\mdihost.dproj"/>
-    </Target>
-    <Target Name="mdihost:Clean">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\mdihost.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="mdihost:Make">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\mdihost.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="dock_test">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\dock_test.dproj"/>
-    </Target>
-    <Target Name="dock_test:Clean">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\dock_test.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="dock_test:Make">
-        <MSBuild Projects="E:\QDAC3\Demos\Delphi\VCL\QPlugins\MDI\dock_test.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;mdihost;dock_test"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;mdihost:Clean;dock_test:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;mdihost:Make;dock_test:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

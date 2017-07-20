@@ -1,8 +1,0 @@
-[
-  {
-    "Id":"{76397A4F-5350-498D-9CE3-AAF3F9CDAB31}",
-    "Path":"/Services/Docks/Forms/EvunTool",
-    "Loader":"Loader_BPL",
-    "Module":"EvunTool.bpl"
-  }
-]
