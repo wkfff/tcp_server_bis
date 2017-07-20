@@ -12,7 +12,6 @@ uses
   Vcl.Controls,
   Vcl.Forms,
   Vcl.Dialogs,
-  JvTabBar,
   qplugins_base,
   qplugins_params,
   qxml,
@@ -26,8 +25,6 @@ uses
   ChromeTabsTypes,
   ChromeTabsClasses,
   uShareMemServer,
-  JvPageList,
-  JvExControls,
   SynHighlighterXML,
   SynEditHighlighter,
   SynHighlighterIni,
@@ -37,10 +34,6 @@ uses
   Vcl.ImgList,
   VirtualTrees,
   Vcl.Imaging.pngimage,
-  JvExExtCtrls,
-  JvNetscapeSplitter,
-  JvXPCore,
-  JvXPButtons,
   Vcl.Mask,
   RzEdit,
   RzBtnEdt,
@@ -63,7 +56,6 @@ type
     pnlArgus: TPanel;
     pnlReturn: TPanel;
     chrmtbReturn: TChromeTabs;
-    lstReturn: TJvPageList;
     sedtArgus: TSynEdit;
     SynIniSyn1: TSynIniSyn;
     SynXMLSyn1: TSynXMLSyn;
@@ -76,9 +68,7 @@ type
     mniClear: TMenuItem;
     mniN1: TMenuItem;
     mniN2: TMenuItem;
-    splMain: TJvNetscapeSplitter;
     pnlServer: TPanel;
-    btnClosePanel: TJvXPToolButton;
     pmList: TPopupMenu;
     mniN3: TMenuItem;
     mniN4: TMenuItem;

@@ -61,19 +61,6 @@ object frmDMSTool: TfrmDMSTool
     429)
   PixelsPerInch = 96
   TextHeight = 13
-  object splMain: TJvNetscapeSplitter
-    Left = 345
-    Top = 0
-    Height = 429
-    Align = alLeft
-    MinSize = 1
-    Maximized = False
-    Minimized = False
-    ButtonCursor = crDefault
-    ExplicitLeft = 288
-    ExplicitTop = 32
-    ExplicitHeight = 100
-  end
   object pnlArgus: TPanel
     Left = 0
     Top = 0
@@ -216,13 +203,15 @@ object frmDMSTool: TfrmDMSTool
     end
   end
   object pnlReturn: TPanel
-    Left = 355
+    Left = 345
     Top = 0
-    Width = 269
+    Width = 279
     Height = 429
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = 355
+    ExplicitWidth = 269
     object chrmtbReturn: TChromeTabs
       Left = 0
       Top = 0
@@ -551,14 +540,6 @@ object frmDMSTool: TfrmDMSTool
       Align = alTop
       TabOrder = 0
     end
-    object lstReturn: TJvPageList
-      Left = 0
-      Top = 29
-      Width = 269
-      Height = 400
-      PropagateEnable = False
-      Align = alClient
-    end
   end
   object pnlList: TPanel
     Left = -49
@@ -613,12 +594,6 @@ object frmDMSTool: TfrmDMSTool
           Width = 312
           WideText = #26041#27861
         end>
-    end
-    object btnClosePanel: TJvXPToolButton
-      Left = 379
-      Top = 1
-      ImageIndex = 0
-      OnClick = btnClosePanelClick
     end
   end
   object sedtXML: TSynEdit
@@ -687,7 +662,7 @@ object frmDMSTool: TfrmDMSTool
     Left = 289
     Top = 213
     Bitmap = {
-      494C01010A002400A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A002400A80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

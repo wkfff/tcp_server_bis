@@ -290,7 +290,7 @@ begin
 
   GetMem(pMsgId, 49);
   GetMem(pErrorMsg, 2048);
-  GetMem(pGetMsg, 1024 * 1024);
+  GetMem(pGetMsg, 1024 * 1024 * 100);
   try
     FillChar(pMsgId[0], 49, #0);
     FillChar(pErrorMsg[0], 2048, #0);
