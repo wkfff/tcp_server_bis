@@ -623,6 +623,7 @@ begin
   if pgcResults.PageCount > 1 then
     for I := pgcResults.PageCount - 1 downto 1 do
       pgcResults.Pages[I].Free;
+  pgcResults.ActivePageIndex := 0;
 end;
 
 initialization
