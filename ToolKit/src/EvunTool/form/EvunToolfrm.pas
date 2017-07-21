@@ -94,6 +94,10 @@ type
     edtServer: TRzEdit;
     btbtnExcute: TRzBitBtn;
     actExcuteHttp: TAction;
+    mniCopy: TMenuItem;
+    mniCopy1: TMenuItem;
+    mniPaste: TMenuItem;
+    mniPaste1: TMenuItem;
     procedure FormResize(Sender: TObject);
     procedure btnListClick(Sender: TObject);
     procedure vstMethodListDblClick(Sender: TObject);
@@ -116,6 +120,10 @@ type
     procedure pgcResultsClose(Sender: TObject; var AllowClose: Boolean);
     procedure FormShow(Sender: TObject);
     procedure actExcuteHttpExecute(Sender: TObject);
+    procedure mniCopyClick(Sender: TObject);
+    procedure mniCopy1Click(Sender: TObject);
+    procedure mniPasteClick(Sender: TObject);
+    procedure mniPaste1Click(Sender: TObject);
   private
     FNotifyId_log: Integer;
     FShareMem: TShareMemServer;
@@ -225,7 +233,7 @@ begin
     end;
 
     try
-      sedtXML.Text := HttpPost(edtServer.Text, AData, hct_GB2312, AHeader);
+      sedtXML.Text := HttpPost(edtServer.Text, AData, hct_UTF8, AHeader);
       actResolveXML.Execute;
       pgcResults.ActivePageIndex := 0;
       if pgcResults.PageCount > 1 then
@@ -310,6 +318,26 @@ begin
   DoLogMessage(PChar(AMessage));
 end;
 
+procedure TfrmEvunTool.mniPaste1Click(Sender: TObject);
+begin
+  sedtXML.PasteFromClipboard;
+end;
+
+procedure TfrmEvunTool.mniPasteClick(Sender: TObject);
+begin
+  sedtArgus.PasteFromClipboard;
+end;
+
+procedure TfrmEvunTool.mniCopy1Click(Sender: TObject);
+begin
+  sedtXML.CopyToClipboard;
+end;
+
+procedure TfrmEvunTool.mniCopyClick(Sender: TObject);
+begin
+  sedtArgus.CopyToClipboard;
+end;
+
 procedure TfrmEvunTool.DoGetShareMemData(AJob: PQJob);
 var
   ADecode: QStringW;
@@ -328,6 +356,10 @@ const
 begin
   IsNew := True;
   pReceive := PWideChar(AJob.Data);
+  if (Pos('DMS_IBASEPARAMETERS.QUERYDTSYSPARAMETERS', pReceive) > 0)
+    or (Pos('DMS_IDTCICLOUDSUPPORT.QUERYSTANDBY', pReceive) > 0) then
+    Exit;
+
   if CharInW(AscII_12, pReceive) then
     IsNew := False;
 
@@ -408,14 +440,14 @@ begin
       sedtArgus.Lines.Add('');
       Inc(I);
     end;
-    sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count);
+    sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
     sedtArgus.EndUpdate;
   end
   else
   begin
     sedtXML.BeginUpdate;
     sedtXML.Lines.Text := (PDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).ReceiveXML);
-    sedtXML.GotoLineAndCenter(sedtArgus.Lines.Count);
+    sedtXML.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
     sedtXML.EndUpdate;
   end;
 end;

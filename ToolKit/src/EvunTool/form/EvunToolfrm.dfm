@@ -95,6 +95,8 @@ object frmEvunTool: TfrmEvunTool
       BorderSides = [sdTop]
       BorderWidth = 0
       GradientColorStyle = gcsMSOffice
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 0
       VisualStyle = vsGradient
       ToolbarControls = (
@@ -111,17 +113,20 @@ object frmEvunTool: TfrmEvunTool
       object btnList: TRzToolButton
         Left = 80
         Top = 2
+        Hint = #30417#25511#26041#27861#21015#34920
         ImageIndex = 191
         OnClick = btnListClick
       end
       object btnLog: TRzToolButton
         Left = 55
         Top = 2
+        Hint = #26085#24535
         ImageIndex = 320
       end
       object btnExcute: TRzToolButton
         Left = 105
         Top = 2
+        Hint = #25191#34892#26041#27861
         Action = actExcuteHttp
       end
       object cbxStart: TRzCheckBox
@@ -129,6 +134,7 @@ object frmEvunTool: TfrmEvunTool
         Top = 7
         Width = 43
         Height = 15
+        Hint = #24320#22987#30417#25511
         Action = actStartListener
         State = cbUnchecked
         TabOrder = 0
@@ -307,7 +313,7 @@ object frmEvunTool: TfrmEvunTool
     Left = 425
     Top = 16
     Bitmap = {
-      494C010166016801240010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010166016801300010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0050000010020000000000000A0
       0500000000000000000000000000000000000C0C0C4D848484FF0C0C0C4D0000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12256,6 +12262,16 @@ object frmEvunTool: TfrmEvunTool
     object mniClearArgusedt: TMenuItem
       Action = actClearArgusedt
     end
+    object mniCopy: TMenuItem
+      Caption = #22797#21046
+      ImageIndex = 197
+      OnClick = mniCopyClick
+    end
+    object mniPaste: TMenuItem
+      Caption = #31896#36148
+      ImageIndex = 157
+      OnClick = mniPasteClick
+    end
   end
   object pmArgusList: TPopupMenu
     Images = il16X16
@@ -12277,6 +12293,16 @@ object frmEvunTool: TfrmEvunTool
     end
     object mniClearXML: TMenuItem
       Action = actClearXML
+    end
+    object mniCopy1: TMenuItem
+      Caption = #22797#21046
+      ImageIndex = 197
+      OnClick = mniCopy1Click
+    end
+    object mniPaste1: TMenuItem
+      Caption = #31896#36148
+      ImageIndex = 157
+      OnClick = mniPaste1Click
     end
   end
 end
