@@ -15,6 +15,9 @@
         <Projects Include="ToolKit\src\Main\ToolKit.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="ToolKit\src\YPubliclibs\YPubliclibs.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
             <Dependencies/>
         </Projects>
@@ -68,6 +71,15 @@
     <Target Name="ToolKit:Make">
         <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Make"/>
     </Target>
+    <Target Name="YPubliclibs">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj"/>
+    </Target>
+    <Target Name="YPubliclibs:Clean">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="YPubliclibs:Make">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Make"/>
+    </Target>
     <Target Name="EvunTool">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj"/>
     </Target>
@@ -96,13 +108,13 @@
         <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;EvunTool;Project1;Advanced"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;YPubliclibs;EvunTool;Project1;Advanced"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;EvunTool:Clean;Project1:Clean;Advanced:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;YPubliclibs:Clean;EvunTool:Clean;Project1:Clean;Advanced:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;EvunTool:Make;Project1:Make;Advanced:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;YPubliclibs:Make;EvunTool:Make;Project1:Make;Advanced:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

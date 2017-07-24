@@ -43,6 +43,7 @@ type
     procedure RadioGroup1Click(Sender: TObject);
     procedure VST3StateChange(Sender: TBaseVirtualTree; Enter, Leave: TVirtualTreeStates);
     procedure VST3FreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure VST3GetLineStyle(Sender: TBaseVirtualTree; var Bits: Pointer);
   private
     procedure WMStartEditing(var Message: TMessage); message WM_STARTEDITING;
   end;
@@ -188,6 +189,12 @@ begin
         Index := 13;
     end;
   end;
+end;
+
+procedure TPropertiesForm.VST3GetLineStyle(Sender: TBaseVirtualTree;
+  var Bits: Pointer);
+begin
+
 end;
 
 //----------------------------------------------------------------------------------------------------------------------

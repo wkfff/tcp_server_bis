@@ -12,12 +12,6 @@ uses
   Vcl.Controls,
   Vcl.Forms,
   Vcl.Dialogs,
-  qstring,
-  qplugins_base,
-  QPlugins,
-  qplugins_vcl_formsvc,
-  qplugins_vcl_messages,
-  qplugins_params,
   Vcl.ExtCtrls,
   RzPanel,
   RzSplit,
@@ -33,8 +27,6 @@ uses
   SynHighlighterIni,
   SynHighlighterXML,
   VirtualTrees,
-  qxml,
-  uShareMemServer,
   System.Actions,
   Vcl.ActnList,
   Vcl.Menus,
@@ -43,6 +35,15 @@ uses
   RzLabel,
   Vcl.Mask,
   RzEdit,
+  qstring,
+  qplugins_base,
+  uPubliclibsBase,
+  QPlugins,
+  qxml,
+  uShareMemServer,
+  qplugins_vcl_formsvc,
+  qplugins_vcl_messages,
+  qplugins_params,
   iocp.Http.Client,
   qworker;
 
@@ -100,7 +101,6 @@ type
     mniPaste1: TMenuItem;
     procedure FormResize(Sender: TObject);
     procedure btnListClick(Sender: TObject);
-    procedure vstMethodListDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node:
@@ -124,7 +124,11 @@ type
     procedure mniCopy1Click(Sender: TObject);
     procedure mniPasteClick(Sender: TObject);
     procedure mniPaste1Click(Sender: TObject);
+    procedure rzpnlListDblClick(Sender: TObject);
   private
+    FOldPos: TPoint;
+    FDragOnRunTime: IDragOnRunTime;
+    InReposition: Boolean;
     FNotifyId_log: Integer;
     FShareMem: TShareMemServer;
     FDMSInfoList: TStringList;
@@ -187,9 +191,10 @@ begin
 
   try
     AHeader := THttpHeaders.Create;
-    AHeader.Add('Content-Encoding','gzip');
-    AHeader.Add('Content-Type','application/x-www-form-urlencoded');
-    AHeader.Add('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
+    AHeader.Add('Content-Encoding', 'gzip');
+    AHeader.Add('Content-Type', 'application/x-www-form-urlencoded');
+    AHeader.Add('Accept',
+      'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
     AHeader.Add('Accept-Encoding', 'gzip, deflate, identity');
     AHeader.Add('User-Agent', 'UserClient');
     AData := sedtArgus.SelText;
@@ -198,7 +203,7 @@ begin
     begin
       for I := sedtArgus.CaretY - 1 to sedtArgus.Lines.Count - 1 do
       begin
-        if (Trim(sedtArgus.Lines[I]) = '')  then
+        if (Trim(sedtArgus.Lines[I]) = '') then
         begin
           AEnd := I - 1;
           Break;
@@ -356,8 +361,8 @@ const
 begin
   IsNew := True;
   pReceive := PWideChar(AJob.Data);
-  if (Pos('DMS_IBASEPARAMETERS.QUERYDTSYSPARAMETERS', pReceive) > 0)
-    or (Pos('DMS_IDTCICLOUDSUPPORT.QUERYSTANDBY', pReceive) > 0) then
+  if (Pos('DMS_IBASEPARAMETERS.QUERYDTSYSPARAMETERS', pReceive) > 0) or (Pos('DMS_IDTCICLOUDSUPPORT.QUERYSTANDBY',
+    pReceive) > 0) then
     Exit;
 
   if CharInW(AscII_12, pReceive) then
@@ -474,6 +479,10 @@ begin
 
   FNotifyId_log := (PluginsManager as IQNotifyManager).IdByName('__safe_Logger__');
   rzpnlList.Hide;
+
+  if Supports(PluginsManager.ByPath(PChar('/Services/Controls/DragOnRunTime')),
+    IDragOnRunTime, FDragOnRunTime) then
+    FDragOnRunTime.SelectControl := rzpnlList;
 end;
 
 procedure TfrmEvunTool.FormDestroy(Sender: TObject);
@@ -510,7 +519,7 @@ begin
     sedtXML.Text := '';
 end;
 
-procedure TfrmEvunTool.vstMethodListDblClick(Sender: TObject);
+procedure TfrmEvunTool.rzpnlListDblClick(Sender: TObject);
 begin
   rzpnlList.Hide;
 end;

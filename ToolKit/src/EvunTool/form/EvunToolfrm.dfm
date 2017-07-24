@@ -218,12 +218,13 @@ object frmEvunTool: TfrmEvunTool
       Images = il16X16
       ParentColor = False
       ShowCloseButtonOnActiveTab = True
+      TabHeight = 29
       TabIndex = 0
       TabOrder = 0
       TabStyle = tsCutCorner
       Transparent = True
       OnClose = pgcResultsClose
-      FixedDimension = 23
+      FixedDimension = 29
       object tstXML: TRzTabSheet
         Color = 15781299
         ImageIndex = 126
@@ -232,7 +233,7 @@ object frmEvunTool: TfrmEvunTool
           Left = 0
           Top = 0
           Width = 351
-          Height = 448
+          Height = 442
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -264,12 +265,12 @@ object frmEvunTool: TfrmEvunTool
     GradientColorStyle = gcsMSOffice
     TabOrder = 1
     VisualStyle = vsGradient
+    OnDblClick = rzpnlListDblClick
     object vstMethodList: TVirtualStringTree
       Left = 0
-      Top = 0
+      Top = 21
       Width = 409
-      Height = 190
-      Align = alClient
+      Height = 169
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET
       Header.Font.Color = clWindowText
@@ -282,7 +283,6 @@ object frmEvunTool: TfrmEvunTool
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
       TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
       TreeOptions.SelectionOptions = [toFullRowSelect]
-      OnDblClick = vstMethodListDblClick
       OnFocusChanged = vstMethodListFocusChanged
       OnFreeNode = vstMethodListFreeNode
       OnGetText = vstMethodListGetText
@@ -300,7 +300,7 @@ object frmEvunTool: TfrmEvunTool
           CaptionAlignment = taCenter
           Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
           Position = 1
-          Width = 312
+          Width = 328
           WideText = #26041#27861
         end>
     end
@@ -313,7 +313,7 @@ object frmEvunTool: TfrmEvunTool
     Left = 425
     Top = 16
     Bitmap = {
-      494C010166016801300010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010166016801400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0050000010020000000000000A0
       0500000000000000000000000000000000000C0C0C4D848484FF0C0C0C4D0000
       0000000000000000000000000000000000000000000000000000000000000000

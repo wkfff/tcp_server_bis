@@ -141,7 +141,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\debug\ToolKit.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\debug\ToolKit.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ToolKit.exe</RemoteName>
                         <Overwrite>true</Overwrite>
