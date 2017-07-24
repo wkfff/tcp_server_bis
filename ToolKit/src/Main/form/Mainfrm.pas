@@ -18,7 +18,6 @@ uses
   RzPanel,
   System.ImageList,
   Vcl.ImgList,
-  cxGraphics,
   Vcl.Menus,
   System.Actions,
   Vcl.ActnList,
@@ -35,13 +34,13 @@ uses
   qplugins_vcl_formsvc,
   RzStatus,
   utils_safeLogger,
-  Logfrm;
+  Logfrm,
+  JvImageList;
 
 type
   TfrmToolBox = class(TForm)
     tbrMenu: TRzToolbar;
     btnSystem: TRzMenuToolbarButton;
-    ilSmall_16X16: TcxImageList;
     pmSystem: TPopupMenu;
     actlstMain: TActionList;
     actClose: TAction;
@@ -66,6 +65,7 @@ type
     RzClockStatus1: TRzClockStatus;
     rzstspnStatus: TRzStatusPane;
     btnLog: TRzToolButton;
+    ilSmall16X16: TJvImageList;
     procedure actCloseExecute(Sender: TObject);
     procedure actEvunToolExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -117,8 +117,6 @@ begin
   APage.ImageIndex := AImageIndex;
   AFormService.DockTo(APage.Handle, faContent);
   FillChar(AEvents, SizeOf(AEvents), 0);
-  AEvents.OnClose := DoDockChildClose;
-  AEvents.OnFree := DoDockChildFree;
   AFormService.HookEvents(AEvents);
   if AHoldNeeded then
     HoldByComponent(APage, AFormService);
@@ -129,22 +127,10 @@ end;
 procedure TfrmToolBox.DoDockChildClose(ASender: IQFormService;
   var Action: TCloseAction);
 begin
-  Action := caFree;
 end;
 
 procedure TfrmToolBox.DoDockChildFree(AForm: IQFormService);
-var
-  I: Integer;
 begin
-  for I := 0 to pgcClient.PageCount - 1 do
-  begin
-    if pgcClient.Pages[I].Tag = IntPtr(AForm) then
-    begin
-      AForm.UnhookEvents;
-      FreeObject(pgcClient.Pages[I]);
-      Break;
-    end;
-  end;
 end;
 
 procedure TfrmToolBox.DoShowDockForm(ACaption: string; AImageIndex: Integer);
@@ -174,7 +160,6 @@ begin
   PluginsManager.Loaders.Add(TQDLLLoader.Create(APath, '.dll'));
   PluginsManager.Loaders.Add(TQBPLLoader.Create(APath, '.bpl'));
   PluginsManager.Start;
-
 end;
 
 procedure TfrmToolBox.FormDestroy(Sender: TObject);
@@ -186,7 +171,7 @@ begin
   begin
     AForm := IQFormService(Pointer(pgcClient.Pages[I].Tag));
     AForm.UnhookEvents;
-    AForm._Release;
+    AForm.Close;
   end;
 end;
 
@@ -201,8 +186,9 @@ procedure TfrmToolBox.pgcClientClose(Sender: TObject; var AllowClose: Boolean);
 var
   AFormService: IQFormService;
 begin
-  AllowClose := False;
+  AllowClose := True;
   AFormService := IQFormService(Pointer(pgcClient.ActivePage.Tag));
+  AFormService.UnhookEvents;
   AFormService.Close;
 end;
 

@@ -12,6 +12,12 @@
         <Projects Include="InterfaceObject\Server\src\DIOCPTCPServer.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Test\Project1.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Test\Advanced\Advanced.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="ToolKit\src\Main\ToolKit.dproj">
             <Dependencies/>
         </Projects>
@@ -19,12 +25,6 @@
             <Dependencies/>
         </Projects>
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Test\Project1.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Test\Advanced\Advanced.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -62,6 +62,24 @@
     <Target Name="DIOCPTCPServer:Make">
         <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Project1">
+        <MSBuild Projects="Test\Project1.dproj"/>
+    </Target>
+    <Target Name="Project1:Clean">
+        <MSBuild Projects="Test\Project1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project1:Make">
+        <MSBuild Projects="Test\Project1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Advanced">
+        <MSBuild Projects="Test\Advanced\Advanced.dproj"/>
+    </Target>
+    <Target Name="Advanced:Clean">
+        <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Advanced:Make">
+        <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Make"/>
+    </Target>
     <Target Name="ToolKit">
         <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj"/>
     </Target>
@@ -89,32 +107,14 @@
     <Target Name="EvunTool:Make">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Project1">
-        <MSBuild Projects="Test\Project1.dproj"/>
-    </Target>
-    <Target Name="Project1:Clean">
-        <MSBuild Projects="Test\Project1.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Project1:Make">
-        <MSBuild Projects="Test\Project1.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="Advanced">
-        <MSBuild Projects="Test\Advanced\Advanced.dproj"/>
-    </Target>
-    <Target Name="Advanced:Clean">
-        <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Advanced:Make">
-        <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;YPubliclibs;EvunTool;Project1;Advanced"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;Project1;Advanced;ToolKit;YPubliclibs;EvunTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;YPubliclibs:Clean;EvunTool:Clean;Project1:Clean;Advanced:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;Project1:Clean;Advanced:Clean;ToolKit:Clean;YPubliclibs:Clean;EvunTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;YPubliclibs:Make;EvunTool:Make;Project1:Make;Advanced:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;Project1:Make;Advanced:Make;ToolKit:Make;YPubliclibs:Make;EvunTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

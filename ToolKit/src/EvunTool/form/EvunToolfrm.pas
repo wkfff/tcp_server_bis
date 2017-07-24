@@ -17,7 +17,6 @@ uses
   RzSplit,
   System.ImageList,
   Vcl.ImgList,
-  cxGraphics,
   RzTabs,
   SynEdit,
   RzButton,
@@ -489,12 +488,16 @@ procedure TfrmEvunTool.FormDestroy(Sender: TObject);
 var
   I: Integer;
 begin
-  for I := 0 to FDCSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
-  FDCSInfoList.Free;
-  for I := 0 to FDMSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
-  FDMSInfoList.Free;
+  if Assigned(FDCSInfoList) then
+    for I := 0 to FDCSInfoList.Count - 1 do
+      Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
+  if Assigned(FDCSInfoList) then
+    FreeAndNilObject(FDCSInfoList);
+  if Assigned(FDMSInfoList) then
+    for I := 0 to FDMSInfoList.Count - 1 do
+      Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
+  if Assigned(FDMSInfoList) then
+    FreeAndNilObject(FDMSInfoList);
 
   Workers.Clear(FShareMem, -1, True);
   FShareMem.Free;
