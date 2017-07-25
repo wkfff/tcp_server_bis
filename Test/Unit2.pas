@@ -17,11 +17,17 @@ uses
   QPlugins,
   qplugins_base,
   qplugins_loader_lib,
-  uPubliclibsBase;
+  uPubliclibsBase, FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.VCLUI.Wait, Data.DB,
+  FireDAC.Comp.Client;
 
 type
   TForm2 = class(TForm)
     Panel1: TPanel;
+    FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
+    con1: TFDConnection;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

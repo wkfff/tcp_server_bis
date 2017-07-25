@@ -35,7 +35,7 @@ uses
   RzStatus,
   utils_safeLogger,
   Logfrm,
-  JvImageList;
+  JvImageList, Vcl.StdCtrls;
 
 type
   TfrmToolBox = class(TForm)
@@ -96,7 +96,7 @@ end;
 procedure TfrmToolBox.actEvunToolExecute(Sender: TObject);
 begin
   //
-  DoShowDockForm('EvunTool', 360);
+  DoShowDockForm('EvunTool', actEvunTool.ImageIndex);
 end;
 
 procedure TfrmToolBox.btnLogClick(Sender: TObject);

@@ -44,7 +44,7 @@ requires
 
 contains
   EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool},
-  virtualstringtreefram in 'frame\virtualstringtreefram.pas' {frmvirtualstringtree: TFrame},
+  GridDatafram in 'frame\GridDatafram.pas' {frmvirtualstringtree: TFrame},
   ShShareMemMap in 'unit\ShShareMemMap.pas',
   ShThread in 'unit\ShThread.pas',
   uShareMemServer in 'unit\uShareMemServer.pas',

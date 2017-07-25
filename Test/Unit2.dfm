@@ -15,11 +15,21 @@ object Form2: TForm2
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
-    Left = 72
-    Top = 112
+    Left = 104
+    Top = 24
     Width = 185
     Height = 41
     Caption = 'Panel1'
     TabOrder = 0
+  end
+  object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
+    Left = 144
+    Top = 160
+  end
+  object con1: TFDConnection
+    Params.Strings = (
+      'DriverID=SQLite')
+    Left = 200
+    Top = 240
   end
 end

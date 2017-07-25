@@ -2,8 +2,8 @@ object frmEvunTool: TfrmEvunTool
   Left = 0
   Top = 0
   Caption = 'EvunTool'
-  ClientHeight = 475
-  ClientWidth = 710
+  ClientHeight = 430
+  ClientWidth = 693
   Color = 15316623
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -48,22 +48,22 @@ object frmEvunTool: TfrmEvunTool
     0000FC3F0000F81F0000F00F0000E0070000C003000080010000000000000000
     000080010000C0030000E0070000F00F0000F81F0000FC3F0000FE7F0000}
   OldCreateOrder = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   DesignSize = (
-    710
-    475)
+    693
+    430)
   PixelsPerInch = 96
   TextHeight = 13
   object splEvunTool: TRzSplitter
     Left = 0
     Top = 0
-    Width = 710
-    Height = 475
-    Position = 348
-    Percent = 49
+    Width = 693
+    Height = 430
+    Position = 347
     UpperLeft.Color = 15781299
     LowerRight.Color = 15781299
     HotSpotVisible = True
@@ -74,10 +74,10 @@ object frmEvunTool: TfrmEvunTool
     TabOrder = 0
     VisualStyle = vsGradient
     BarSize = (
-      348
+      347
       0
-      355
-      475)
+      354
+      430)
     UpperLeftControls = (
       tbrButtons
       sedtArgus
@@ -87,7 +87,7 @@ object frmEvunTool: TfrmEvunTool
     object tbrButtons: TRzToolbar
       Left = 0
       Top = 0
-      Width = 348
+      Width = 347
       Height = 29
       Images = il16X16
       BorderInner = fsNone
@@ -144,8 +144,8 @@ object frmEvunTool: TfrmEvunTool
     object sedtArgus: TSynEdit
       Left = 0
       Top = 29
-      Width = 348
-      Height = 417
+      Width = 347
+      Height = 372
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -159,24 +159,24 @@ object frmEvunTool: TfrmEvunTool
       Gutter.Font.Height = -11
       Gutter.Font.Name = 'Courier New'
       Gutter.Font.Style = []
+      Gutter.LeftOffset = 0
       Gutter.ShowLineNumbers = True
       Highlighter = sisIni
       FontSmoothing = fsmNone
     end
     object rzpnlServer: TRzPanel
       Left = 0
-      Top = 446
-      Width = 348
+      Top = 401
+      Width = 347
       Height = 29
       Align = alBottom
       BorderOuter = fsNone
       Color = 15781299
       GradientColorStyle = gcsMSOffice
+      GradientDirection = gdVerticalEnd
       TabOrder = 2
       VisualStyle = vsGradient
-      DesignSize = (
-        348
-        29)
+      OnResize = rzpnlServerResize
       object lblServer: TRzLabel
         Left = 7
         Top = 7
@@ -186,19 +186,17 @@ object frmEvunTool: TfrmEvunTool
         Transparent = True
       end
       object edtServer: TRzEdit
-        Left = 75
+        Left = 76
         Top = 4
-        Width = 186
+        Width = 192
         Height = 21
         Text = ''
-        Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
       end
       object btbtnExcute: TRzBitBtn
-        Left = 267
+        Left = 270
         Top = 2
         Action = actExcuteHttp
-        Anchors = [akTop, akRight]
         Caption = #25191#34892
         TabOrder = 1
         ImageIndex = 215
@@ -208,8 +206,8 @@ object frmEvunTool: TfrmEvunTool
     object pgcResults: TRzPageControl
       Left = 0
       Top = 0
-      Width = 355
-      Height = 475
+      Width = 339
+      Height = 430
       Hint = ''
       ActivePage = tstXML
       Align = alClient
@@ -232,8 +230,8 @@ object frmEvunTool: TfrmEvunTool
         object sedtXML: TSynEdit
           Left = 0
           Top = 0
-          Width = 351
-          Height = 442
+          Width = 335
+          Height = 397
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -247,73 +245,65 @@ object frmEvunTool: TfrmEvunTool
           Gutter.Font.Height = -11
           Gutter.Font.Name = 'Courier New'
           Gutter.Font.Style = []
+          Gutter.LeftOffset = 0
           Gutter.ShowLineNumbers = True
           Gutter.ShowModification = True
+          Gutter.Width = 10
           Highlighter = sxsXML
           FontSmoothing = fsmNone
         end
       end
     end
   end
-  object rzpnlList: TRzPanel
+  object vstMethodList: TVirtualStringTree
     Left = 0
-    Top = 256
+    Top = 232
     Width = 409
-    Height = 190
+    Height = 169
     Anchors = [akLeft, akBottom]
-    BorderOuter = fsNone
-    GradientColorStyle = gcsMSOffice
+    Header.AutoSizeIndex = 0
+    Header.Font.Charset = DEFAULT_CHARSET
+    Header.Font.Color = clWindowText
+    Header.Font.Height = -11
+    Header.Font.Name = 'Tahoma'
+    Header.Font.Style = []
+    Header.Options = [hoColumnResize, hoVisible]
+    PopupMenu = pmArgusList
     TabOrder = 1
-    VisualStyle = vsGradient
-    OnDblClick = rzpnlListDblClick
-    object vstMethodList: TVirtualStringTree
-      Left = 0
-      Top = 21
-      Width = 409
-      Height = 169
-      Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
-      Header.Font.Color = clWindowText
-      Header.Font.Height = -11
-      Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
-      Header.Options = [hoColumnResize, hoVisible]
-      PopupMenu = pmArgusList
-      TabOrder = 0
-      TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
-      TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
-      TreeOptions.SelectionOptions = [toFullRowSelect]
-      OnFocusChanged = vstMethodListFocusChanged
-      OnFreeNode = vstMethodListFreeNode
-      OnGetText = vstMethodListGetText
-      OnInitChildren = vstMethodListInitChildren
-      OnInitNode = vstMethodListInitNode
-      Columns = <
-        item
-          Alignment = taCenter
-          Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
-          Position = 0
-          Width = 77
-          WideText = 'Client'
-        end
-        item
-          CaptionAlignment = taCenter
-          Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
-          Position = 1
-          Width = 328
-          WideText = #26041#27861
-        end>
-    end
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
+    OnDblClick = vstMethodListDblClick
+    OnFocusChanged = vstMethodListFocusChanged
+    OnFreeNode = vstMethodListFreeNode
+    OnGetText = vstMethodListGetText
+    OnInitChildren = vstMethodListInitChildren
+    OnInitNode = vstMethodListInitNode
+    Columns = <
+      item
+        Alignment = taCenter
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
+        Position = 0
+        Width = 77
+        WideText = 'Client'
+      end
+      item
+        CaptionAlignment = taCenter
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
+        Position = 1
+        Width = 328
+        WideText = #26041#27861
+      end>
   end
   object il16X16: TJvImageList
     ColorDepth = cd32Bit
     PixelFormat = pf32bit
     Items = <>
     DrawingStyle = dsTransparent
-    Left = 425
+    Left = 553
     Top = 16
     Bitmap = {
-      494C010166016801480010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010166016801580010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0050000010020000000000000A0
       0500000000000000000000000000000000000C0C0C4D848484FF0C0C0C4D0000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12205,12 +12195,12 @@ object frmEvunTool: TfrmEvunTool
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
     WantBracesParsed = False
-    Left = 425
-    Top = 64
+    Left = 553
+    Top = 48
   end
   object actEvunTool: TActionList
     Images = il16X16
-    Left = 367
+    Left = 521
     Top = 16
     object actStartListener: TAction
       Caption = #24320#22987
@@ -12252,12 +12242,12 @@ object frmEvunTool: TfrmEvunTool
     KeyAttri.Foreground = clBlue
     NumberAttri.Foreground = clHighlight
     NumberAttri.Style = [fsBold]
-    Left = 367
-    Top = 64
+    Left = 521
+    Top = 48
   end
   object pmArgus: TPopupMenu
     Images = il16X16
-    Left = 483
+    Left = 585
     Top = 16
     object mniClearArgusedt: TMenuItem
       Action = actClearArgusedt
@@ -12275,7 +12265,7 @@ object frmEvunTool: TfrmEvunTool
   end
   object pmArgusList: TPopupMenu
     Images = il16X16
-    Left = 541
+    Left = 617
     Top = 16
     object mniClearArgus: TMenuItem
       Action = actClearArgus
@@ -12283,7 +12273,7 @@ object frmEvunTool: TfrmEvunTool
   end
   object pmXML: TPopupMenu
     Images = il16X16
-    Left = 599
+    Left = 649
     Top = 16
     object mniResolveXML: TMenuItem
       Action = actResolveXML

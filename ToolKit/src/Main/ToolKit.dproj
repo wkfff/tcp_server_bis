@@ -89,7 +89,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>..\resource\tool.ico</Icon_MainIcon>
         <UsePackages>true</UsePackages>
-        <DCC_UsePackage>vcl;rtl;QDAC3;RaizeComponentsVcl;Jcl;JvCore;JvStdCtrls;YPubliclibs</DCC_UsePackage>
+        <DCC_UsePackage>vcl;rtl;QDAC3;RaizeComponentsVcl;Jcl;JvCore;JvStdCtrls</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -104,6 +104,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>..\resource\tool.ico</Icon_MainIcon>
+        <UsePackages>true</UsePackages>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

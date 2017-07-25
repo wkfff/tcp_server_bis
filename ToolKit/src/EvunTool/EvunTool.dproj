@@ -142,7 +142,7 @@
             <Form>frmEvunTool</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="frame\virtualstringtreefram.pas">
+        <DCCReference Include="frame\GridDatafram.pas">
             <Form>frmvirtualstringtree</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>

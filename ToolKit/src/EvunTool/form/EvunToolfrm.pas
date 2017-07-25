@@ -29,7 +29,6 @@ uses
   System.Actions,
   Vcl.ActnList,
   Vcl.Menus,
-  virtualstringtreefram,
   Vcl.StdCtrls,
   RzLabel,
   Vcl.Mask,
@@ -44,7 +43,8 @@ uses
   qplugins_vcl_messages,
   qplugins_params,
   iocp.Http.Client,
-  qworker;
+  qworker,
+  GridDatafram;
 
 type
   PDMSDebugInfo = ^TDMSDebugInfo;
@@ -73,8 +73,6 @@ type
     btnList: TRzToolButton;
     btnLog: TRzToolButton;
     btnExcute: TRzToolButton;
-    rzpnlList: TRzPanel;
-    vstMethodList: TVirtualStringTree;
     actEvunTool: TActionList;
     actStartListener: TAction;
     sisIni: TSynIniSyn;
@@ -98,6 +96,7 @@ type
     mniCopy1: TMenuItem;
     mniPaste: TMenuItem;
     mniPaste1: TMenuItem;
+    vstMethodList: TVirtualStringTree;
     procedure FormResize(Sender: TObject);
     procedure btnListClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -123,7 +122,9 @@ type
     procedure mniCopy1Click(Sender: TObject);
     procedure mniPasteClick(Sender: TObject);
     procedure mniPaste1Click(Sender: TObject);
-    procedure rzpnlListDblClick(Sender: TObject);
+    procedure vstMethodListDblClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure rzpnlServerResize(Sender: TObject);
   private
     FOldPos: TPoint;
     FDragOnRunTime: IDragOnRunTime;
@@ -306,10 +307,10 @@ end;
 
 procedure TfrmEvunTool.btnListClick(Sender: TObject);
 begin
-  if rzpnlList.Showing then
-    rzpnlList.Hide
+  if vstMethodList.Showing then
+    vstMethodList.Hide
   else
-    rzpnlList.Show;
+    vstMethodList.Show;
 end;
 
 procedure TfrmEvunTool.DoLogMessage(AMessage: PChar);
@@ -465,6 +466,11 @@ begin
   AVST.RootNodeCount := OldRootCount;
 end;
 
+procedure TfrmEvunTool.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+end;
+
 procedure TfrmEvunTool.FormCreate(Sender: TObject);
 begin
   FShareMem := TShareMemServer.Create(Debug_MapMem);
@@ -477,27 +483,23 @@ begin
   vstMethodList.RootNodeCount := 2;
 
   FNotifyId_log := (PluginsManager as IQNotifyManager).IdByName('__safe_Logger__');
-  rzpnlList.Hide;
+  vstMethodList.Hide;
 
   if Supports(PluginsManager.ByPath(PChar('/Services/Controls/DragOnRunTime')),
     IDragOnRunTime, FDragOnRunTime) then
-    FDragOnRunTime.SelectControl := rzpnlList;
+    FDragOnRunTime.SelectControl := vstMethodList;
 end;
 
 procedure TfrmEvunTool.FormDestroy(Sender: TObject);
 var
   I: Integer;
 begin
-  if Assigned(FDCSInfoList) then
-    for I := 0 to FDCSInfoList.Count - 1 do
-      Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
-  if Assigned(FDCSInfoList) then
-    FreeAndNilObject(FDCSInfoList);
-  if Assigned(FDMSInfoList) then
-    for I := 0 to FDMSInfoList.Count - 1 do
-      Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
-  if Assigned(FDMSInfoList) then
-    FreeAndNilObject(FDMSInfoList);
+  for I := 0 to FDCSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
+  FreeAndNilObject(FDCSInfoList);
+  for I := 0 to FDMSInfoList.Count - 1 do
+    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
+  FreeAndNilObject(FDMSInfoList);
 
   Workers.Clear(FShareMem, -1, True);
   FShareMem.Free;
@@ -522,9 +524,18 @@ begin
     sedtXML.Text := '';
 end;
 
-procedure TfrmEvunTool.rzpnlListDblClick(Sender: TObject);
+procedure TfrmEvunTool.rzpnlServerResize(Sender: TObject);
 begin
-  rzpnlList.Hide;
+  if rzpnlServer.Width = 0 then
+    Exit;
+  edtServer.Left := 72;
+  edtServer.Width := rzpnlServer.Width - 72 - btbtnExcute.Width - 4;
+  btbtnExcute.Left := edtServer.Left + edtServer.Width + 2;
+end;
+
+procedure TfrmEvunTool.vstMethodListDblClick(Sender: TObject);
+begin
+  vstMethodList.Hide;
 end;
 
 procedure TfrmEvunTool.vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node:

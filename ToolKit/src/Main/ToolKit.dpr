@@ -8,6 +8,7 @@ program ToolKit;
 
 uses
   Vcl.Forms,
+  Winapi.Windows,
   Mainfrm in 'form\Mainfrm.pas' {frmToolBox},
   Logfrm in 'form\Logfrm.pas' {frmLogger};
 
@@ -15,13 +16,22 @@ uses
 
 var
   frmToolBox: TfrmToolBox;
+  hMutex: HWND;
+  iRet: Integer;
 
 begin
   ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TfrmToolBox, frmToolBox);
-  Application.CreateForm(TfrmLogger, frmLogger);
-  frmLogger.Hide;
-  Application.Run;
+  hMutex := CreateMutex(nil, False, PChar('TOOL_KIT_MUTEX_ONE'));//创建互斥对象
+  iRet := GetLastError;
+  if iRet <> ERROR_ALREADY_EXISTS then //创建成功, 运行程序
+  begin
+    Application.Initialize;
+    Application.MainFormOnTaskbar := True;
+    Application.CreateForm(TfrmToolBox, frmToolBox);
+    Application.CreateForm(TfrmLogger, frmLogger);
+    frmLogger.Hide;
+    Application.Run;
+  end;
+  ReleaseMutex(hMutex);    //释放互斥对象
 end.

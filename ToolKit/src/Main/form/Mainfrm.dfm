@@ -256,6 +256,7 @@ object frmToolBox: TfrmToolBox
       Hint = ''
       Align = alClient
       Color = 15781299
+      Images = ilSmall16X16
       ParentColor = False
       ShowCloseButtonOnActiveTab = True
       TabOrder = 0
@@ -321,6 +322,7 @@ object frmToolBox: TfrmToolBox
       Height = 19
       Align = alLeft
       Caption = ''
+      Images = ilSmall16X16
       ExplicitLeft = 736
       ExplicitHeight = 20
     end
@@ -402,7 +404,7 @@ object frmToolBox: TfrmToolBox
     Left = 296
     Top = 211
     Bitmap = {
-      494C010168019801280010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801300010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
