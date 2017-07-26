@@ -34,8 +34,9 @@ uses
   qplugins_vcl_formsvc,
   RzStatus,
   utils_safeLogger,
-  Logfrm,
-  JvImageList, Vcl.StdCtrls;
+  JvImageList,
+  Vcl.StdCtrls,
+  Logfrm;
 
 type
   TfrmToolBox = class(TForm)
@@ -66,6 +67,8 @@ type
     rzstspnStatus: TRzStatusPane;
     btnLog: TRzToolButton;
     ilSmall16X16: TJvImageList;
+    actConfig: TAction;
+    mniConfig: TMenuItem;
     procedure actCloseExecute(Sender: TObject);
     procedure actEvunToolExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -74,6 +77,7 @@ type
     procedure pgcClientChanging(Sender: TObject; NewIndex: Integer;
       var AllowChange: Boolean);
     procedure btnLogClick(Sender: TObject);
+    procedure actConfigExecute(Sender: TObject);
   private
     FNotifyId_log: Integer;
     procedure DoDockChildClose(ASender: IQFormService; var Action: TCloseAction);
@@ -91,6 +95,11 @@ implementation
 procedure TfrmToolBox.actCloseExecute(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TfrmToolBox.actConfigExecute(Sender: TObject);
+begin
+  //
 end;
 
 procedure TfrmToolBox.actEvunToolExecute(Sender: TObject);

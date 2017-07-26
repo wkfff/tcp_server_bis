@@ -18,10 +18,10 @@
         <Projects Include="Test\Advanced\Advanced.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ToolKit\src\Main\ToolKit.dproj">
+        <Projects Include="ToolKit\src\YPubliclibs\YPubliclibs.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ToolKit\src\YPubliclibs\YPubliclibs.dproj">
+        <Projects Include="ToolKit\src\Main\ToolKit.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
@@ -80,15 +80,6 @@
     <Target Name="Advanced:Make">
         <MSBuild Projects="Test\Advanced\Advanced.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ToolKit">
-        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj"/>
-    </Target>
-    <Target Name="ToolKit:Clean">
-        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ToolKit:Make">
-        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Make"/>
-    </Target>
     <Target Name="YPubliclibs">
         <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj"/>
     </Target>
@@ -97,6 +88,15 @@
     </Target>
     <Target Name="YPubliclibs:Make">
         <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ToolKit">
+        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj"/>
+    </Target>
+    <Target Name="ToolKit:Clean">
+        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ToolKit:Make">
+        <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Make"/>
     </Target>
     <Target Name="EvunTool">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj"/>
@@ -108,13 +108,13 @@
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;Project1;Advanced;ToolKit;YPubliclibs;EvunTool"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;Project1;Advanced;YPubliclibs;ToolKit;EvunTool"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;Project1:Clean;Advanced:Clean;ToolKit:Clean;YPubliclibs:Clean;EvunTool:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;Project1:Clean;Advanced:Clean;YPubliclibs:Clean;ToolKit:Clean;EvunTool:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;Project1:Make;Advanced:Make;ToolKit:Make;YPubliclibs:Make;EvunTool:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;Project1:Make;Advanced:Make;YPubliclibs:Make;ToolKit:Make;EvunTool:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

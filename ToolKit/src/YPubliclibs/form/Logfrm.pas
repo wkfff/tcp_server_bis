@@ -28,19 +28,26 @@ type
     procedure mniN1Click(Sender: TObject);
   private
     { Private declarations }
-    FNotifyId_log: Integer;
     procedure Notify(const AId: Cardinal; AParams: IQParams;
       var AFireNext: Boolean); stdcall;
   public
     { Public declarations }
+    destructor Destroy;override;
   end;
 
 var
   frmLogger: TfrmLogger;
+  ToolLog: TSafeLogger;
 
 implementation
 
 {$R *.dfm}
+
+destructor TfrmLogger.Destroy;
+begin
+  FreeAndNil(ToolLog);
+  inherited;
+end;
 
 procedure TfrmLogger.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -50,9 +57,11 @@ end;
 procedure TfrmLogger.FormCreate(Sender: TObject);
 begin
   //
-  sfLogger.setAppender(TStringsAppender.Create(sedtLog.Lines));
-  FNotifyId_log := (PluginsManager as IQNotifyManager).IdByName('__safe_Logger__');
-  (PluginsManager as IQNotifyManager).Subscribe(FNotifyId_log, Self);
+  if not Assigned(ToolLog) then
+  begin
+    ToolLog := TSafeLogger.Create;
+    ToolLog.setAppender(TStringsAppender.Create(sedtLog.Lines));
+  end;
 end;
 
 procedure TfrmLogger.mniN1Click(Sender: TObject);
@@ -63,12 +72,14 @@ end;
 procedure TfrmLogger.Notify(const AId: Cardinal; AParams: IQParams;
   var AFireNext: Boolean);
 begin
-  if AId = FNotifyId_log then
-  begin
-    sfLogger.logMessage(AParams.Items[0].AsString.Value);
-    sedtLog.GotoLineAndCenter(sedtLog.Lines.Count);
-  end;
 end;
+
+initialization
+  if not Assigned(frmLogger) then
+    frmLogger := TfrmLogger.Create(Application);
+
+finalization
+  FreeAndNil(frmLogger);
 
 end.
 

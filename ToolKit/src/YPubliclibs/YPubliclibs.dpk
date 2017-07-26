@@ -32,10 +32,12 @@ requires
   rtl,
   vcl,
   dbrtl,
-  QDAC3;
+  QDAC3,
+  SynEdit_R;
 
 contains
   uDragOnRunTime in 'unit\uDragOnRunTime.pas',
-  uPubliclibsBase in 'unit\uPubliclibsBase.pas';
+  uPubliclibsBase in 'unit\uPubliclibsBase.pas',
+  Logfrm in 'form\Logfrm.pas' {frmLogger};
 
 end.

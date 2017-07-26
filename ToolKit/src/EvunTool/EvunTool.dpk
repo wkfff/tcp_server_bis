@@ -40,7 +40,10 @@ requires
   Jcl,
   JvCore,
   JvStdCtrls,
-  YPubliclibs;
+  YPubliclibs,
+  vclFireDAC,
+  FireDAC,
+  RaizeComponentsVclDb;
 
 contains
   EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool},
@@ -48,6 +51,7 @@ contains
   ShShareMemMap in 'unit\ShShareMemMap.pas',
   ShThread in 'unit\ShThread.pas',
   uShareMemServer in 'unit\uShareMemServer.pas',
-  uSystemModule in 'unit\uSystemModule.pas';
+  uSystemModule in 'unit\uSystemModule.pas',
+  DBGridDatafram in 'frame\DBGridDatafram.pas' {framDBGridData: TFrame};
 
 end.

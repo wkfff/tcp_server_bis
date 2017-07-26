@@ -89,7 +89,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>..\resource\tool.ico</Icon_MainIcon>
         <UsePackages>true</UsePackages>
-        <DCC_UsePackage>vcl;rtl;QDAC3;RaizeComponentsVcl;Jcl;JvCore;JvStdCtrls</DCC_UsePackage>
+        <DCC_UsePackage>vcl;rtl;QDAC3;RaizeComponentsVcl;Jcl;JvCore;JvStdCtrls;YPubliclibs</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -112,10 +112,6 @@
         </DelphiCompile>
         <DCCReference Include="form\Mainfrm.pas">
             <Form>frmToolBox</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="form\Logfrm.pas">
-            <Form>frmLogger</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">

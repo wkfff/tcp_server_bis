@@ -9,8 +9,7 @@ program ToolKit;
 uses
   Vcl.Forms,
   Winapi.Windows,
-  Mainfrm in 'form\Mainfrm.pas' {frmToolBox},
-  Logfrm in 'form\Logfrm.pas' {frmLogger};
+  Mainfrm in 'form\Mainfrm.pas' {frmToolBox};
 
 {$R *.res}
 
@@ -29,8 +28,6 @@ begin
     Application.Initialize;
     Application.MainFormOnTaskbar := True;
     Application.CreateForm(TfrmToolBox, frmToolBox);
-    Application.CreateForm(TfrmLogger, frmLogger);
-    frmLogger.Hide;
     Application.Run;
   end;
   ReleaseMutex(hMutex);    // Õ∑≈ª•≥‚∂‘œÛ

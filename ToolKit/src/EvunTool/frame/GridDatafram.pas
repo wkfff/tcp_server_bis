@@ -20,7 +20,11 @@ uses
   qxml,
   qplugins_base,
   QPlugins,
-  qplugins_params, Vcl.Mask, RzEdit, RzBtnEdt;
+  qplugins_params,
+  Vcl.Mask,
+  RzEdit,
+  RzBtnEdt,
+  Logfrm;
 
 type
   TResultColumn = class
@@ -35,44 +39,40 @@ type
     btnColumns: TRzButtonEdit;
     procedure vstMainGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstMainInitNode(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-    procedure vstMainBeforeCellPaint(Sender: TBaseVirtualTree;
-      TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-      CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+    procedure vstMainInitNode(Sender: TBaseVirtualTree; ParentNode, Node:
+      PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vstMainBeforeCellPaint(Sender: TBaseVirtualTree; TargetCanvas:
+      TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode:
+      TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
     procedure vstMainDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
-      Node: PVirtualNode; Column: TColumnIndex; const Text: string;
-      const CellRect: TRect; var DefaultDraw: Boolean);
-    procedure vstColumnsInitNode(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+      Node: PVirtualNode; Column: TColumnIndex; const Text: string; const
+      CellRect: TRect; var DefaultDraw: Boolean);
     procedure vstColumnsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstColumnsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure vstColumnsCompareNodes(Sender: TBaseVirtualTree; Node1,
-      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+    procedure vstColumnsCompareNodes(Sender: TBaseVirtualTree; Node1, Node2:
+      PVirtualNode; Column: TColumnIndex; var Result: Integer);
     procedure btnColumnsChange(Sender: TObject);
     procedure btnColumnsButtonClick(Sender: TObject);
-    procedure vstColumnsFocusChanged(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Column: TColumnIndex);
+    procedure vstColumnsFocusChanged(Sender: TBaseVirtualTree; Node:
+      PVirtualNode; Column: TColumnIndex);
     procedure vstColumnsDblClick(Sender: TObject);
-    procedure btnColumnsKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure vstColumnsKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure btnColumnsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure vstColumnsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure vstColumnsInitNode(Sender: TBaseVirtualTree; ParentNode, Node:
+      PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vstColumnsFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vstColumnsExit(Sender: TObject);
   private
     { Private declarations }
-    FNotifyManager: IQNotifyManager;
     FColumns: TQParams;
     FDataSetXML: TQXML;
     FMetaXML: TQXML;
     FChooseIndex: Integer;
-    FNotifyId_log: Integer;
     function GetDataSetXML: TQXML;
     procedure SetDataSetXML(const Value: TQXML);
-    procedure DoLogMessage(AMessage: PChar);
     procedure Log(AMessage: string);
-    procedure DoIterateSubtreeSetVisible(Sender: TBaseVirtualTree; Node: PVirtualNode;
-     Data: Pointer; var Abort: Boolean);
+    procedure DoIterateSubtreeSetVisible(Sender: TBaseVirtualTree; Node:
+      PVirtualNode; Data: Pointer; var Abort: Boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -104,8 +104,8 @@ begin
   end;
 end;
 
-procedure Tfrmvirtualstringtree.btnColumnsKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure Tfrmvirtualstringtree.btnColumnsKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
 begin
   if Key = VK_DOWN then
   begin
@@ -124,8 +124,6 @@ begin
   vstColumns.RootNodeCount := 0;
   vstColumns.NodeDataSize := SizeOf(TResultColumn);
 
-  FNotifyManager := (PluginsManager as IQNotifyManager);
-  FNotifyId_log := FNotifyManager.IdByName('__safe_Logger__');
   FChooseIndex := 0;
 end;
 
@@ -137,30 +135,19 @@ begin
   inherited;
 end;
 
-procedure Tfrmvirtualstringtree.DoIterateSubtreeSetVisible(
-  Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer;
-  var Abort: Boolean);
+procedure Tfrmvirtualstringtree.DoIterateSubtreeSetVisible(Sender:
+  TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TResultColumn;
 begin
   NodeData := Node.GetData<TResultColumn>;
-  Sender.IsVisible[Node] := (Pos(UpperCase(btnColumns.Text), NodeData.ColumnName) > 0)
-    or (Trim(btnColumns.Text) = '');
-end;
-
-procedure Tfrmvirtualstringtree.DoLogMessage(AMessage: PChar);
-var
-  AParams: TQParams;
-begin
-  AParams := TQParams.Create;
-  AParams.Add('log_message', AMessage);
-  FNotifyManager.Send(FNotifyId_log, AParams as IQParams);
+  Sender.IsVisible[Node] := (Pos(UpperCase(btnColumns.Text), NodeData.ColumnName)
+    > 0) or (Trim(btnColumns.Text) = '');
 end;
 
 procedure Tfrmvirtualstringtree.Log(AMessage: string);
 begin
-  Sleep(10);
-  DoLogMessage(PChar(AMessage));
+  ToolLog.logMessage(AMessage);
 end;
 
 function Tfrmvirtualstringtree.GetDataSetXML: TQXML;
@@ -208,7 +195,7 @@ begin
   Data2 := Node2.GetData<TResultColumn>;
   case Column of
     0:
-      Result := comparetext(Data1.ColumnName, Data2.ColumnName);
+      Result := CompareText(Data1.ColumnName, Data2.ColumnName);
     1:
       if Data1.ColumnIndex = Data2.ColumnIndex then
         Result := 0
@@ -221,8 +208,12 @@ end;
 
 procedure Tfrmvirtualstringtree.vstColumnsDblClick(Sender: TObject);
 begin
-  btnColumns.Text :=
-    vstColumns.GetFirstSelected(False).GetData<TResultColumn>.ColumnName;
+  btnColumns.Text := vstColumns.GetFirstSelected(False).GetData<TResultColumn>.ColumnName;
+  vstColumns.Visible := False;
+end;
+
+procedure Tfrmvirtualstringtree.vstColumnsExit(Sender: TObject);
+begin
   vstColumns.Visible := False;
 end;
 
@@ -244,16 +235,17 @@ begin
   Node.GetData<TResultColumn>.Free;
 end;
 
-procedure Tfrmvirtualstringtree.vstColumnsGetText(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: string);
+procedure Tfrmvirtualstringtree.vstColumnsGetText(Sender: TBaseVirtualTree; Node:
+  PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   Data: TResultColumn;
 begin
   Data := Sender.GetNodeData<TResultColumn>(Node);
   case Column of
-    0: CellText := Data.ColumnName;
-    1: CellText := IntToStr(Data.ColumnIndex);
+    0:
+      CellText := Data.ColumnName;
+    1:
+      CellText := IntToStr(Data.ColumnIndex);
   end;
 end;
 
@@ -268,20 +260,20 @@ begin
   Sender.SetNodeData(Node, Data);
 end;
 
-procedure Tfrmvirtualstringtree.vstColumnsKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure Tfrmvirtualstringtree.vstColumnsKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
 begin
   if Key = VK_RETURN then
   begin
-    btnColumns.Text :=
-      vstColumns.GetFirstSelected(False).GetData<TResultColumn>.ColumnName;
+    btnColumns.Text := vstColumns.GetFirstSelected(False).GetData <
+      TResultColumn > .ColumnName;
     vstColumns.Visible := False;
   end;
 end;
 
 procedure Tfrmvirtualstringtree.vstMainBeforeCellPaint(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; CellPaintMode:
+  TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
 begin
   if Node.Index mod 2 <> 0 then
   begin
@@ -296,8 +288,8 @@ begin
 end;
 
 procedure Tfrmvirtualstringtree.vstMainDrawText(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const Text:
+  string; const CellRect: TRect; var DefaultDraw: Boolean);
 begin
   if (Column = FChooseIndex) then
   begin
@@ -306,8 +298,7 @@ begin
 end;
 
 procedure Tfrmvirtualstringtree.vstMainGetText(Sender: TBaseVirtualTree; Node:
-  PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText:
-  string);
+  PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   Data: TQXML;
 begin

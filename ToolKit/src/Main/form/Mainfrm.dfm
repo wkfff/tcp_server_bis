@@ -361,6 +361,9 @@ object frmToolBox: TfrmToolBox
     OwnerDraw = True
     Left = 412
     Top = 211
+    object mniConfig: TMenuItem
+      Action = actConfig
+    end
     object mniClose: TMenuItem
       Action = actClose
     end
@@ -380,6 +383,12 @@ object frmToolBox: TfrmToolBox
       Caption = 'EvunTool'
       ImageIndex = 1
       OnExecute = actEvunToolExecute
+    end
+    object actConfig: TAction
+      Category = 'System'
+      Caption = #35774#32622
+      ImageIndex = 247
+      OnExecute = actConfigExecute
     end
   end
   object mctrMain: TRzMenuController
@@ -404,7 +413,7 @@ object frmToolBox: TfrmToolBox
     Left = 296
     Top = 211
     Bitmap = {
-      494C010168019801300010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801380010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

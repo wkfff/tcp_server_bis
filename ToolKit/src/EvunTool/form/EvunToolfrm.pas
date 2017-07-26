@@ -13,6 +13,8 @@ uses
   Vcl.Forms,
   Vcl.Dialogs,
   Vcl.ExtCtrls,
+  System.IniFiles,
+  DB,
   RzPanel,
   RzSplit,
   System.ImageList,
@@ -30,6 +32,8 @@ uses
   Vcl.ActnList,
   Vcl.Menus,
   Vcl.StdCtrls,
+  Vcl.DBGrids,
+  Vcl.Grids,
   RzLabel,
   Vcl.Mask,
   RzEdit,
@@ -44,7 +48,10 @@ uses
   qplugins_params,
   iocp.Http.Client,
   qworker,
-  GridDatafram;
+  GridDatafram,
+  Logfrm,
+  DBGridDatafram,
+  RzBtnEdt;
 
 type
   PDMSDebugInfo = ^TDMSDebugInfo;
@@ -89,7 +96,6 @@ type
     actClearXML: TAction;
     mniClearXML: TMenuItem;
     lblServer: TRzLabel;
-    edtServer: TRzEdit;
     btbtnExcute: TRzBitBtn;
     actExcuteHttp: TAction;
     mniCopy: TMenuItem;
@@ -97,6 +103,8 @@ type
     mniPaste: TMenuItem;
     mniPaste1: TMenuItem;
     vstMethodList: TVirtualStringTree;
+    frmServerList: TframDBGridData;
+    edtServer: TRzButtonEdit;
     procedure FormResize(Sender: TObject);
     procedure btnListClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -125,18 +133,19 @@ type
     procedure vstMethodListDblClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure rzpnlServerResize(Sender: TObject);
+    procedure edtServerButtonClick(Sender: TObject);
+    procedure frmServerListgrdDataDblClick(Sender: TObject);
+    procedure btnBtnOKClick(Sender: TObject);
   private
     FOldPos: TPoint;
     FDragOnRunTime: IDragOnRunTime;
     InReposition: Boolean;
-    FNotifyId_log: Integer;
     FShareMem: TShareMemServer;
     FDMSInfoList: TStringList;
     FDCSInfoList: TStringList;
     procedure DoGetShareMemData(AJob: PQJob);
     procedure DoRefrashVST(AVST: TVirtualStringTree);
     procedure ClearTabControl;
-    procedure DoLogMessage(AMessage: PChar);
     procedure Log(AMessage: string);
   public
     { Public declarations }
@@ -305,6 +314,12 @@ begin
   FShareMem.Active := cbxStart.Checked;
 end;
 
+procedure TfrmEvunTool.btnBtnOKClick(Sender: TObject);
+begin
+  //
+
+end;
+
 procedure TfrmEvunTool.btnListClick(Sender: TObject);
 begin
   if vstMethodList.Showing then
@@ -313,14 +328,9 @@ begin
     vstMethodList.Show;
 end;
 
-procedure TfrmEvunTool.DoLogMessage(AMessage: PChar);
-begin
-  (PluginsManager as IQNotifyManager).Send(FNotifyId_log, NewParams([AMessage]));
-end;
-
 procedure TfrmEvunTool.Log(AMessage: string);
 begin
-  DoLogMessage(PChar(AMessage));
+  ToolLog.logMessage(AMessage);
 end;
 
 procedure TfrmEvunTool.mniPaste1Click(Sender: TObject);
@@ -466,6 +476,13 @@ begin
   AVST.RootNodeCount := OldRootCount;
 end;
 
+procedure TfrmEvunTool.edtServerButtonClick(Sender: TObject);
+begin
+  frmServerList.OpenSQL := 'SELECT * FROM sys_server_list;';
+  frmServerList.Query;
+  frmServerList.Visible := True;
+end;
+
 procedure TfrmEvunTool.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
@@ -482,7 +499,6 @@ begin
   vstMethodList.NodeDataSize := SizeOf(TDMSDebugInfo);
   vstMethodList.RootNodeCount := 2;
 
-  FNotifyId_log := (PluginsManager as IQNotifyManager).IdByName('__safe_Logger__');
   vstMethodList.Hide;
 
   if Supports(PluginsManager.ByPath(PChar('/Services/Controls/DragOnRunTime')),
@@ -515,6 +531,29 @@ end;
 procedure TfrmEvunTool.FormShow(Sender: TObject);
 begin
   sedtArgus.SetFocus;
+end;
+
+procedure TfrmEvunTool.frmServerListgrdDataDblClick(Sender: TObject);
+const
+  DMS_FILE = 'F:\GeelyEVUN\SVN\Client3.0\DMS\br_dev\bin\config\AppServer.dms';
+  DCS_FILE = 'F:\GeelyEVUN\SVN\Client3.0\DCS\br_dev\bin\config\AppServer.dms';
+var
+  AIni: TIniFile;
+  AFileName: string;
+begin
+  frmServerList.Visible := False;
+  if frmServerList.qryData.RecordCount = 0 then
+    Exit;
+  edtServer.Text := frmServerList.qryData.FieldByName('server_url').AsString;
+  if Pos('dms',edtServer.Text) > 0 then
+    AFileName := DMS_FILE
+  else
+    AFileName := DCS_FILE;
+
+  AIni := TIniFile.Create(AFileName);
+  AIni.WriteString('Server', 'ISP', '0');
+  AIni.WriteString('LAN', 'URL[1]', edtServer.Text);
+  AIni.Free;
 end;
 
 procedure TfrmEvunTool.pgcResultsClose(Sender: TObject; var AllowClose: Boolean);

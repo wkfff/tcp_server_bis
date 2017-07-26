@@ -63,7 +63,7 @@ object frmvirtualstringtree: Tfrmvirtualstringtree
     Left = 4
     Top = 26
     Width = 269
-    Height = 100
+    Height = 183
     DragMode = dmAutomatic
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -82,6 +82,7 @@ object frmvirtualstringtree: Tfrmvirtualstringtree
     Visible = False
     OnCompareNodes = vstColumnsCompareNodes
     OnDblClick = vstColumnsDblClick
+    OnExit = vstColumnsExit
     OnFocusChanged = vstColumnsFocusChanged
     OnFreeNode = vstColumnsFreeNode
     OnGetText = vstColumnsGetText
