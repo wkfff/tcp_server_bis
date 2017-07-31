@@ -14,6 +14,13 @@ object Form2: TForm2
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object Gauge1: TGauge
+    Left = 72
+    Top = 224
+    Width = 353
+    Height = 28
+    Progress = 0
+  end
   object Panel1: TPanel
     Left = 104
     Top = 24
@@ -22,14 +29,23 @@ object Form2: TForm2
     Caption = 'Panel1'
     TabOrder = 0
   end
+  object btn1: TButton
+    Left = 368
+    Top = 48
+    Width = 75
+    Height = 25
+    Caption = 'btn1'
+    TabOrder = 1
+    OnClick = btn1Click
+  end
   object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
-    Left = 144
-    Top = 160
+    Left = 312
+    Top = 104
   end
   object con1: TFDConnection
     Params.Strings = (
       'DriverID=SQLite')
-    Left = 200
-    Top = 240
+    Left = 192
+    Top = 144
   end
 end

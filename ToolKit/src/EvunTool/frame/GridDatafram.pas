@@ -265,8 +265,12 @@ procedure Tfrmvirtualstringtree.vstColumnsKeyDown(Sender: TObject; var Key: Word
 begin
   if Key = VK_RETURN then
   begin
-    btnColumns.Text := vstColumns.GetFirstSelected(False).GetData <
-      TResultColumn > .ColumnName;
+    btnColumns.Text := vstColumns.GetFirstSelected(False).GetData<TResultColumn>.ColumnName;
+    vstColumns.Visible := False;
+  end
+  else if Key = VK_ESCAPE then
+  begin
+    btnColumns.Text := '';
     vstColumns.Visible := False;
   end;
 end;

@@ -2,9 +2,9 @@ object frmToolBox: TfrmToolBox
   Left = 0
   Top = 0
   Caption = 'ToolBox'
-  ClientHeight = 482
-  ClientWidth = 736
-  Color = clBtnFace
+  ClientHeight = 459
+  ClientWidth = 709
+  Color = 15781299
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -154,7 +154,7 @@ object frmToolBox: TfrmToolBox
   object tbrMenu: TRzToolbar
     Left = 0
     Top = 0
-    Width = 736
+    Width = 709
     Height = 29
     BorderInner = fsNone
     BorderOuter = fsGroove
@@ -163,6 +163,7 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 0
     VisualStyle = vsGradient
+    ExplicitWidth = 736
     ToolbarControls = (
       btnSystem
       pcr1
@@ -200,22 +201,26 @@ object frmToolBox: TfrmToolBox
   object splMain: TRzSplitter
     Left = 0
     Top = 58
-    Width = 736
-    Height = 405
+    Width = 709
+    Height = 382
     Position = 142
-    Percent = 19
+    Percent = 20
+    LowerRight.Color = 15781299
     HotSpotVisible = True
     HotSpotSizePercent = 30
     SplitterWidth = 7
     Align = alClient
+    Color = 15781299
     GradientColorStyle = gcsMSOffice
     TabOrder = 1
     VisualStyle = vsGradient
+    ExplicitWidth = 736
+    ExplicitHeight = 405
     BarSize = (
       142
       0
       149
-      405)
+      382)
     UpperLeftControls = (
       grpList)
     LowerRightControls = (
@@ -224,7 +229,7 @@ object frmToolBox: TfrmToolBox
       Left = 0
       Top = 0
       Width = 142
-      Height = 405
+      Height = 382
       GradientColorStyle = gcsMSOffice
       GradientColorStart = clBtnFace
       GradientColorStop = clBtnShadow
@@ -235,6 +240,7 @@ object frmToolBox: TfrmToolBox
       Color = clBtnShadow
       ParentColor = False
       TabOrder = 0
+      ExplicitHeight = 405
       object rzgrpTools: TRzGroup
         CaptionImageIndex = 170
         Items = <
@@ -242,7 +248,7 @@ object frmToolBox: TfrmToolBox
             Action = actEvunTool
           end>
         Opened = True
-        OpenedHeight = 405
+        OpenedHeight = 382
         DividerVisible = False
         Caption = #24037#20855
         ParentColor = False
@@ -251,11 +257,12 @@ object frmToolBox: TfrmToolBox
     object pgcClient: TRzPageControl
       Left = 0
       Top = 0
-      Width = 587
-      Height = 405
+      Width = 560
+      Height = 382
       Hint = ''
       Align = alClient
       Color = 15781299
+      UseColoredTabs = True
       Images = ilSmall16X16
       ParentColor = False
       ShowCloseButtonOnActiveTab = True
@@ -264,13 +271,15 @@ object frmToolBox: TfrmToolBox
       Transparent = True
       OnChanging = pgcClientChanging
       OnClose = pgcClientClose
+      ExplicitWidth = 587
+      ExplicitHeight = 405
       FixedDimension = 20
     end
   end
   object tbrList: TRzToolbar
     Left = 0
     Top = 29
-    Width = 736
+    Width = 709
     Height = 29
     Images = ilSmall16X16
     BorderInner = fsNone
@@ -280,6 +289,7 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 2
     VisualStyle = vsGradient
+    ExplicitWidth = 736
     ToolbarControls = (
       btnEvunTool
       pcr3
@@ -306,8 +316,8 @@ object frmToolBox: TfrmToolBox
   end
   object rzsbrMain: TRzStatusBar
     Left = 0
-    Top = 463
-    Width = 736
+    Top = 440
+    Width = 709
     Height = 19
     BorderInner = fsNone
     BorderOuter = fsNone
@@ -316,6 +326,8 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 3
     VisualStyle = vsGradient
+    ExplicitTop = 463
+    ExplicitWidth = 736
     object rgsModule: TRzGlyphStatus
       Left = 0
       Top = 0
@@ -327,33 +339,34 @@ object frmToolBox: TfrmToolBox
       ExplicitHeight = 20
     end
     object rpsMain: TRzProgressStatus
-      Left = 100
+      Left = 193
       Top = 0
       Height = 19
       Align = alLeft
       ParentShowHint = False
+      OnClick = rpsMainClick
+      BarStyle = bsGradient
       PartsComplete = 0
       Percent = 0
+      ShowPercent = True
       TotalParts = 0
-      ExplicitLeft = 736
-      ExplicitHeight = 20
+      ExplicitLeft = 94
     end
     object RzClockStatus1: TRzClockStatus
-      Left = 200
+      Left = 293
       Top = 0
       Height = 19
       Align = alLeft
-      ExplicitLeft = 736
-      ExplicitHeight = 20
+      ExplicitLeft = 564
     end
     object rzstspnStatus: TRzStatusPane
-      Left = 350
+      Left = 100
       Top = 0
+      Width = 93
       Height = 19
       Align = alLeft
+      Anchors = [akLeft, akTop, akRight, akBottom]
       Caption = ''
-      ExplicitLeft = 736
-      ExplicitHeight = 20
     end
   end
   object pmSystem: TPopupMenu
@@ -413,7 +426,7 @@ object frmToolBox: TfrmToolBox
     Left = 296
     Top = 211
     Bitmap = {
-      494C010168019801380010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -13,18 +13,21 @@ uses
   Vcl.Forms,
   Vcl.Dialogs,
   Vcl.Buttons,
-  RzButton,
   Vcl.ExtCtrls,
-  RzPanel,
+  Vcl.StdCtrls,
   System.ImageList,
   Vcl.ImgList,
   Vcl.Menus,
   System.Actions,
   Vcl.ActnList,
+  JvImageList,
+  RzPanel,
+  RzButton,
   RzCommon,
   RzSplit,
   RzGroupBar,
   RzTabs,
+  RzStatus,
   qstring,
   qplugins_base,
   QPlugins,
@@ -32,14 +35,12 @@ uses
   qplugins_formsvc,
   qplugins_vcl_messages,
   qplugins_vcl_formsvc,
-  RzStatus,
+  qworker,
   utils_safeLogger,
-  JvImageList,
-  Vcl.StdCtrls,
   Logfrm;
 
 type
-  TfrmToolBox = class(TForm)
+  TfrmToolBox = class(TForm, IQNotify)
     tbrMenu: TRzToolbar;
     btnSystem: TRzMenuToolbarButton;
     pmSystem: TPopupMenu;
@@ -78,12 +79,18 @@ type
       var AllowChange: Boolean);
     procedure btnLogClick(Sender: TObject);
     procedure actConfigExecute(Sender: TObject);
+    procedure rpsMainClick(Sender: TObject);
   private
-    FNotifyId_log: Integer;
-    procedure DoDockChildClose(ASender: IQFormService; var Action: TCloseAction);
+    FNotifyIdProgressStart: Integer;
+    FNotifyIdProgressEnd: Integer;
+    FNotifyIdProgressCancel: Integer;
+    FShowProgress: Boolean;
     procedure DoShowDockForm(ACaption: string; AImageIndex: Integer);
-    procedure DoDockChildFree(AForm: IQFormService);
-    procedure DockPage(AFormService: IQFormService;AImageIndex: Integer; AHoldNeeded: Boolean = True);
+    procedure DockPage(AFormService: IQFormService;AImageIndex: Integer;
+      AHoldNeeded: Boolean = True);
+    procedure Notify(const AId: Cardinal; AParams: IQParams;
+      var AFireNext: Boolean); stdcall;
+    procedure DoShowProgress(AJob: PQJob);
   public
     { Public declarations }
   end;
@@ -104,7 +111,6 @@ end;
 
 procedure TfrmToolBox.actEvunToolExecute(Sender: TObject);
 begin
-  //
   DoShowDockForm('EvunTool', actEvunTool.ImageIndex);
 end;
 
@@ -133,15 +139,6 @@ begin
   splMain.CloseHotSpot;
 end;
 
-procedure TfrmToolBox.DoDockChildClose(ASender: IQFormService;
-  var Action: TCloseAction);
-begin
-end;
-
-procedure TfrmToolBox.DoDockChildFree(AForm: IQFormService);
-begin
-end;
-
 procedure TfrmToolBox.DoShowDockForm(ACaption: string; AImageIndex: Integer);
 var
   I: Integer;
@@ -164,11 +161,22 @@ end;
 procedure TfrmToolBox.FormCreate(Sender: TObject);
 var
   APath: string;
+  ANotifyManager: IQNotifyManager;
 begin
   APath := ExtractFilePath(Application.ExeName);
   PluginsManager.Loaders.Add(TQDLLLoader.Create(APath, '.dll'));
   PluginsManager.Loaders.Add(TQBPLLoader.Create(APath, '.bpl'));
   PluginsManager.Start;
+
+  ANotifyManager := (PluginsManager as IQNotifyManager);
+
+  FNotifyIdProgressStart  := ANotifyManager.IdByName('main_form.progress.start_update');
+  FNotifyIdProgressEnd    := ANotifyManager.IdByName('main_form.progress.end_update');
+  FNotifyIdProgressCancel := ANotifyManager.IdByName('main_form.progress.cancel');
+  ANotifyManager.Subscribe(FNotifyIdProgressStart, Self);
+  ANotifyManager.Subscribe(FNotifyIdProgressEnd, Self);
+  ANotifyManager.Subscribe(FNotifyIdProgressCancel, Self);
+  FShowProgress := False;
 end;
 
 procedure TfrmToolBox.FormDestroy(Sender: TObject);
@@ -181,6 +189,47 @@ begin
     AForm := IQFormService(Pointer(pgcClient.Pages[I].Tag));
     AForm.UnhookEvents;
     AForm.Close;
+  end;
+end;
+
+procedure TfrmToolBox.DoShowProgress(AJob: PQJob);
+begin
+  if FShowProgress then
+  begin
+    rpsMain.Percent := rpsMain.Percent + 1;
+    if rzstspnStatus.Font.Color = clRed then
+      rzstspnStatus.Font.Color := clBlue
+    else if rzstspnStatus.Font.Color = clBlue then
+      rzstspnStatus.Font.Color := clRed;
+    Workers.Delay(DoShowProgress, 5000, AJob.Data, False);
+    Application.ProcessMessages;
+  end;
+end;
+
+procedure TfrmToolBox.Notify(const AId: Cardinal; AParams: IQParams;
+  var AFireNext: Boolean);
+begin
+  if AId = FNotifyIdProgressStart then
+  begin
+    FShowProgress := True;
+    rpsMain.Percent := 0;
+    rzstspnStatus.Caption := AParams.Items[0].AsString.Value;
+    rzstspnStatus.Font.Color := clRed;
+    Workers.Post(DoShowProgress, Pointer(AParams), False)
+  end
+  else if AId = FNotifyIdProgressEnd then
+  begin
+    FShowProgress := False;
+    rzstspnStatus.Font.Color := clGreen;
+    rzstspnStatus.Caption := 'HTTP方法调用完成';
+    rpsMain.Percent := 100;
+  end
+  else if AId = FNotifyIdProgressCancel then
+  begin
+    FShowProgress := False;
+    rzstspnStatus.Font.Color := clBlack;
+    rzstspnStatus.Caption := 'HTTP方法调用取消';
+    rpsMain.Percent := 0;
   end;
 end;
 
@@ -199,6 +248,15 @@ begin
   AFormService := IQFormService(Pointer(pgcClient.ActivePage.Tag));
   AFormService.UnhookEvents;
   AFormService.Close;
+end;
+
+procedure TfrmToolBox.rpsMainClick(Sender: TObject);
+begin
+  if FShowProgress then
+  begin
+    Workers.Clear(False);
+    (PluginsManager as IQNotifyManager).Send(FNotifyIdProgressCancel, nil);
+  end;
 end;
 
 end.

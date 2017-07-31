@@ -58,6 +58,69 @@ object frmEvunTool: TfrmEvunTool
     430)
   PixelsPerInch = 96
   TextHeight = 13
+  object vstMethodList: TVirtualStringTree
+    Left = 0
+    Top = 232
+    Width = 409
+    Height = 169
+    Anchors = [akLeft, akBottom]
+    Header.AutoSizeIndex = 0
+    Header.Font.Charset = DEFAULT_CHARSET
+    Header.Font.Color = clWindowText
+    Header.Font.Height = -11
+    Header.Font.Name = 'Tahoma'
+    Header.Font.Style = []
+    Header.Options = [hoColumnResize, hoVisible]
+    PopupMenu = pmArgusList
+    TabOrder = 1
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
+    OnDblClick = vstMethodListDblClick
+    OnFocusChanged = vstMethodListFocusChanged
+    OnFreeNode = vstMethodListFreeNode
+    OnGetText = vstMethodListGetText
+    OnInitChildren = vstMethodListInitChildren
+    OnInitNode = vstMethodListInitNode
+    Columns = <
+      item
+        Alignment = taCenter
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
+        Position = 0
+        Width = 77
+        WideText = 'Client'
+      end
+      item
+        CaptionAlignment = taCenter
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
+        Position = 1
+        Width = 328
+        WideText = #26041#27861
+      end>
+  end
+  inline frmServerList: TframDBGridData
+    Left = 76
+    Top = 59
+    Width = 591
+    Height = 345
+    Anchors = [akLeft, akBottom]
+    TabOrder = 2
+    Visible = False
+    ExplicitLeft = 76
+    ExplicitTop = 59
+    inherited grdData: TRzDBGrid
+      Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      OnDblClick = frmServerListgrdDataDblClick
+    end
+    inherited tbControl: TRzToolbar
+      Images = il16X16
+      ToolbarControls = (
+        nvData)
+      inherited nvData: TRzDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
   object splEvunTool: TRzSplitter
     Left = 0
     Top = 0
@@ -71,6 +134,7 @@ object frmEvunTool: TfrmEvunTool
     Align = alClient
     Color = 15781299
     GradientColorStyle = gcsMSOffice
+    GradientDirection = gdVerticalEnd
     TabOrder = 0
     VisualStyle = vsGradient
     BarSize = (
@@ -95,6 +159,7 @@ object frmEvunTool: TfrmEvunTool
       BorderSides = [sdTop]
       BorderWidth = 0
       GradientColorStyle = gcsMSOffice
+      GradientDirection = gdVerticalEnd
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
@@ -113,9 +178,7 @@ object frmEvunTool: TfrmEvunTool
       object btnList: TRzToolButton
         Left = 80
         Top = 2
-        Hint = #30417#25511#26041#27861#21015#34920
-        ImageIndex = 191
-        OnClick = btnListClick
+        Action = actShowList
       end
       object btnLog: TRzToolButton
         Left = 55
@@ -259,77 +322,15 @@ object frmEvunTool: TfrmEvunTool
       end
     end
   end
-  object vstMethodList: TVirtualStringTree
-    Left = 0
-    Top = 232
-    Width = 409
-    Height = 169
-    Anchors = [akLeft, akBottom]
-    Header.AutoSizeIndex = 0
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
-    Header.Options = [hoColumnResize, hoVisible]
-    PopupMenu = pmArgusList
-    TabOrder = 1
-    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning]
-    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toFullRowSelect]
-    OnDblClick = vstMethodListDblClick
-    OnFocusChanged = vstMethodListFocusChanged
-    OnFreeNode = vstMethodListFreeNode
-    OnGetText = vstMethodListGetText
-    OnInitChildren = vstMethodListInitChildren
-    OnInitNode = vstMethodListInitNode
-    Columns = <
-      item
-        Alignment = taCenter
-        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
-        Position = 0
-        Width = 77
-        WideText = 'Client'
-      end
-      item
-        CaptionAlignment = taCenter
-        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coVisible, coAllowFocus, coUseCaptionAlignment, coEditable]
-        Position = 1
-        Width = 328
-        WideText = #26041#27861
-      end>
-  end
-  inline frmServerList: TframDBGridData
-    Left = 76
-    Top = 59
-    Width = 591
-    Height = 345
-    Anchors = [akLeft, akBottom]
-    TabOrder = 2
-    Visible = False
-    ExplicitLeft = 76
-    ExplicitTop = 59
-    inherited grdData: TRzDBGrid
-      OnDblClick = frmServerListgrdDataDblClick
-    end
-    inherited tbControl: TRzToolbar
-      Images = il16X16
-      ToolbarControls = (
-        nvData)
-      inherited nvData: TRzDBNavigator
-        Hints.Strings = ()
-      end
-    end
-  end
   object il16X16: TJvImageList
     ColorDepth = cd32Bit
     PixelFormat = pf32bit
     Items = <>
     DrawingStyle = dsTransparent
-    Left = 553
-    Top = 16
+    Left = 252
+    Top = 201
     Bitmap = {
-      494C01016801F401640010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01016801F401800010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12353,13 +12354,13 @@ object frmEvunTool: TfrmEvunTool
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
     WantBracesParsed = False
-    Left = 553
-    Top = 48
+    Left = 444
+    Top = 201
   end
   object actEvunTool: TActionList
     Images = il16X16
-    Left = 521
-    Top = 16
+    Left = 220
+    Top = 201
     object actStartListener: TAction
       Caption = #24320#22987
       ImageIndex = 40
@@ -12390,6 +12391,16 @@ object frmEvunTool: TfrmEvunTool
       ImageIndex = 215
       OnExecute = actExcuteHttpExecute
     end
+    object actShowList: TAction
+      Caption = #26041#27861#21015#34920
+      ImageIndex = 191
+      OnExecute = actShowListExecute
+    end
+    object actFormatXML: TAction
+      Caption = #26684#24335#21270'XML'
+      ImageIndex = 126
+      OnExecute = actFormatXMLExecute
+    end
   end
   object sisIni: TSynIniSyn
     Options.AutoDetectEnabled = False
@@ -12400,15 +12411,29 @@ object frmEvunTool: TfrmEvunTool
     KeyAttri.Foreground = clBlue
     NumberAttri.Foreground = clHighlight
     NumberAttri.Style = [fsBold]
-    Left = 521
-    Top = 48
+    Left = 412
+    Top = 201
   end
   object pmArgus: TPopupMenu
     Images = il16X16
-    Left = 585
-    Top = 16
-    object mniClearArgusedt: TMenuItem
-      Action = actClearArgusedt
+    OwnerDraw = True
+    Left = 284
+    Top = 201
+    object mniStartListener: TMenuItem
+      Action = actStartListener
+      OnClick = mniStartListenerClick
+    end
+    object mniShowList: TMenuItem
+      Action = actShowList
+    end
+    object mniN2: TMenuItem
+      Caption = '-'
+    end
+    object mniExcuteHttp: TMenuItem
+      Action = actExcuteHttp
+    end
+    object mniN3: TMenuItem
+      Caption = '-'
     end
     object mniCopy: TMenuItem
       Caption = #22797#21046
@@ -12420,21 +12445,36 @@ object frmEvunTool: TfrmEvunTool
       ImageIndex = 157
       OnClick = mniPasteClick
     end
+    object mniN4: TMenuItem
+      Caption = '-'
+    end
+    object mniClearArgusedt: TMenuItem
+      Action = actClearArgusedt
+    end
+    object mniN5: TMenuItem
+      Caption = #27979#35797
+      OnClick = mniN5Click
+    end
   end
   object pmArgusList: TPopupMenu
     Images = il16X16
-    Left = 617
-    Top = 16
+    OwnerDraw = True
+    Left = 316
+    Top = 201
     object mniClearArgus: TMenuItem
       Action = actClearArgus
     end
   end
   object pmXML: TPopupMenu
     Images = il16X16
-    Left = 649
-    Top = 16
+    OwnerDraw = True
+    Left = 348
+    Top = 201
     object mniResolveXML: TMenuItem
       Action = actResolveXML
+    end
+    object mniFormatXML: TMenuItem
+      Action = actFormatXML
     end
     object mniN1: TMenuItem
       Caption = '-'
@@ -12452,5 +12492,10 @@ object frmEvunTool: TfrmEvunTool
       ImageIndex = 157
       OnClick = mniPaste1Click
     end
+  end
+  object mctrMain: TRzMenuController
+    GradientColorStyle = gcsMSOffice
+    Left = 380
+    Top = 201
   end
 end

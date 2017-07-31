@@ -51,7 +51,8 @@ uses
   GridDatafram,
   Logfrm,
   DBGridDatafram,
-  RzBtnEdt;
+  RzBtnEdt,
+  RzCommon;
 
 type
   PDMSDebugInfo = ^TDMSDebugInfo;
@@ -105,8 +106,18 @@ type
     vstMethodList: TVirtualStringTree;
     frmServerList: TframDBGridData;
     edtServer: TRzButtonEdit;
+    actShowList: TAction;
+    mniShowList: TMenuItem;
+    mniExcuteHttp: TMenuItem;
+    mniStartListener: TMenuItem;
+    mctrMain: TRzMenuController;
+    mniN2: TMenuItem;
+    mniN3: TMenuItem;
+    mniN4: TMenuItem;
+    mniN5: TMenuItem;
+    actFormatXML: TAction;
+    mniFormatXML: TMenuItem;
     procedure FormResize(Sender: TObject);
-    procedure btnListClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure vstMethodListFocusChanged(Sender: TBaseVirtualTree; Node:
@@ -135,8 +146,15 @@ type
     procedure rzpnlServerResize(Sender: TObject);
     procedure edtServerButtonClick(Sender: TObject);
     procedure frmServerListgrdDataDblClick(Sender: TObject);
-    procedure btnBtnOKClick(Sender: TObject);
+    procedure actShowListExecute(Sender: TObject);
+    procedure mniStartListenerClick(Sender: TObject);
+    procedure mniN5Click(Sender: TObject);
+    procedure actFormatXMLExecute(Sender: TObject);
   private
+    FExecutingHttpMethod: Boolean;
+    FNotifyIdProgressStart: Integer;
+    FNotifyIdProgressEnd: Integer;
+    FNotifyManager: IQNotifyManager;
     FOldPos: TPoint;
     FDragOnRunTime: IDragOnRunTime;
     InReposition: Boolean;
@@ -190,77 +208,115 @@ end;
 
 procedure TfrmEvunTool.actExcuteHttpExecute(Sender: TObject);
 var
-  AHeader: THttpHeaders;
   AData: string;
   I: Integer;
   AEnd: Integer;
   AStart: Integer;
+  AMethod: string;
 begin
-  AHeader := nil;
+  {TODO -oYU -cGeneral : HttpQueue 顺序执行Http Post}
+  if FExecutingHttpMethod then
+    Exit;
+
+  AData := sedtArgus.SelText;
+
+  if Trim(AData) = '' then
+  begin
+    for I := sedtArgus.CaretY - 1 to sedtArgus.Lines.Count - 1 do
+    begin
+      if (Trim(sedtArgus.Lines[I]) = '') then
+      begin
+        AEnd := I - 1;
+        Break;
+      end
+      else if (I = sedtArgus.Lines.Count - 1) then
+      begin
+        AEnd := I;
+        Break;
+      end;
+    end;
+
+    for I := AEnd downto 0 do
+    begin
+      if (Trim(sedtArgus.Lines[I]) = '') then
+        Break;
+
+      if Pos('ACTION', sedtArgus.Lines[I]) > 0 then
+        AMethod := Trim(sedtArgus.Lines[I]);
+
+      if AData = '' then
+        AData := sedtArgus.Lines[I]
+      else
+        AData := sedtArgus.Lines[I] + '&' + AData;
+    end;
+  end
+  else
+  begin
+    for I := sedtArgus.BlockEnd.Line downto sedtArgus.BlockBegin.Line do
+    begin
+      if Trim(sedtArgus.Lines[I]) = '' then
+        Break;
+
+      if Pos('ACTION', sedtArgus.Lines[I]) > 0 then
+        AMethod := Trim(sedtArgus.Lines[I]);
+
+      if AData = '' then
+        AData := sedtArgus.Lines[I]
+      else
+        AData := sedtArgus.Lines[I] + '&' + AData;
+    end;
+  end;
 
   try
-    AHeader := THttpHeaders.Create;
-    AHeader.Add('Content-Encoding', 'gzip');
-    AHeader.Add('Content-Type', 'application/x-www-form-urlencoded');
-    AHeader.Add('Accept',
-      'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
-    AHeader.Add('Accept-Encoding', 'gzip, deflate, identity');
-    AHeader.Add('User-Agent', 'UserClient');
-    AData := sedtArgus.SelText;
-
-    if Trim(AData) = '' then
+    FNotifyManager.Send(FNotifyIdProgressStart, NewParams(['调用HTTP执行方法:' + AMethod]));
+    FExecutingHttpMethod := True;
+    Workers.Post(procedure(AJob: PQJob)
+                 var
+                   AHeader: THttpHeaders;
+                 begin
+                   AHeader := nil;
+                   try
+                     AHeader := THttpHeaders.Create;
+                     AHeader.Add('Content-Encoding', 'gzip');
+                     AHeader.Add('Content-Type', 'application/x-www-form-urlencoded');
+                     AHeader.Add('Accept',
+                       'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
+                     AHeader.Add('Accept-Encoding', 'gzip, deflate, identity');
+                     AHeader.Add('User-Agent', 'UserClient');
+                     sedtXML.Text := HttpPost(edtServer.Text, AData, hct_UTF8, AHeader);
+                     FNotifyManager.Send(FNotifyIdProgressEnd, nil);
+                     Workers.Post(procedure(AJob: PQJob)
+                                  begin
+                                    FExecutingHttpMethod := False;
+                                    actResolveXML.Execute;
+                                    pgcResults.ActivePageIndex := 0;
+                                    if pgcResults.PageCount > 1 then
+                                      pgcResults.ActivePageIndex := pgcResults.PageCount - 1;
+                                  end, nil, True);
+                   finally
+                     FreeAndNil(AHeader);
+                   end;
+                 end, nil, False);
+  except
+    on E: Exception do
     begin
-      for I := sedtArgus.CaretY - 1 to sedtArgus.Lines.Count - 1 do
-      begin
-        if (Trim(sedtArgus.Lines[I]) = '') then
-        begin
-          AEnd := I - 1;
-          Break;
-        end
-        else if (I = sedtArgus.Lines.Count - 1) then
-        begin
-          AEnd := I;
-          Break;
-        end;
-      end;
-      for I := AEnd downto 0 do
-      begin
-        if (Trim(sedtArgus.Lines[I]) = '') then
-          Break;
-        if AData = '' then
-          AData := sedtArgus.Lines[I]
-        else
-          AData := sedtArgus.Lines[I] + '&' + AData;
-      end;
-    end
-    else
-    begin
-      for I := sedtArgus.BlockEnd.Line downto sedtArgus.BlockBegin.Line do
-      begin
-        if Trim(sedtArgus.Lines[I]) = '' then
-          Continue;
-        if AData = '' then
-          AData := sedtArgus.Lines[I]
-        else
-          AData := sedtArgus.Lines[I] + '&' + AData;
-      end;
+      ShowMessage(E.Message);
+      Log('Eorr:' + E.Message);
     end;
+  end;
+end;
 
-    try
-      sedtXML.Text := HttpPost(edtServer.Text, AData, hct_UTF8, AHeader);
-      actResolveXML.Execute;
-      pgcResults.ActivePageIndex := 0;
-      if pgcResults.PageCount > 1 then
-        pgcResults.ActivePageIndex := pgcResults.PageCount - 1;
-    except
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-        Log('Eorr:' + E.Message);
-      end;
-    end;
+procedure TfrmEvunTool.actFormatXMLExecute(Sender: TObject);
+var
+  AQxml: TQXML;
+begin
+  AQxml := TQXML.Create;
+  try
+    AQxml.Parse(PWideChar(sedtXML.Text));
+    sedtXML.Text := '<?xml version="1.0" encoding="UTF-8"?>' + #13 + #10
+      + AQxml.AsXML;
   finally
-    FreeAndNil(AHeader);
+    AQxml.Free;
   end;
 end;
 
@@ -309,23 +365,22 @@ begin
   end;
 end;
 
+procedure TfrmEvunTool.actShowListExecute(Sender: TObject);
+begin
+  vstMethodList.BringToFront;
+  if vstMethodList.Visible then
+  begin
+    vstMethodList.Visible := False;
+  end
+  else
+  begin
+    vstMethodList.Visible := True;
+  end;
+end;
+
 procedure TfrmEvunTool.actStartListenerExecute(Sender: TObject);
 begin
   FShareMem.Active := cbxStart.Checked;
-end;
-
-procedure TfrmEvunTool.btnBtnOKClick(Sender: TObject);
-begin
-  //
-
-end;
-
-procedure TfrmEvunTool.btnListClick(Sender: TObject);
-begin
-  if vstMethodList.Showing then
-    vstMethodList.Hide
-  else
-    vstMethodList.Show;
 end;
 
 procedure TfrmEvunTool.Log(AMessage: string);
@@ -343,6 +398,12 @@ begin
   sedtArgus.PasteFromClipboard;
 end;
 
+procedure TfrmEvunTool.mniStartListenerClick(Sender: TObject);
+begin
+  cbxStart.Checked := not cbxStart.Checked;
+  actStartListener.Execute;
+end;
+
 procedure TfrmEvunTool.mniCopy1Click(Sender: TObject);
 begin
   sedtXML.CopyToClipboard;
@@ -351,6 +412,14 @@ end;
 procedure TfrmEvunTool.mniCopyClick(Sender: TObject);
 begin
   sedtArgus.CopyToClipboard;
+end;
+
+procedure TfrmEvunTool.mniN5Click(Sender: TObject);
+begin
+  Log('BlockBegin.Char:' + IntToStr(sedtArgus.BlockBegin.Char));
+  Log('BlockBegin.Line:' + IntToStr(sedtArgus.BlockBegin.Line));
+  Log('BlockEnd.Char:' + IntToStr(sedtArgus.BlockEnd.Char));
+  Log('BlockEnd.Line:' + IntToStr(sedtArgus.BlockEnd.Line));
 end;
 
 procedure TfrmEvunTool.DoGetShareMemData(AJob: PQJob);
@@ -478,6 +547,7 @@ end;
 
 procedure TfrmEvunTool.edtServerButtonClick(Sender: TObject);
 begin
+  frmServerList.BringToFront;
   frmServerList.OpenSQL := 'SELECT * FROM sys_server_list;';
   frmServerList.Query;
   frmServerList.Visible := True;
@@ -504,6 +574,11 @@ begin
   if Supports(PluginsManager.ByPath(PChar('/Services/Controls/DragOnRunTime')),
     IDragOnRunTime, FDragOnRunTime) then
     FDragOnRunTime.SelectControl := vstMethodList;
+
+  FNotifyManager := (PluginsManager as IQNotifyManager);
+  FNotifyIdProgressStart := FNotifyManager.IdByName('main_form.progress.start_update');
+  FNotifyIdProgressEnd := FNotifyManager.IdByName('main_form.progress.end_update');
+  FExecutingHttpMethod := False;
 end;
 
 procedure TfrmEvunTool.FormDestroy(Sender: TObject);
