@@ -55,9 +55,8 @@ object framDBGridData: TframDBGridData
   end
   object conData: TFDConnection
     Params.Strings = (
-      'Database=E:\WHTX\ToolKit\debug\config.db'
+      'Database=.\config.db'
       'DriverID=SQLite')
-    Connected = True
     LoginPrompt = False
     Left = 196
     Top = 158
