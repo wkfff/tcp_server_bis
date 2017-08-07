@@ -16,7 +16,6 @@ uses
   QPlugins,
   qplugins_base,
   qplugins_loader_lib,
-  uPubliclibsBase,
   FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteDef,
   FireDAC.Stan.Intf,
@@ -33,7 +32,7 @@ uses
   Data.DB,
   FireDAC.Comp.Client,
   Vcl.Samples.Gauges,
-  qworker, Vcl.StdCtrls;
+  qworker, System.ImageList, Vcl.ImgList, JvImageList, Vcl.StdCtrls;
 
 type
   TForm2 = class(TForm, IQNotify)
@@ -42,6 +41,7 @@ type
     con1: TFDConnection;
     Gauge1: TGauge;
     btn1: TButton;
+    ilSmall16X16: TJvImageList;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
   private
@@ -50,7 +50,6 @@ type
     FNotifyIdProgressEnd: Integer;
     FShowProgress: Boolean;
     inReposition: Boolean;
-    FDragOnRunTime: IDragOnRunTime;
     oldPos: TPoint;
     procedure ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:
       TShiftState; X, Y: Integer);
@@ -150,9 +149,6 @@ begin
   PluginsManager.Loaders.Add(TQBPLLoader.Create(APath, '.bpl'));
   PluginsManager.Start;
 
-  if Supports(PluginsManager.ByPath(PChar('/Services/Controls/DragOnRunTime')),
-    IDragOnRunTime, FDragOnRunTime) then
-    FDragOnRunTime.SelectControl := Panel1;
   FNotifyIdProgressStart := (PluginsManager as IQNotifyManager).IdByName('ProgressStart');
   FNotifyIdProgressEnd := (PluginsManager as IQNotifyManager).IdByName('ProgressEnd');
   (PluginsManager as IQNotifyManager).Subscribe(FNotifyIdProgressStart, Self);

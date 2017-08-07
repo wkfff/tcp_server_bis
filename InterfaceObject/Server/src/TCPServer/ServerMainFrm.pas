@@ -28,8 +28,7 @@ uses
   uIntfTCPClientContext,
   utils_safeLogger,
   uResource,
-  uLogAppender,
-  cxGraphics;
+  uLogAppender;
 
 type
   TfrmDIOCPTcpServer = class(TForm)
@@ -52,7 +51,6 @@ type
     O2: TMenuItem;
     actClose1: TMenuItem;
     mniClose: TMenuItem;
-    ilPop: TcxImageList;
     procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
     procedure actShowExecute(Sender: TObject);
     procedure actHideExecute(Sender: TObject);

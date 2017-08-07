@@ -163,7 +163,6 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 0
     VisualStyle = vsGradient
-    ExplicitWidth = 736
     ToolbarControls = (
       btnSystem
       pcr1
@@ -214,8 +213,6 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 1
     VisualStyle = vsGradient
-    ExplicitWidth = 736
-    ExplicitHeight = 405
     BarSize = (
       142
       0
@@ -240,12 +237,14 @@ object frmToolBox: TfrmToolBox
       Color = clBtnShadow
       ParentColor = False
       TabOrder = 0
-      ExplicitHeight = 405
       object rzgrpTools: TRzGroup
         CaptionImageIndex = 170
         Items = <
           item
             Action = actEvunTool
+          end
+          item
+            Action = actVersionInfo
           end>
         Opened = True
         OpenedHeight = 382
@@ -271,8 +270,6 @@ object frmToolBox: TfrmToolBox
       Transparent = True
       OnChanging = pgcClientChanging
       OnClose = pgcClientClose
-      ExplicitWidth = 587
-      ExplicitHeight = 405
       FixedDimension = 20
     end
   end
@@ -289,9 +286,10 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 2
     VisualStyle = vsGradient
-    ExplicitWidth = 736
     ToolbarControls = (
       btnEvunTool
+      scr1
+      btnVersionInfo
       pcr3
       btnLog)
     object btnEvunTool: TRzToolButton
@@ -300,18 +298,28 @@ object frmToolBox: TfrmToolBox
       Action = actEvunTool
     end
     object pcr3: TRzSpacer
-      Left = 29
+      Left = 62
       Top = 2
       Grooved = True
     end
     object btnLog: TRzToolButton
-      Left = 37
+      Left = 70
       Top = 2
       Hint = #26174#31034#26085#24535
       ImageIndex = 162
       ParentShowHint = False
       ShowHint = True
       OnClick = btnLogClick
+    end
+    object btnVersionInfo: TRzToolButton
+      Left = 37
+      Top = 2
+      Action = actVersionInfo
+    end
+    object scr1: TRzSpacer
+      Left = 29
+      Top = 2
+      Grooved = True
     end
   end
   object rzsbrMain: TRzStatusBar
@@ -326,8 +334,6 @@ object frmToolBox: TfrmToolBox
     GradientColorStyle = gcsMSOffice
     TabOrder = 3
     VisualStyle = vsGradient
-    ExplicitTop = 463
-    ExplicitWidth = 736
     object rgsModule: TRzGlyphStatus
       Left = 0
       Top = 0
@@ -393,7 +399,7 @@ object frmToolBox: TfrmToolBox
     end
     object actEvunTool: TAction
       Category = 'Tools'
-      Caption = 'EvunTool'
+      Caption = 'Evun'#24037#20855
       ImageIndex = 1
       OnExecute = actEvunToolExecute
     end
@@ -402,6 +408,12 @@ object frmToolBox: TfrmToolBox
       Caption = #35774#32622
       ImageIndex = 247
       OnExecute = actConfigExecute
+    end
+    object actVersionInfo: TAction
+      Category = 'Tools'
+      Caption = 'VersionInfo'
+      ImageIndex = 177
+      OnExecute = actVersionInfoExecute
     end
   end
   object mctrMain: TRzMenuController
@@ -417,6 +429,9 @@ object frmToolBox: TfrmToolBox
     object mniEvunTool: TMenuItem
       Action = actEvunTool
     end
+    object mniVersionInfo: TMenuItem
+      Action = actVersionInfo
+    end
   end
   object ilSmall16X16: TJvImageList
     ColorDepth = cd32Bit
@@ -426,7 +441,7 @@ object frmToolBox: TfrmToolBox
     Left = 296
     Top = 211
     Bitmap = {
-      494C010168019801400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801440010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

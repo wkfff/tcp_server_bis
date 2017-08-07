@@ -70,6 +70,10 @@ type
     ilSmall16X16: TJvImageList;
     actConfig: TAction;
     mniConfig: TMenuItem;
+    actVersionInfo: TAction;
+    mniVersionInfo: TMenuItem;
+    btnVersionInfo: TRzToolButton;
+    scr1: TRzSpacer;
     procedure actCloseExecute(Sender: TObject);
     procedure actEvunToolExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,6 +84,7 @@ type
     procedure btnLogClick(Sender: TObject);
     procedure actConfigExecute(Sender: TObject);
     procedure rpsMainClick(Sender: TObject);
+    procedure actVersionInfoExecute(Sender: TObject);
   private
     FNotifyIdProgressStart: Integer;
     FNotifyIdProgressEnd: Integer;
@@ -114,6 +119,11 @@ begin
   DoShowDockForm('EvunTool', actEvunTool.ImageIndex);
 end;
 
+procedure TfrmToolBox.actVersionInfoExecute(Sender: TObject);
+begin
+  DoShowDockForm('VersionInfo', actVersionInfo.ImageIndex);
+end;
+
 procedure TfrmToolBox.btnLogClick(Sender: TObject);
 begin
   if Assigned(frmLogger) then
@@ -123,7 +133,6 @@ end;
 procedure TfrmToolBox.DockPage(AFormService: IQFormService; AImageIndex: Integer; AHoldNeeded: Boolean);
 var
   APage: TRzTabSheet;
-  AEvents: TQFormEvents;
 begin
   APage := TRzTabSheet.Create(pgcClient);
   APage.PageControl := pgcClient;
@@ -131,8 +140,6 @@ begin
   APage.Tag := IntPtr(AFormService);
   APage.ImageIndex := AImageIndex;
   AFormService.DockTo(APage.Handle, faContent);
-  FillChar(AEvents, SizeOf(AEvents), 0);
-  AFormService.HookEvents(AEvents);
   if AHoldNeeded then
     HoldByComponent(APage, AFormService);
   pgcClient.ActivePage := APage;
@@ -187,7 +194,6 @@ begin
   for I := 0 to pgcClient.PageCount - 1 do
   begin
     AForm := IQFormService(Pointer(pgcClient.Pages[I].Tag));
-    AForm.UnhookEvents;
     AForm.Close;
   end;
 end;
@@ -246,7 +252,6 @@ var
 begin
   AllowClose := True;
   AFormService := IQFormService(Pointer(pgcClient.ActivePage.Tag));
-  AFormService.UnhookEvents;
   AFormService.Close;
 end;
 

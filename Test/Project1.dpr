@@ -3,7 +3,6 @@ program Project1;
 uses
   Vcl.Forms,
   Unit2 in 'Unit2.pas' {Form2},
-  uDragOnRunTime in '..\ToolKit\src\Main\unit\uDragOnRunTime.pas',
   Unit3 in 'Unit3.pas' {Form3};
 
 {$R *.res}

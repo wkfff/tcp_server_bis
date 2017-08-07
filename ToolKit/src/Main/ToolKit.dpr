@@ -9,7 +9,8 @@ program ToolKit;
 uses
   Vcl.Forms,
   Winapi.Windows,
-  Mainfrm in 'form\Mainfrm.pas' {frmToolBox};
+  Mainfrm in 'form\Mainfrm.pas' {frmToolBox},
+  VersionInfofrm in 'form\VersionInfofrm.pas' {frmVersionInfo};
 
 {$R *.res}
 

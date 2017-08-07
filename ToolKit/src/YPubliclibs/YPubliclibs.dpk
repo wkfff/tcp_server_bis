@@ -33,7 +33,8 @@ requires
   vcl,
   dbrtl,
   QDAC3,
-  SynEdit_R;
+  SynEdit_R,
+  diocpVcl;
 
 contains
   uDragOnRunTime in 'unit\uDragOnRunTime.pas',
