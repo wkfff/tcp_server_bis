@@ -43,6 +43,8 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
+    FDateTimeFormat: TFormatSettings;
+
     FFieldList: TQParams;
     FTableName: string;
     FConditionList: TQParams;
@@ -71,11 +73,18 @@ procedure TdfrmEHSB.DataModuleCreate(Sender: TObject);
 var
   AdbIni: TIniFile;
   ibDef: IFDStanConnectionDef;
+  ATemp: string;
 begin
   AdbIni := nil;
   try
     AdbIni := TIniFile.Create(ExtractFilePath(ParamStr(0)) + DIOCP_TCP_SERVER_INI_FILE);
 
+    FDateTimeFormat.ShortDateFormat := AdbIni.ReadString('DateTime', 'ShortDateFormat', 'yyyy-mm-dd');
+    ATemp := AdbIni.ReadString('DateTime', 'DateSeparator', '-');
+    FDateTimeFormat.DateSeparator := PChar(ATemp)^;
+    FDateTimeFormat.LongTimeFormat := AdbIni.ReadString('DateTime', 'LongTimeFormat', 'hh:nn:ss');
+    ATemp := AdbIni.ReadString('DateTime', 'TimeSeparator', ':');
+    FDateTimeFormat.TimeSeparator := PChar(ATemp)^;
     ibDef := FDManager.ConnectionDefs.FindConnectionDef(CONNECTIONDEFNAME);
     if not Assigned(ibDef) then
     begin
@@ -156,12 +165,12 @@ begin
 
   if not conBIS.Connected then
     conBIS.Connected := True;
+  sfLogger.logMessage('SQLÓï¾ä:' + qryBIS.Command.SQLText);
   qryBIS.Open;
   if qryBIS.RecordCount > 0 then
     qryBIS.Edit
   else
     qryBIS.Append;
-  sfLogger.logMessage('SQLÓï¾ä:' + qryBIS.Command.SQLText);
 
   for I := 0 to FieldList.Count - 1 do
   begin
@@ -177,7 +186,7 @@ begin
       ftDateTime:
       begin
         if Pos('-', AParam.AsString) > 0 then
-          AFDField.AsDateTime := StrToDateTime(AParam.AsString)
+          AFDField.AsDateTime := StrToDateTime(AParam.AsString, FDateTimeFormat)
         else
           AFDField.AsDateTime := StrToDateTime((LeftStr(AParam.AsString, 4)
             + '-' + MidStr(AParam.AsString, 5, 2) + '-'
@@ -199,7 +208,7 @@ begin
         if AParam.AsString = '' then
           Exit;
         if Pos('-', AParam.AsString) > 0 then
-          AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AParam.AsString))
+          AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AParam.AsString, FDateTimeFormat))
         else
           AFDField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(
             StrToDateTime((LeftStr(AParam.AsString, 4)

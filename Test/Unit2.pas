@@ -32,6 +32,7 @@ uses
   Data.DB,
   FireDAC.Comp.Client,
   Vcl.Samples.Gauges,
+  Unit4,
   qworker, System.ImageList, Vcl.ImgList, JvImageList, Vcl.StdCtrls;
 
 type
@@ -42,8 +43,10 @@ type
     Gauge1: TGauge;
     btn1: TButton;
     ilSmall16X16: TJvImageList;
+    btn2: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
+    procedure btn2Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -75,6 +78,11 @@ uses Unit3;
 procedure TForm2.btn1Click(Sender: TObject);
 begin
   Form3.Show;
+end;
+
+procedure TForm2.btn2Click(Sender: TObject);
+begin
+  Form4.Show;
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

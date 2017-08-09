@@ -22,7 +22,9 @@ uses
   uBaseIntf in 'IntfModule\uBaseIntf.pas',
   uResource in 'lib\uResource.pas',
   EHSBdfrm in 'IntfModule\EHSBdfrm.pas' {dfrmEHSB: TDataModule},
-  uLogAppender in 'lib\uLogAppender.pas';
+  uLogAppender in 'lib\uLogAppender.pas',
+  uHBTMintf in 'IntfModule\uHBTMintf.pas',
+  ICalculateService in 'IntfModule\ICalculateService.pas';
 
 {$R *.res}
 var
@@ -42,7 +44,7 @@ begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
     Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
-    Application.Run;
+  Application.Run;
   end;
   ReleaseMutex(hMutex);    // Õ∑≈ª•≥‚∂‘œÛ
 end.

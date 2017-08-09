@@ -3,7 +3,7 @@ object Form2: TForm2
   Top = 0
   Caption = 'Form2'
   ClientHeight = 459
-  ClientWidth = 516
+  ClientWidth = 704
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -38,6 +38,15 @@ object Form2: TForm2
     TabOrder = 1
     OnClick = btn1Click
   end
+  object btn2: TButton
+    Left = 528
+    Top = 128
+    Width = 75
+    Height = 25
+    Caption = 'WebService'
+    TabOrder = 2
+    OnClick = btn2Click
+  end
   object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
     Left = 312
     Top = 104
@@ -56,7 +65,7 @@ object Form2: TForm2
     Left = 320
     Top = 155
     Bitmap = {
-      494C0101680198014C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801500010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
