@@ -44,7 +44,7 @@ begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
     Application.CreateForm(TfrmDIOCPTcpServer, ServerMain);
-  Application.Run;
+    Application.Run;
   end;
   ReleaseMutex(hMutex);    // Õ∑≈ª•≥‚∂‘œÛ
 end.
