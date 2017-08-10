@@ -53,4 +53,9 @@ object dfrmEHSB: TdfrmEHSB
     Left = 208
     Top = 16
   end
+  object spExecute: TFDStoredProc
+    Connection = conBIS
+    Left = 264
+    Top = 16
+  end
 end

@@ -41,6 +41,7 @@ type
     qryBIS: TFDQuery;
     fdmBIS: TFDManager;
     qryUpdate: TFDQuery;
+    spExecute: TFDStoredProc;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private

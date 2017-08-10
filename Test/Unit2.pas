@@ -33,20 +33,34 @@ uses
   FireDAC.Comp.Client,
   Vcl.Samples.Gauges,
   Unit4,
-  qworker, System.ImageList, Vcl.ImgList, JvImageList, Vcl.StdCtrls;
+  qworker, System.ImageList, Vcl.ImgList, JvImageList, Vcl.StdCtrls,
+  FireDAC.Phys.MSSQLDef, FireDAC.Phys.MSSQL, FireDAC.Phys.ODBCBase,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  FireDAC.Comp.DataSet, Vcl.Grids, Vcl.DBGrids;
 
 type
   TForm2 = class(TForm, IQNotify)
     Panel1: TPanel;
     FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink;
-    con1: TFDConnection;
     Gauge1: TGauge;
     btn1: TButton;
     ilSmall16X16: TJvImageList;
     btn2: TButton;
+    msd1: TFDPhysMSSQLDriverLink;
+    con2: TFDConnection;
+    sp1: TFDStoredProc;
+    btn3: TButton;
+    ds1: TDataSource;
+    dbgrd1: TDBGrid;
+    sp1test_item_id: TStringField;
+    sp1quantitative_result: TStringField;
+    sp1inspection_id: TStringField;
+    sp1check_time: TSQLTimeStampField;
+    qry1: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
+    procedure btn3Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -83,6 +97,17 @@ end;
 procedure TForm2.btn2Click(Sender: TObject);
 begin
   Form4.Show;
+end;
+
+procedure TForm2.btn3Click(Sender: TObject);
+var
+  AParam: TFDParam;
+begin
+  con2.Connected := True;
+  sp1.ExecProc('usp_LisGetPatientTestResult',['00434843']);
+  sp1.Open;
+  sp1.First;
+  ShowMessage(sp1.Fields[1].AsString);
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:
