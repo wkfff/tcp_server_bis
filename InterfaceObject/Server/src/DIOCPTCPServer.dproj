@@ -118,9 +118,8 @@
         </DCCReference>
         <DCCReference Include="TCPServer\uDIOCPStreamCoder.pas"/>
         <DCCReference Include="TCPServer\uIntfTCPClientContext.pas"/>
-        <DCCReference Include="TCPServer\uRunTimeINfoTools.pas"/>
+        <DCCReference Include="TCPServer\uRunTimeInfoTools.pas"/>
         <DCCReference Include="IntfModule\uEHSBIntf.pas"/>
-        <DCCReference Include="IntfModule\uTCPServerIntf.pas"/>
         <DCCReference Include="IntfModule\uEwellMqExpts.pas"/>
         <DCCReference Include="IntfModule\uBaseIntf.pas"/>
         <DCCReference Include="lib\uResource.pas"/>
@@ -130,7 +129,18 @@
         </DCCReference>
         <DCCReference Include="lib\uLogAppender.pas"/>
         <DCCReference Include="IntfModule\uHBTMintf.pas"/>
-        <DCCReference Include="IntfModule\ICalculateService.pas"/>
+        <DCCReference Include="lib\MSSQLConverdm.pas">
+            <Form>dmMSSQLConver</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Interface\ICalculateServiceIntf.pas"/>
+        <DCCReference Include="Interface\ITCPServerIntf.pas"/>
+        <DCCReference Include="lib\CnDebug.pas"/>
+        <DCCReference Include="lib\CnPropSheetFrm.pas">
+            <Form>CnPropSheetForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <RcItem Include="Server.ico">
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>

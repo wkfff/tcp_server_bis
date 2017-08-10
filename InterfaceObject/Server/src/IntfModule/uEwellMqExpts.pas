@@ -10,7 +10,7 @@ uses
   qplugins_params,
   qxml,
   qstring,
-  utils_safeLogger;
+  CnDebug;
 
 type
   MQException = class(Exception)
@@ -329,7 +329,7 @@ begin
   Result := 0;
 
   pSecId := ConvertStringToAnsiChar(ServiceId);
-  sfLogger.logMessage('服务ID:' + string(pSecId));
+  CnDebugger.LogMsg('服务ID:' + string(pSecId));
 
   GetMem(pMsgId, 49);
   GetMem(pErrorMsg, 2048);
@@ -339,11 +339,11 @@ begin
     FillChar(pErrorMsg[0], 2048, #0);
 
     pPutMsg := ConvertStringToAnsiChar(CreateQueryParamsMsg);
-    sfLogger.logMessage('MQ Put消息内容:' + string(pPutMsg));
+    CnDebugger.LogMsg('MQ Put消息内容:' + string(pPutMsg));
 
     iReturn := PutMsgMQ(PAnsiChar(AnsiString(ServiceId)), @pMsgId[0], pPutMsg, @pErrorMsg
       [0]);
-    sfLogger.logMessage('消息ID:' + string(pMsgId));
+    CnDebugger.LogMsg('消息ID:' + string(pMsgId));
 
     if iReturn <> 1 then
     begin
@@ -358,7 +358,7 @@ begin
       raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
         iReturn, pErrorMsg]));
     end;
-    sfLogger.logMessage('MQ Get消息内容:' + string(pGetMsg));
+    CnDebugger.LogMsg('MQ Get消息内容:' + string(pGetMsg));
     FrespMsg.Parse(PWideChar(string(pGetMsg)));
     Result := iReturn;
   finally
@@ -385,4 +385,5 @@ begin
 end;
 
 end.
+
 

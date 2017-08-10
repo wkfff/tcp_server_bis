@@ -32,7 +32,7 @@ uses
   qstring,
   qplugins_base,
   qplugins_params,
-  utils_safeLogger;
+  CnDebug;
 
 type
   TdfrmEHSB = class(TDataModule)
@@ -40,6 +40,7 @@ type
     conBIS: TFDConnection;
     qryBIS: TFDQuery;
     fdmBIS: TFDManager;
+    qryUpdate: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
@@ -54,6 +55,7 @@ type
     function GetFieldList: TQParams;
   public
     { Public declarations }
+    procedure QueryData(const ASql: string);
     procedure PutDataIntoDatabase;
     property FieldList: TQParams read GetFieldList write SetFieldList;
     property TableName: string read FTableName write FTableName;
@@ -165,7 +167,7 @@ begin
 
   if not conBIS.Connected then
     conBIS.Connected := True;
-  sfLogger.logMessage('SQLÓï¾ä:' + qryBIS.Command.SQLText);
+  CnDebugger.LogMsg('SQLÓï¾ä:' + qryBIS.Command.SQLText);
   qryBIS.Open;
   if qryBIS.RecordCount > 0 then
     qryBIS.Edit
@@ -177,7 +179,7 @@ begin
     AFieldName := FieldList.Items[I].Name;
     AFDField := qryBIS.FieldByName(AFieldName);
     AParam := FieldList.Items[I];
-    sfLogger.logMessage('FieldName:' + AFieldName + ';FieldValue:'
+    CnDebugger.LogMsg('FieldName:' + AFieldName + ';FieldValue:'
       + AParam.AsString + ';FieldType:'
       + GetEnumname(TypeInfo(TFieldType), Ord(AFDField.DataType)));
     case AFDField.DataType of
@@ -226,6 +228,11 @@ begin
   qryBIS.Post;
 
   qryBIS.Close;
+end;
+
+procedure TdfrmEHSB.QueryData(const ASql: string);
+begin
+  qryBIS.Open(ASql);
 end;
 
 procedure TdfrmEHSB.SetConditionList(const Value: TQParams);

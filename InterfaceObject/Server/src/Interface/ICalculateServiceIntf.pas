@@ -6,7 +6,7 @@
 // (2017-08-09 14:24:43 - - $Rev: 90173 $)
 // ************************************************************************ //
 
-unit ICalculateService;
+unit ICalculateServiceIntf;
 
 interface
 

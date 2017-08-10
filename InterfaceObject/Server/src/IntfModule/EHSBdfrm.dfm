@@ -48,4 +48,9 @@ object dfrmEHSB: TdfrmEHSB
     Left = 64
     Top = 16
   end
+  object qryUpdate: TFDQuery
+    Connection = conBIS
+    Left = 208
+    Top = 16
+  end
 end

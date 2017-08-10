@@ -1,3 +1,12 @@
+{*------------------------------------------------------------------------------
+  湖北天门Webservice接口
+
+  @author  YU
+  @version 2017/07/14 1.0 Initial revision.
+  @todo
+  @comment
+-------------------------------------------------------------------------------}
+
 unit uHBTMintf;
 
 interface
@@ -5,16 +14,17 @@ interface
 uses
   System.SysUtils,
   System.IniFiles,
+  Data.DB,
   qplugins_base,
   QPlugins,
   qxml,
-  uTCPServerIntf,
+  ITCPServerIntf,
   uBaseIntf,
   uResource,
   uEwellMqExpts,
-  utils_safeLogger,
+  CnDebug,
   qstring,
-  ICalculateService,
+  ICalculateServiceIntf,
   EHSBdfrm;
 
 type
@@ -22,31 +32,18 @@ type
   private
     FService: ICalculateServicePortType;
   protected
-//    function GetTestItemResultInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
-//      override;
     /// <summary>
     /// 获取病人信息
     /// </summary>
     function GetPateintInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    function GetTestItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    function GetDiagnosesInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    function GetSurgeryInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    function GetTreatmentItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
-//      override;
-//    function GetChargeItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
-//      override;
-//    /// <summary>
-//    /// 获取职员信息接口
-//    /// </summary>
-//    function GetStaffInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    /// <summary>
-//    /// 获取病区信息接口
-//    /// </summary>
-//    function GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
-//    /// <summary>
-//    /// 获取科室信息接口
-//    /// </summary>
-//    function GetDeptInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
+    /// <summary>
+    /// 医嘱回传接口
+    /// </summary>
+    function SendClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
+    /// <summary>
+    /// 医嘱删除接口
+    /// </summary>
+    function DeleteClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
   public
     destructor Destroy; override;
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
@@ -58,6 +55,63 @@ const
   HospitalCode = '00002';
 
 { THBTMInterfaceObject }
+
+function THBTMInterfaceObject.DeleteClinicalRequisitionOrder(ARecvXML,
+  ASendXML: TQXMLNode): Boolean;
+var
+  AInput: TQXML;
+  AOut: TQXML;
+  ATemp: string;
+  ANode: TQXMLNode;
+  ARequisitionId: string;
+  sql: string;
+  UpdateSql: string;
+  dtSql: TdfrmEHSB;
+  I: Integer;
+begin
+  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  if ARequisitionId = '' then
+    raise Exception.Create('SendClinicalRequisitionOrder Error requisitionid is null');
+
+  dtSql := nil;
+  AInput := nil;
+  AOut := nil;
+  try
+    dtSql := TdfrmEHSB.Create(nil);
+
+    AInput := TQXML.Create;
+    AOut := TQXML.Create;
+    ANode := AInput.AddNode('funderService');
+    ANode.Attrs.Add('functionName').Value := 'xk_delOrderInfo';
+    ANode.AddNode('value').Text := ARequisitionId;
+    ATemp := AInput.Encode(False);
+    CnDebugger.TraceMsgWithTag(ATemp, 'xk_delOrderInfo webservice input');
+    ATemp := FService.funInterFace(ATemp);
+    CnDebugger.TraceMsgWithTag(ATemp, 'xk_delOrderInfo webservice output');
+
+    AOut.Parse(PWideChar(ATemp));
+    if AOut.TextByPath('root.result.ResultCode' ,'') <> '0' then
+      raise Exception.Create('xk_delOrderInfo Error. Message is' + AOut.TextByPath('root.result.ErrorMsg' ,''));
+
+    UpdateSql := 'UPDATE clinical_requisition_order ' + #10
+     + 'SET   ' + #10
+     + '       OrderStatus     = 3 ' + #10
+     + 'WHERE  requisitionid         = '''+ ARequisitionId +'''';
+
+    dtSql.qryUpdate.SQL.Clear;
+    dtSql.qryUpdate.SQL.Add(UpdateSql);
+    dtSql.qryUpdate.ExecSQL;
+
+    ANode := ASendXML.AddNode('root');
+    ANode.AddNode('resultcode').Text := '0';
+    ANode.AddNode('resultmessage').Text := '成功';
+    ANode.AddNode('results').Text := '';
+  finally
+    FreeAndNil(AOut);
+    FreeAndNil(AInput);
+    FreeAndNil(dtSql);
+  end;
+end;
 
 destructor THBTMInterfaceObject.Destroy;
 begin
@@ -100,9 +154,9 @@ begin
     ANode := AInput.AddNode('funderService');
     ANode.Attrs.Add('functionName').Value := 'xk_queryPatInfo';
     ANode.AddNode('value').Text := APatientId;
-    sfLogger.logMessage('webservice入参：' + AInput.Encode(False));
+    CnDebugger.TraceMsgWithTag(AInput.Encode(False), 'xk_queryPatInfo webservice input');
     AOut := FService.funInterFace(AInput.Encode(False));
-    sfLogger.logMessage('webservice出参：' + AOut);
+    CnDebugger.TraceMsgWithTag(AOut, 'xk_queryPatInfo webservice output');
     AOutPut.Parse(PWideChar(AOut));
 
     dtSQL := TdfrmEHSB.Create(nil);
@@ -129,6 +183,95 @@ begin
     FreeAndNil(AInput);
     FreeAndNil(AOutPut);
     FreeAndNil(dtSQL);
+  end;
+end;
+
+function THBTMInterfaceObject.SendClinicalRequisitionOrder(ARecvXML,
+  ASendXML: TQXMLNode): Boolean;
+var
+  AInput: TQXML;
+  AOut: TQXML;
+  ATemp: string;
+  ANode: TQXMLNode;
+  ARequisitionId: string;
+  sql: string;
+  UpdateSql: string;
+  dtSql: TdfrmEHSB;
+  I: Integer;
+begin
+  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  if ARequisitionId = '' then
+    raise Exception.Create('SendClinicalRequisitionOrder Error requisitionid is null');
+
+  sql := 'SELECT cro.InPatientId, ' + #10
+       + '       ''1''                         AS ''1'', ' + #10
+       + '       cro.HisItemCode, ' + #10
+       + '       cro.RequisitionTime, ' + #10
+       + '       cro.RequisitionDoctor, ' + #10
+       + '       cro.ItemCount, ' + #10
+       + '       cro.ExecUnit, ' + #10
+       + '       cro.WardCode, ' + #10
+       + '       cro.DeptCode, ' + #10
+       + '       cro.RequisitionID, cro.OrderID ' + #10
+       + 'FROM   clinical_requisition_order  AS cro ' + #10
+       + 'WHERE  cro.RequisitionID = ''' + ARequisitionId + ''' '+ #10
+       + '       AND cro.OrderStatus < 2;';
+
+  dtSql := nil;
+  AInput := nil;
+  AOut := nil;
+  try
+    dtSql := TdfrmEHSB.Create(nil);
+    dtSql.QueryData(sql);
+    if dtSql.qryBIS.RecordCount = 0 then
+      raise Exception.Create('Query requisition data Error data not found. requisition_id: ' + ARequisitionId);
+
+    AInput := TQXML.Create;
+    AOut := TQXML.Create;
+    ANode := AInput.AddNode('funderService');
+    ANode.Attrs.Add('functionName').Value := 'xk_saveOrderInfo';
+
+    dtSql.qryBIS.First;
+    while not dtSql.qryBIS.Eof do
+    begin
+      for I := 0 to dtSql.qryBIS.Fields.Count - 2 do
+      begin
+        case dtSql.qryBIS.Fields[I].DataType of
+          ftString: ANode.AddNode('value').Text := dtSql.qryBIS.Fields[I].AsString;
+          ftDateTime, ftTimeStamp: ANode.AddNode('value').Text := FormatDateTime('yyyy-mm-dd', dtSql.qryBIS.Fields[I].AsDateTime);
+          ftInteger: ANode.AddNode('value').Text := IntToStr(dtSql.qryBIS.Fields[I].AsInteger);
+        end;
+      end;
+
+      ATemp := AInput.Encode(False);
+      CnDebugger.TraceMsgWithTag(ATemp, 'xk_saveOrderInfo webservice input');
+      ATemp := FService.funInterFace(ATemp);
+      CnDebugger.TraceMsgWithTag(ATemp, 'xk_saveOrderInfo webservice output');
+
+      AOut.Parse(PWideChar(ATemp));
+      if AOut.TextByPath('root.result.ResultCode' ,'') <> '0' then
+        raise Exception.Create('xk_saveOrderInfo Error. Message is' + AOut.TextByPath('root.result.ErrorMsg' ,''));
+
+      UpdateSql := 'UPDATE clinical_requisition_order ' + #10
+       + 'SET    OrderNo         = '''+ AOut.TextByPath('root.result.order_sn','') +''', ' + #10
+       + '       OrderStatus     = 2 ' + #10
+       + 'WHERE  OrderID         = '''+ dtSql.qryBIS.FindField('OrderID').AsString +'''';
+
+      dtSql.qryUpdate.SQL.Clear;
+      dtSql.qryUpdate.SQL.Add(UpdateSql);
+      dtSql.qryUpdate.ExecSQL;
+
+      dtSql.qryBIS.Next;
+    end;
+
+    ANode := ASendXML.AddNode('root');
+    ANode.AddNode('resultcode').Text := '0';
+    ANode.AddNode('resultmessage').Text := '成功';
+    ANode.AddNode('results').Text := '';
+  finally
+    FreeAndNil(AOut);
+    FreeAndNil(AInput);
+    FreeAndNil(dtSql);
   end;
 end;
 

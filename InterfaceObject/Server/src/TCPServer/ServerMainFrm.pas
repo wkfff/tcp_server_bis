@@ -26,7 +26,7 @@ uses
   ServerMMonitorFrm,
   uDIOCPStreamCoder,
   uIntfTCPClientContext,
-  utils_safeLogger,
+  CnDebug,
   uResource,
   uLogAppender;
 
@@ -137,7 +137,9 @@ end;
 
 procedure TfrmDIOCPTcpServer.FormCreate(Sender: TObject);
 begin
-  sfLogger.setAppender(TMyLogFileAppender.Create(True));
+  CnDebugger.AutoStart := False;
+  CnDebugger.DumpToFile := True;
+  CnDebugger.DumpFileName := 'tcp_server_log.log';
   FTcpServer := TDiocpCoderTcpServer.Create(Self);
   SetServerPort;
   FTcpServer.Name := 'WHTX_TCPServer';

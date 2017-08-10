@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   QPlugins,
   qxml,
-  uTCPServerIntf,
+  ITCPServerIntf,
   uResource;
 
 type
@@ -22,11 +22,19 @@ type
     function GetStaffInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
     function GetDeptInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
+    function SendClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
+    function DeleteClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
   public
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; virtual;
   end;
 
 implementation
+
+function TBaseIntf.DeleteClinicalRequisitionOrder(ARecvXML,
+  ASendXML: TQXMLNode): Boolean;
+begin
+  Result := False;
+end;
 
 function TBaseIntf.ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean;
 var
@@ -56,7 +64,12 @@ begin
   else if intfName = 'getpateintinfos' then
     Result := GetPateintInfos(ARecvXML, ASendXML)
   else if intfName = 'gettestitemresultinfos' then
-    Result := GetTestItemResultInfos(ARecvXML, ASendXML);
+    Result := GetTestItemResultInfos(ARecvXML, ASendXML)
+  else if intfName = 'sendclinicalrequisitionorder' then
+    Result := SendClinicalRequisitionOrder(ARecvXML, ASendXML)
+  else if intfName = 'deleteclinicalrequisitionorder' then
+    Result := DeleteClinicalRequisitionOrder(ARecvXML, ASendXML)
+
 end;
 
 function TBaseIntf.GetChargeItemInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
@@ -107,6 +120,12 @@ begin
 end;
 
 function TBaseIntf.GetWardInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
+begin
+  Result := False;
+end;
+
+function TBaseIntf.SendClinicalRequisitionOrder(ARecvXML,
+  ASendXML: TQXMLNode): Boolean;
 begin
   Result := False;
 end;

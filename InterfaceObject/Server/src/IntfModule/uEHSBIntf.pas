@@ -18,11 +18,11 @@ uses
   QPlugins,
   qplugins_params,
   qxml,
-  uTCPServerIntf,
+  ITCPServerIntf,
   uBaseIntf,
   uResource,
   uEwellMqExpts,
-  utils_safeLogger,
+  CnDebug,
   qstring,
   EHSBdfrm;
 
@@ -78,7 +78,7 @@ const
 destructor TEHSBInterfaceObject.Destroy;
 begin
   FreeAndNilObject(FConfig);
-  sfLogger.logMessage('InterFace.Destroy.00001');
+  CnDebugger.LogMsg('InterFace.Destroy.00001');
   inherited;
 end;
 

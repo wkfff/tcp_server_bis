@@ -1,8 +1,8 @@
 object FMMonitor: TFMMonitor
   Left = 0
   Top = 0
-  Width = 506
-  Height = 351
+  Width = 509
+  Height = 398
   Align = alClient
   TabOrder = 0
   ExplicitWidth = 451
@@ -231,8 +231,8 @@ object FMMonitor: TFMMonitor
     Caption = 'recvRequest'
   end
   object Port: TLabel
-    Left = 16
-    Top = 292
+    Left = 348
+    Top = 183
     Width = 20
     Height = 13
     Caption = 'Port'
@@ -244,8 +244,8 @@ object FMMonitor: TFMMonitor
     ParentFont = False
   end
   object lblPort: TLabel
-    Left = 111
-    Top = 292
+    Left = 405
+    Top = 183
     Width = 30
     Height = 13
     Caption = 'lblPort'

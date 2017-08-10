@@ -1,4 +1,4 @@
-unit uRunTimeINfoTools;
+unit uRunTimeInfoTools;
 
 interface
 

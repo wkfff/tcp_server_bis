@@ -1,4 +1,4 @@
-unit uTCPServerIntf;
+unit ITCPServerIntf;
 
 interface
 

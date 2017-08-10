@@ -7,11 +7,11 @@ uses
   SysUtils,
   diocp_coder_tcpServer,
   utils_zipTools,
-  utils_safeLogger,
+  CnDebug,
   qxml,
   QPlugins,
   qstring,
-  uTCPServerIntf,
+  ITCPServerIntf,
   uResource;
 
 type
@@ -65,13 +65,13 @@ begin
 
     recvXMLNode.LoadFromStream(unzipStream);
 
-    sfLogger.logMessage(GetRemoteInfo + recvXMLNode.Encode(False));
+    CnDebugger.TraceMsg(GetRemoteInfo + recvXMLNode.Encode(False));
 
     HospitalCode := recvXMLNode.TextByPath(HOSPITAL_CODE_XMLPATH, '-1');
     if HospitalCode = '-1' then      //检查医院代码是否传入
     begin
       GenerateErrorXML(HOSPITAL_CODE_ERROR, sendXMLNode);
-      sfLogger.logMessage(HOSPITAL_CODE_ERROR,'', lgvError);
+      CnDebugger.TraceMsgError(HOSPITAL_CODE_ERROR);
     end
     else
     begin
@@ -79,19 +79,20 @@ begin
       if Assigned(excuIntf) then     //检查医院接口是否注册
       begin
         try
-          excuIntf.ExecuteIntf(recvXMLNode, sendXMLNode)
+          excuIntf.ExecuteIntf(recvXMLNode, sendXMLNode);
+          CnDebugger.TraceMsg(GetRemoteInfo + sendXMLNode.Encode(False));
         except
           on E: Exception do
           begin
             GenerateErrorXML(Format(HOSPITAL_INTFEXCUT_ERROR, [E.Message]), sendXMLNode);
-            sfLogger.logMessage(Format(HOSPITAL_INTFEXCUT_ERROR, [E.Message]), '', lgvError);
+            CnDebugger.TraceMsgError(Format(HOSPITAL_INTFEXCUT_ERROR, [E.Message]));
           end;
         end;
       end
       else
       begin
         GenerateErrorXML(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]), sendXMLNode);
-        sfLogger.logMessage(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]), '', lgvError);
+        CnDebugger.TraceMsgError(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]));
       end;
     end;
 
@@ -131,13 +132,15 @@ end;
 procedure TMyTCPClientContext.OnConnected;
 begin
   inherited;
-  sfLogger.logMessage(Format('客户端连接成功：【%s】',[GetRemoteInfo]));
+  CnDebugger.LogMsg(Format('客户端连接成功：【%s】',[GetRemoteInfo]));
 end;
 
 procedure TMyTCPClientContext.OnDisconnected;
 begin
   inherited;
-  sfLogger.logMessage(Format('客户端连接断开：【%s】',[GetRemoteInfo]));
+  CnDebugger.LogMsg(Format('客户端连接断开：【%s】',[GetRemoteInfo]));
 end;
 
 end.
+
+

@@ -1,7 +1,6 @@
 program DIOCPTCPServer;
 
 {$R *.dres}
-{ Reduce EXE size by disabling as much of RTTI as possible (delphi XE10.1 }
 {$IF CompilerVersion >= 21.0}
 {$WEAKLINKRTTI ON}
 {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
@@ -15,16 +14,19 @@ uses
   ServerMainFrm in 'TCPServer\ServerMainFrm.pas' {frmDIOCPTcpServer},
   uDIOCPStreamCoder in 'TCPServer\uDIOCPStreamCoder.pas',
   uIntfTCPClientContext in 'TCPServer\uIntfTCPClientContext.pas',
-  uRunTimeINfoTools in 'TCPServer\uRunTimeINfoTools.pas',
+  uRunTimeInfoTools in 'TCPServer\uRunTimeInfoTools.pas',
   uEHSBIntf in 'IntfModule\uEHSBIntf.pas',
-  uTCPServerIntf in 'IntfModule\uTCPServerIntf.pas',
   uEwellMqExpts in 'IntfModule\uEwellMqExpts.pas',
   uBaseIntf in 'IntfModule\uBaseIntf.pas',
   uResource in 'lib\uResource.pas',
   EHSBdfrm in 'IntfModule\EHSBdfrm.pas' {dfrmEHSB: TDataModule},
   uLogAppender in 'lib\uLogAppender.pas',
   uHBTMintf in 'IntfModule\uHBTMintf.pas',
-  ICalculateService in 'IntfModule\ICalculateService.pas';
+  MSSQLConverdm in 'lib\MSSQLConverdm.pas' {dmMSSQLConver: TDataModule},
+  ICalculateServiceIntf in 'Interface\ICalculateServiceIntf.pas',
+  ITCPServerIntf in 'Interface\ITCPServerIntf.pas',
+  CnDebug in 'lib\CnDebug.pas',
+  CnPropSheetFrm in 'lib\CnPropSheetFrm.pas' {CnPropSheetForm};
 
 {$R *.res}
 var
