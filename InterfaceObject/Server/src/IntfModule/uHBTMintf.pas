@@ -238,7 +238,7 @@ begin
       begin
         case dtSql.qryBIS.Fields[I].DataType of
           ftString: ANode.AddNode('value').Text := dtSql.qryBIS.Fields[I].AsString;
-          ftDateTime, ftTimeStamp: ANode.AddNode('value').Text := FormatDateTime('yyyy-mm-dd', dtSql.qryBIS.Fields[I].AsDateTime);
+          ftDateTime, ftTimeStamp: ANode.AddNode('value').Text := FormatDateTime('yyyy-mm-dd hh:mm:ss', dtSql.qryBIS.Fields[I].AsDateTime);
           ftInteger: ANode.AddNode('value').Text := IntToStr(dtSql.qryBIS.Fields[I].AsInteger);
         end;
       end;
