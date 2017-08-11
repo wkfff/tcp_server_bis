@@ -102,7 +102,7 @@ object Form2: TForm2
     Left = 320
     Top = 155
     Bitmap = {
-      494C010168019801540010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801580010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12131,8 +12131,8 @@ object Form2: TForm2
       'User_Name=sa'
       'Password=7540000E'
       'Server=127.0.0.1'
-      'DriverID=MSSQL')
-    Connected = True
+      'DriverID=MSSQL'
+      'LoginTimeout=1')
     LoginPrompt = False
     Left = 200
     Top = 296
@@ -12193,5 +12193,10 @@ object Form2: TForm2
     Connection = con2
     Left = 432
     Top = 352
+  end
+  object ae1: TApplicationEvents
+    OnException = ae1Exception
+    Left = 448
+    Top = 232
   end
 end

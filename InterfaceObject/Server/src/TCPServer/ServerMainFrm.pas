@@ -28,7 +28,7 @@ uses
   uIntfTCPClientContext,
   CnDebug,
   uResource,
-  uLogAppender;
+  uLogAppender, Vcl.AppEvnts;
 
 type
   TfrmDIOCPTcpServer = class(TForm)
@@ -51,6 +51,7 @@ type
     O2: TMenuItem;
     actClose1: TMenuItem;
     mniClose: TMenuItem;
+    aeMain: TApplicationEvents;
     procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
     procedure actShowExecute(Sender: TObject);
     procedure actHideExecute(Sender: TObject);
@@ -60,6 +61,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
     procedure mniCloseClick(Sender: TObject);
+    procedure aeMainException(Sender: TObject; E: Exception);
   private
     { Private declarations }
     FTcpServer: TDiocpCoderTcpServer;
@@ -103,6 +105,11 @@ begin
   Application.BringToFront;
 end;
 
+procedure TfrmDIOCPTcpServer.aeMainException(Sender: TObject; E: Exception);
+begin
+  CnDebugger.TraceMsgError(E.Message);
+end;
+
 destructor TfrmDIOCPTcpServer.Destroy;
 begin
   traMain.Visible := False;
@@ -139,6 +146,7 @@ procedure TfrmDIOCPTcpServer.FormCreate(Sender: TObject);
 begin
   CnDebugger.AutoStart := False;
   CnDebugger.DumpToFile := True;
+  CnDebugger.ExceptTracking := False;
   CnDebugger.DumpFileName := 'tcp_server_log.log';
   FTcpServer := TDiocpCoderTcpServer.Create(Self);
   SetServerPort;

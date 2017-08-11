@@ -40,11 +40,13 @@ type
     /// <summary>
     /// 医嘱回传接口
     /// </summary>
-    function SendClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
+    function SendClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode):
+      Boolean; override;
     /// <summary>
     /// 医嘱删除接口
     /// </summary>
-    function DeleteClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
+    function DeleteClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode):
+      Boolean; override;
     /// <summary>
     /// 获取病人最近一次检验结果
     /// </summary>
@@ -61,8 +63,8 @@ const
 
 { THBTMInterfaceObject }
 
-function THBTMInterfaceObject.DeleteClinicalRequisitionOrder(ARecvXML,
-  ASendXML: TQXMLNode): Boolean;
+function THBTMInterfaceObject.DeleteClinicalRequisitionOrder(ARecvXML, ASendXML:
+  TQXMLNode): Boolean;
 var
   AInput: TQXML;
   AOut: TQXML;
@@ -74,7 +76,8 @@ var
   dtSql: TdfrmEHSB;
   I: Integer;
 begin
-  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
+    '');
   if ARequisitionId = '' then
     raise Exception.Create('SendClinicalRequisitionOrder Error requisitionid is null');
 
@@ -95,13 +98,13 @@ begin
     CnDebugger.TraceMsgWithTag(ATemp, 'xk_delOrderInfo webservice output');
 
     AOut.Parse(PWideChar(ATemp));
-    if AOut.TextByPath('root.result.ResultCode' ,'') <> '0' then
-      raise Exception.Create('xk_delOrderInfo Error. Message is' + AOut.TextByPath('root.result.ErrorMsg' ,''));
+    if AOut.TextByPath('root.result.ResultCode', '') <> '0' then
+      raise Exception.Create('xk_delOrderInfo Error. Message is' + AOut.TextByPath
+        ('root.result.ErrorMsg', ''));
 
-    UpdateSql := 'UPDATE clinical_requisition_order ' + #10
-     + 'SET   ' + #10
-     + '       OrderStatus     = 3 ' + #10
-     + 'WHERE  requisitionid         = '''+ ARequisitionId +'''';
+    UpdateSql := 'UPDATE clinical_requisition_order ' + #10 + 'SET   ' + #10 +
+      '       OrderStatus     = 3 ' + #10 + 'WHERE  requisitionid         = '''
+      + ARequisitionId + '''';
 
     dtSql.qryUpdate.SQL.Clear;
     dtSql.qryUpdate.SQL.Add(UpdateSql);
@@ -123,16 +126,14 @@ begin
   inherited;
 end;
 
-function THBTMInterfaceObject.ExecuteIntf(ARecvXML,
-  ASendXML: TQXMLNode): Boolean;
+function THBTMInterfaceObject.ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean;
 begin
   if not Assigned(FService) then
     FService := GetICalculateServicePortType;
   inherited;
 end;
 
-function THBTMInterfaceObject.GetPateintInfos(ARecvXML,
-  ASendXML: TQXMLNode): Boolean;
+function THBTMInterfaceObject.GetPateintInfos(ARecvXML, ASendXML: TQXMLNode): Boolean;
 var
   APatientId: string;
   ANums: Integer;
@@ -147,10 +148,12 @@ begin
   AOutPut := nil;
   dtSQL := nil;
 
-  APatientId := Trim(ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid', ''));
+  APatientId := Trim(ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid',
+    ''));
   if APatientId = '' then
     raise Exception.Create('GetPateintInfos resolve patientid Error patientid is null');
-  if not TryStrToInt(ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', ''), ANums) then
+  if not TryStrToInt(ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber',
+    ''), ANums) then
     raise Exception.Create('GetPateintInfos resolve Nums Error Can`t TryStrToInt()');
 
   try
@@ -173,10 +176,14 @@ begin
       begin
         FieldList.Add(ANode.Items[I].Name, ANode.Items[I].Text);
       end;
-      FieldList.Add('GetId', ANode.TextByPath('PatientId', '') + '-' + ANode.TextByPath('PatientNumber', '') + '-'  + ANode.TextByPath('InPatientId', ''));
-      ConditionList.Add('PatientId', APOSTROPHE + ANode.TextByPath('PatientId', '') + APOSTROPHE);
-      ConditionList.Add('PatientNumber', APOSTROPHE + ANode.TextByPath('PatientNumber', '') + APOSTROPHE);
-      ConditionList.Add('InPatientId', APOSTROPHE + ANode.TextByPath('InPatientId', '') + APOSTROPHE);
+      FieldList.Add('GetId', ANode.TextByPath('PatientId', '') + '-' + ANode.TextByPath
+        ('PatientNumber', '') + '-' + ANode.TextByPath('InPatientId', ''));
+      ConditionList.Add('PatientId', APOSTROPHE + ANode.TextByPath('PatientId',
+        '') + APOSTROPHE);
+      ConditionList.Add('PatientNumber', APOSTROPHE + ANode.TextByPath('PatientNumber',
+        '') + APOSTROPHE);
+      ConditionList.Add('InPatientId', APOSTROPHE + ANode.TextByPath('InPatientId',
+        '') + APOSTROPHE);
       PutDataIntoDatabase;
     end;
 
@@ -191,9 +198,11 @@ begin
   end;
 end;
 
-function THBTMInterfaceObject.GetTestItemResultInfos(ARecvXML,
-  ASendXML: TQXMLNode): Boolean;
+function THBTMInterfaceObject.GetTestItemResultInfos(ARecvXML, ASendXML:
+  TQXMLNode): Boolean;
 var
+  ANode: TQXMLNode;
+  AInPatientId: string;
   APatientId: string;
   ATestItems: string;
   dtSql: TdfrmEHSB;
@@ -206,41 +215,59 @@ begin
   ATestItems := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid', '');
   if ATestItems = '' then
     raise Exception.Create('GetTestItemResultInfos Error testitemid is null');
+  AInPatientId := ARecvXML.TextByPath('interfacemessage.interfaceparms.inpatientid', '');
 
   dtSql := nil;
   try
+    dtSql := TdfrmEHSB.Create(nil);
     with dtSql do
     begin
-      spExecute.ExecProc('proc_getlastresult_bims',[APatientId, ATestItems]);
+      CnDebugger.LogMsgWithTag(APatientId, 'APatientId');
+      CnDebugger.LogMsgWithTag(ATestItems, 'ATestItems');
+      spExecute.ExecProc('proc_getlastresult_bims', [APatientId, AInPatientId, ATestItems]);
       spExecute.Open;
       if spExecute.RecordCount = 0 then
         raise Exception.Create('ExecProc proc_getlastresult_bims Error. Message: no result return.');
+      CnDebugger.LogMsgWithTag(IntToStr(spExecute.RecordCount), 'RecordCount');
+      CnDebugger.LogMsgWithTag(IntToStr(spExecute.Fields.Count), 'Fields.Count');
       spExecute.First;
       while not spExecute.Eof do
       begin
-        sql := 'SELECT * ' + #10
-             + 'FROM   Patient_GetInterface_Result_Info AS pgiri ' + #10
-             + 'WHERE  pgiri.Barcode = '''+ spExecute.FindField('Barcode').AsString +''' ' + #10
-             + '       AND pgiri.TestItemId = '''+ spExecute.FindField('TestItemId').AsString +''';';
+        sql := 'SELECT * ' + #10 +
+          'FROM   Patient_GetInterface_Result_Info AS pgiri ' + #10 +
+          'WHERE  pgiri.Barcode = ''' + spExecute.FindField('Barcode').AsString
+          + ''' ' + #10 + '       AND pgiri.TestItemId = ''' + spExecute.FindField
+          ('TestItemId').AsString + ''';';
         qryUpdate.Open(sql);
         if qryUpdate.RecordCount > 0 then
           qryUpdate.Delete;
         qryUpdate.Append;
-        for I := 0 to spExecute.FieldCount - 1 do
+        for I := 0 to spExecute.Fields.Count - 1 do
         begin
-          qryUpdate.FindField(spExecute.Fields[I].FieldName).Value := spExecute.Fields[I].Value;
+          qryUpdate.FindField(spExecute.Fields[I].FieldName).Value := spExecute.Fields
+            [I].Value;
         end;
+        qryUpdate.FindField('patientid').AsString := APatientId;
+        qryUpdate.FindField('patientnumber').AsString :=
+          ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', '');
+        qryUpdate.FindField('GetID').AsString := spExecute.FindField('Barcode').AsString
+          + spExecute.FindField('TestItemId').AsString;
         qryUpdate.Post;
         spExecute.Next;
       end;
     end;
+
+    ANode := ASendXML.AddNode('root');
+    ANode.AddNode('resultcode').Text := '0';
+    ANode.AddNode('resultmessage').Text := '成功';
+    ANode.AddNode('results').Text := '';
   finally
     FreeAndNil(dtSql);
   end;
 end;
 
-function THBTMInterfaceObject.SendClinicalRequisitionOrder(ARecvXML,
-  ASendXML: TQXMLNode): Boolean;
+function THBTMInterfaceObject.SendClinicalRequisitionOrder(ARecvXML, ASendXML:
+  TQXMLNode): Boolean;
 var
   AInput: TQXML;
   AOut: TQXML;
@@ -252,23 +279,20 @@ var
   dtSql: TdfrmEHSB;
   I: Integer;
 begin
-  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  ARequisitionId := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
+    '');
   if ARequisitionId = '' then
     raise Exception.Create('SendClinicalRequisitionOrder Error requisitionid is null');
 
-  sql := 'SELECT cro.InPatientId, ' + #10
-       + '       ''1''                         AS ''1'', ' + #10
-       + '       cro.HisItemCode, ' + #10
-       + '       cro.RequisitionTime, ' + #10
-       + '       cro.RequisitionDoctor, ' + #10
-       + '       cro.ItemCount, ' + #10
-       + '       cro.ExecUnit, ' + #10
-       + '       cro.WardCode, ' + #10
-       + '       cro.DeptCode, ' + #10
-       + '       cro.RequisitionID, cro.OrderID ' + #10
-       + 'FROM   clinical_requisition_order  AS cro ' + #10
-       + 'WHERE  cro.RequisitionID = ''' + ARequisitionId + ''' '+ #10
-       + '       AND cro.OrderStatus < 2;';
+  sql := 'SELECT cro.InPatientId, ' + #10 +
+    '       ''1''                         AS ''1'', ' + #10 +
+    '       cro.HisItemCode, ' + #10 + '       cro.RequisitionTime, ' + #10 +
+    '       cro.RequisitionDoctor, ' + #10 + '       cro.ItemCount, ' + #10 +
+    '       cro.ExecUnit, ' + #10 + '       cro.WardCode, ' + #10 +
+    '       cro.DeptCode, ' + #10 + '       cro.RequisitionID, cro.OrderID ' +
+    #10 + 'FROM   clinical_requisition_order  AS cro ' + #10 +
+    'WHERE  cro.RequisitionID = ''' + ARequisitionId + ''' ' + #10 +
+    '       AND cro.OrderStatus < 2;';
 
   dtSql := nil;
   AInput := nil;
@@ -277,7 +301,8 @@ begin
     dtSql := TdfrmEHSB.Create(nil);
     dtSql.QueryData(sql);
     if dtSql.qryBIS.RecordCount = 0 then
-      raise Exception.Create('Query requisition data Error data not found. requisition_id: ' + ARequisitionId);
+      raise Exception.Create('Query requisition data Error data not found. requisition_id: '
+        + ARequisitionId);
 
     AInput := TQXML.Create;
     AOut := TQXML.Create;
@@ -290,9 +315,13 @@ begin
       for I := 0 to dtSql.qryBIS.Fields.Count - 2 do
       begin
         case dtSql.qryBIS.Fields[I].DataType of
-          ftString: ANode.AddNode('value').Text := dtSql.qryBIS.Fields[I].AsString;
-          ftDateTime, ftTimeStamp: ANode.AddNode('value').Text := FormatDateTime('yyyy-mm-dd hh:mm:ss', dtSql.qryBIS.Fields[I].AsDateTime);
-          ftInteger: ANode.AddNode('value').Text := IntToStr(dtSql.qryBIS.Fields[I].AsInteger);
+          ftString:
+            ANode.AddNode('value').Text := dtSql.qryBIS.Fields[I].AsString;
+          ftDateTime, ftTimeStamp:
+            ANode.AddNode('value').Text := FormatDateTime('yyyy-mm-dd hh:mm:ss',
+              dtSql.qryBIS.Fields[I].AsDateTime);
+          ftInteger:
+            ANode.AddNode('value').Text := IntToStr(dtSql.qryBIS.Fields[I].AsInteger);
         end;
       end;
 
@@ -302,13 +331,14 @@ begin
       CnDebugger.TraceMsgWithTag(ATemp, 'xk_saveOrderInfo webservice output');
 
       AOut.Parse(PWideChar(ATemp));
-      if AOut.TextByPath('root.result.ResultCode' ,'') <> '0' then
-        raise Exception.Create('xk_saveOrderInfo Error. Message is' + AOut.TextByPath('root.result.ErrorMsg' ,''));
+      if AOut.TextByPath('root.result.ResultCode', '') <> '0' then
+        raise Exception.Create('xk_saveOrderInfo Error. Message is' + AOut.TextByPath
+          ('root.result.ErrorMsg', ''));
 
-      UpdateSql := 'UPDATE clinical_requisition_order ' + #10
-       + 'SET    OrderNo         = '''+ AOut.TextByPath('root.result.order_sn','') +''', ' + #10
-       + '       OrderStatus     = 2 ' + #10
-       + 'WHERE  OrderID         = '''+ dtSql.qryBIS.FindField('OrderID').AsString +'''';
+      UpdateSql := 'UPDATE clinical_requisition_order ' + #10 +
+        'SET    OrderNo         = ''' + AOut.TextByPath('root.result.order_sn',
+        '') + ''', ' + #10 + '       OrderStatus     = 2 ' + #10 +
+        'WHERE  OrderID         = ''' + dtSql.qryBIS.FindField('OrderID').AsString + '''';
 
       dtSql.qryUpdate.SQL.Clear;
       dtSql.qryUpdate.SQL.Add(UpdateSql);
@@ -338,3 +368,4 @@ finalization
   UnregisterServices('Services/Interface', [HospitalCode]);
 
 end.
+

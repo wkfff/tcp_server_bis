@@ -42,6 +42,7 @@ type
     fdmBIS: TFDManager;
     qryUpdate: TFDQuery;
     spExecute: TFDStoredProc;
+    conHIS: TFDConnection;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
@@ -88,6 +89,7 @@ begin
     FDateTimeFormat.LongTimeFormat := AdbIni.ReadString('DateTime', 'LongTimeFormat', 'hh:nn:ss');
     ATemp := AdbIni.ReadString('DateTime', 'TimeSeparator', ':');
     FDateTimeFormat.TimeSeparator := PChar(ATemp)^;
+
     ibDef := FDManager.ConnectionDefs.FindConnectionDef(CONNECTIONDEFNAME);
     if not Assigned(ibDef) then
     begin
@@ -104,6 +106,31 @@ begin
       end;
       ibDef.Apply;
     end;
+
+    ibDef := FDManager.ConnectionDefs.FindConnectionDef('HIS_POOLED');
+    if not Assigned(ibDef) then
+    begin
+      ibDef := FDManager.ConnectionDefs.AddConnectionDef;
+      ibDef.Name := 'HIS_POOLED';
+      with ibDef.Params do
+      begin
+        DriverID := AdbIni.ReadString('HIS_DATABASE', 'DriverName', '');
+        Database := AdbIni.ReadString('HIS_DATABASE', 'DataBase', '');
+        UserName := AdbIni.ReadString('HIS_DATABASE', 'User_Name', '');
+        Password := AdbIni.ReadString('HIS_DATABASE', 'Password', '');
+        Pooled := True;
+        Values['Server'] := AdbIni.ReadString('HIS_DATABASE', 'Server', '');
+      end;
+      ibDef.Apply;
+    end;
+    conHIS.ConnectionDefName := 'HIS_POOLED';
+    try
+      conHIS.Connected := True;
+    except
+      on E: EFDException do
+        raise Exception.Create('HIS_DATABASE Error.Connect false.');
+    end;
+
     conBIS.ConnectionDefName := CONNECTIONDEFNAME;
     conBIS.Connected := False;
   finally
@@ -113,6 +140,8 @@ end;
 
 procedure TdfrmEHSB.DataModuleDestroy(Sender: TObject);
 begin
+  if conHIS.Connected then
+    conHIS.Connected := False;
   if conBIS.Connected then
     conBIS.Connected := False;
   FreeAndNilObject(FFieldList);

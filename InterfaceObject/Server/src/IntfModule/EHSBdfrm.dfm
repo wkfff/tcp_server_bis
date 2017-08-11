@@ -54,8 +54,13 @@ object dfrmEHSB: TdfrmEHSB
     Top = 16
   end
   object spExecute: TFDStoredProc
-    Connection = conBIS
+    Connection = conHIS
     Left = 264
     Top = 16
+  end
+  object conHIS: TFDConnection
+    LoginPrompt = False
+    Left = 16
+    Top = 80
   end
 end
