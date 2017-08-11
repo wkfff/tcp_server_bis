@@ -47,15 +47,52 @@ object Form2: TForm2
     TabOrder = 2
     OnClick = btn2Click
   end
+  object btn3: TButton
+    Left = 368
+    Top = 296
+    Width = 75
+    Height = 25
+    Caption = 'btn3'
+    TabOrder = 3
+    OnClick = btn3Click
+  end
+  object dbgrd1: TDBGrid
+    Left = 136
+    Top = 8
+    Width = 545
+    Height = 210
+    DataSource = ds1
+    TabOrder = 4
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'test_item_id'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'quantitative_result'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'inspection_id'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'check_time'
+        Visible = True
+      end>
+  end
   object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
     Left = 312
     Top = 104
-  end
-  object con1: TFDConnection
-    Params.Strings = (
-      'DriverID=SQLite')
-    Left = 192
-    Top = 144
   end
   object ilSmall16X16: TJvImageList
     ColorDepth = cd32Bit
@@ -65,7 +102,7 @@ object Form2: TForm2
     Left = 320
     Top = 155
     Bitmap = {
-      494C010168019801500010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801540010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12083,5 +12120,78 @@ object Form2: TForm2
       00008001000000000000C003000000000000E007000100000000F00F80030000
       0000F81FC00700000000FC3FE00F000000000000000000000000000000000000
       000000000000}
+  end
+  object msd1: TFDPhysMSSQLDriverLink
+    Left = 136
+    Top = 296
+  end
+  object con2: TFDConnection
+    Params.Strings = (
+      'Database=xhlisdb_data'
+      'User_Name=sa'
+      'Password=7540000E'
+      'Server=127.0.0.1'
+      'DriverID=MSSQL')
+    Connected = True
+    LoginPrompt = False
+    Left = 200
+    Top = 296
+  end
+  object sp1: TFDStoredProc
+    Connection = con2
+    StoredProcName = 'usp_LisGetPatientTestResult'
+    Left = 264
+    Top = 304
+    ParamData = <
+      item
+        Position = 1
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        ParamType = ptResult
+        Value = 0
+      end
+      item
+        Position = 2
+        Name = '@OutPatientID'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 50
+        Value = '00434843'
+      end>
+    object sp1test_item_id: TStringField
+      FieldName = 'test_item_id'
+      Origin = 'test_item_id'
+      ReadOnly = True
+      Required = True
+      Size = 10
+    end
+    object sp1quantitative_result: TStringField
+      FieldName = 'quantitative_result'
+      Origin = 'quantitative_result'
+      ReadOnly = True
+      Size = 50
+    end
+    object sp1inspection_id: TStringField
+      FieldName = 'inspection_id'
+      Origin = 'inspection_id'
+      ReadOnly = True
+      Required = True
+      Size = 30
+    end
+    object sp1check_time: TSQLTimeStampField
+      FieldName = 'check_time'
+      Origin = 'check_time'
+      ReadOnly = True
+    end
+  end
+  object ds1: TDataSource
+    DataSet = sp1
+    Left = 352
+    Top = 376
+  end
+  object qry1: TFDQuery
+    Connection = con2
+    Left = 432
+    Top = 352
   end
 end

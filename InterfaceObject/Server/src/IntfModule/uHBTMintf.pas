@@ -32,6 +32,7 @@ type
   private
     FService: ICalculateServicePortType;
   protected
+
     /// <summary>
     /// 获取病人信息
     /// </summary>
@@ -44,6 +45,10 @@ type
     /// 医嘱删除接口
     /// </summary>
     function DeleteClinicalRequisitionOrder(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
+    /// <summary>
+    /// 获取病人最近一次检验结果
+    /// </summary>
+    function GetTestItemResultInfos(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
   public
     destructor Destroy; override;
     function ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean; override;
@@ -183,6 +188,54 @@ begin
     FreeAndNil(AInput);
     FreeAndNil(AOutPut);
     FreeAndNil(dtSQL);
+  end;
+end;
+
+function THBTMInterfaceObject.GetTestItemResultInfos(ARecvXML,
+  ASendXML: TQXMLNode): Boolean;
+var
+  APatientId: string;
+  ATestItems: string;
+  dtSql: TdfrmEHSB;
+  I: Integer;
+  sql: string;
+begin
+  APatientId := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid', '');
+  if APatientId = '' then
+    raise Exception.Create('GetTestItemResultInfos Error patientid is null');
+  ATestItems := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid', '');
+  if ATestItems = '' then
+    raise Exception.Create('GetTestItemResultInfos Error testitemid is null');
+
+  dtSql := nil;
+  try
+    with dtSql do
+    begin
+      spExecute.ExecProc('proc_getlastresult_bims',[APatientId, ATestItems]);
+      spExecute.Open;
+      if spExecute.RecordCount = 0 then
+        raise Exception.Create('ExecProc proc_getlastresult_bims Error. Message: no result return.');
+      spExecute.First;
+      while not spExecute.Eof do
+      begin
+        sql := 'SELECT * ' + #10
+             + 'FROM   Patient_GetInterface_Result_Info AS pgiri ' + #10
+             + 'WHERE  pgiri.Barcode = '''+ spExecute.FindField('Barcode').AsString +''' ' + #10
+             + '       AND pgiri.TestItemId = '''+ spExecute.FindField('TestItemId').AsString +''';';
+        qryUpdate.Open(sql);
+        if qryUpdate.RecordCount > 0 then
+          qryUpdate.Delete;
+        qryUpdate.Append;
+        for I := 0 to spExecute.FieldCount - 1 do
+        begin
+          qryUpdate.FindField(spExecute.Fields[I].FieldName).Value := spExecute.Fields[I].Value;
+        end;
+        qryUpdate.Post;
+        spExecute.Next;
+      end;
+    end;
+  finally
+    FreeAndNil(dtSql);
   end;
 end;
 
