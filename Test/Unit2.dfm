@@ -90,6 +90,14 @@ object Form2: TForm2
         Visible = True
       end>
   end
+  object edt1: TEdit
+    Left = 72
+    Top = 376
+    Width = 121
+    Height = 21
+    TabOrder = 5
+    Text = 'edt1'
+  end
   object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
     Left = 312
     Top = 104
@@ -102,7 +110,7 @@ object Form2: TForm2
     Left = 320
     Top = 155
     Bitmap = {
-      494C010168019801580010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101680198015C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -12144,19 +12152,22 @@ object Form2: TForm2
     Top = 304
     ParamData = <
       item
-        Position = 1
-        Name = '@RETURN_VALUE'
+        Name = 'RETURN_VALUE'
         DataType = ftInteger
+        FDDataType = dtInt32
         ParamType = ptResult
-        Value = 0
       end
       item
-        Position = 2
-        Name = '@OutPatientID'
+        Name = 'tablename'
         DataType = ftString
+        FDDataType = dtWideString
         ParamType = ptInput
-        Size = 50
-        Value = '00434843'
+      end
+      item
+        Name = 'iRtn'
+        DataType = ftLargeint
+        FDDataType = dtInt64
+        ParamType = ptOutput
       end>
     object sp1test_item_id: TStringField
       FieldName = 'test_item_id'
@@ -12185,7 +12196,6 @@ object Form2: TForm2
     end
   end
   object ds1: TDataSource
-    DataSet = sp1
     Left = 352
     Top = 376
   end

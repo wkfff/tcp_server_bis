@@ -43,6 +43,7 @@ type
     qryUpdate: TFDQuery;
     spExecute: TFDStoredProc;
     conHIS: TFDConnection;
+    spGetMaxNo: TFDStoredProc;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
@@ -209,9 +210,9 @@ begin
     AFieldName := FieldList.Items[I].Name;
     AFDField := qryBIS.FieldByName(AFieldName);
     AParam := FieldList.Items[I];
-    CnDebugger.LogMsg('FieldName:' + AFieldName + ';FieldValue:'
-      + AParam.AsString + ';FieldType:'
-      + GetEnumname(TypeInfo(TFieldType), Ord(AFDField.DataType)));
+//    CnDebugger.LogMsg('FieldName:' + AFieldName + ';FieldValue:'
+//      + AParam.AsString + ';FieldType:'
+//      + GetEnumname(TypeInfo(TFieldType), Ord(AFDField.DataType)));
     case AFDField.DataType of
       ftFloat:
         AFDField.AsFloat := AParam.AsFloat;

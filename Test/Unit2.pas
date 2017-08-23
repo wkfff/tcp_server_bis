@@ -30,7 +30,6 @@ uses
   FireDAC.Phys.SQLite,
   FireDAC.VCLUI.Wait,
   Data.DB,
-  CnDebug,
   FireDAC.Comp.Client,
   Vcl.Samples.Gauges,
   Unit4,
@@ -59,6 +58,7 @@ type
     sp1check_time: TSQLTimeStampField;
     qry1: TFDQuery;
     ae1: TApplicationEvents;
+    edt1: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
@@ -111,14 +111,41 @@ end;
 procedure TForm2.btn3Click(Sender: TObject);
 var
   AParam: TFDParam;
+  AId: Int64;
 begin
   try
     con2.Connected := True;
   except
   end;
-  sp1.ExecProc('usp_LisGetPatientTestResult',['']);
-  sp1.Open;
-  sp1.First;
+//  sp1.StoredProcName := 'GetMaxID';
+
+//  with sp1.Params do begin
+//    Clear;
+//    with Add do begin
+//      Name := 'RETURN_VALUE';
+//      ParamType := ptResult;
+//      DataType := ftInteger;
+//    end;
+//    with Add do begin
+//      Name := 'tablename';
+//      ParamType := ptInput;
+//      DataType := ftString;
+//      Size := 50;
+//      Value := 'GetMaxID';
+//    end;
+//    with Add do begin
+//      Name := 'iRtn';
+//      ParamType := ptOutput;
+//      DataType := ftLargeint;
+//    end;
+//  end;
+//  sp1.Prepare;
+//  sp1.Params[1].
+  sp1.ExecProc('GetMaxID',['GetMaxID', AId]);
+//  sp1.ExecProc('GetMaxID',['test', AId]);
+//  sp1.Open;
+  edt1.text := sp1.Params[2].Value;
+//  sp1.Close;
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

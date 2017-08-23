@@ -201,6 +201,7 @@ end;
 function THBTMInterfaceObject.GetTestItemResultInfos(ARecvXML, ASendXML:
   TQXMLNode): Boolean;
 var
+  dtExcuteTime: TDateTime;
   ANode: TQXMLNode;
   AInPatientId: string;
   APatientId: string;
@@ -219,6 +220,7 @@ begin
 
   dtSql := nil;
   try
+    dtExcuteTime := Now;
     dtSql := TdfrmEHSB.Create(nil);
     with dtSql do
     begin
@@ -228,30 +230,34 @@ begin
       spExecute.Open;
       if spExecute.RecordCount = 0 then
         raise Exception.Create('ExecProc proc_getlastresult_bims Error. Message: no result return.');
-      CnDebugger.LogMsgWithTag(IntToStr(spExecute.RecordCount), 'RecordCount');
-      CnDebugger.LogMsgWithTag(IntToStr(spExecute.Fields.Count), 'Fields.Count');
       spExecute.First;
       while not spExecute.Eof do
       begin
         sql := 'SELECT * ' + #10 +
-          'FROM   Patient_GetInterface_Result_Info AS pgiri ' + #10 +
-          'WHERE  pgiri.Barcode = ''' + spExecute.FindField('Barcode').AsString
-          + ''' ' + #10 + '       AND pgiri.TestItemId = ''' + spExecute.FindField
-          ('TestItemId').AsString + ''';';
+          'FROM   Patient_GetInterface_Result_Info AS pgiri where 1 = 2';
+//          + #10 +
+//          'WHERE  pgiri.Barcode = ''' + spExecute.FindField('Barcode').AsString
+//          + ''' ' + #10 + '       AND pgiri.TestItemId = ''' + spExecute.FindField
+//          ('TestItemId').AsString + ''';';
         qryUpdate.Open(sql);
-        if qryUpdate.RecordCount > 0 then
-          qryUpdate.Delete;
+//        if qryUpdate.RecordCount > 0 then
+//          qryUpdate.Delete;
         qryUpdate.Append;
         for I := 0 to spExecute.Fields.Count - 1 do
         begin
           qryUpdate.FindField(spExecute.Fields[I].FieldName).Value := spExecute.Fields
             [I].Value;
         end;
+        qryUpdate.FindField('InputTime').AsDateTime := dtExcuteTime;
         qryUpdate.FindField('patientid').AsString := APatientId;
         qryUpdate.FindField('patientnumber').AsString :=
           ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', '');
-        qryUpdate.FindField('GetID').AsString := spExecute.FindField('Barcode').AsString
-          + spExecute.FindField('TestItemId').AsString;
+        qryUpdate.FindField('inpatientid').AsString :=
+          ARecvXML.TextByPath('interfacemessage.interfaceparms.inpatientid', '');
+        spGetMaxNo.ExecProc('Usp_Get_Maxno',['Patient_GetInterface_Result_Info',0]);
+        qryUpdate.FindField('GetID').AsString := spGetMaxNo.ParamByName('@max_no').AsString;
+//        spExecute.FindField('Barcode').AsString
+//          + spExecute.FindField('TestItemId').AsString;
         qryUpdate.Post;
         spExecute.Next;
       end;
@@ -306,12 +312,13 @@ begin
 
     AInput := TQXML.Create;
     AOut := TQXML.Create;
-    ANode := AInput.AddNode('funderService');
-    ANode.Attrs.Add('functionName').Value := 'xk_saveOrderInfo';
 
     dtSql.qryBIS.First;
     while not dtSql.qryBIS.Eof do
     begin
+      AInput.Clear;
+      ANode := AInput.AddNode('funderService');
+      ANode.Attrs.Add('functionName').Value := 'xk_saveOrderInfo';
       for I := 0 to dtSql.qryBIS.Fields.Count - 2 do
       begin
         case dtSql.qryBIS.Fields[I].DataType of

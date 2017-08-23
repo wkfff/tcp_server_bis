@@ -63,4 +63,23 @@ object dfrmEHSB: TdfrmEHSB
     Left = 16
     Top = 80
   end
+  object spGetMaxNo: TFDStoredProc
+    Connection = conBIS
+    Left = 64
+    Top = 80
+    ParamData = <
+      item
+        Name = 'tablename'
+        DataType = ftString
+        FDDataType = dtWideString
+        ParamType = ptInput
+        Size = 50
+      end
+      item
+        Name = 'max_no'
+        DataType = ftString
+        FDDataType = dtWideString
+        ParamType = ptOutput
+      end>
+  end
 end
