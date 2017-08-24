@@ -60,6 +60,7 @@ type
     procedure act1Execute(Sender: TObject);
     procedure Action2Execute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure EditCopy1Execute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -104,6 +105,11 @@ end;
 procedure TForm3.btn2Click(Sender: TObject);
 begin
   (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName('ProgressEnd'), nil);
+end;
+
+procedure TForm3.EditCopy1Execute(Sender: TObject);
+begin
+  //
 end;
 
 procedure TForm3.FormCreate(Sender: TObject);

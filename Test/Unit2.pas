@@ -59,11 +59,13 @@ type
     qry1: TFDQuery;
     ae1: TApplicationEvents;
     edt1: TEdit;
+    btn4: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure ae1Exception(Sender: TObject; E: Exception);
+    procedure btn4Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -90,7 +92,7 @@ implementation
 
 {$R *.dfm}
 
-uses Unit3;
+uses Unit3, Unit5;
 
 procedure TForm2.ae1Exception(Sender: TObject; E: Exception);
 begin
@@ -146,6 +148,11 @@ begin
 //  sp1.Open;
   edt1.text := sp1.Params[2].Value;
 //  sp1.Close;
+end;
+
+procedure TForm2.btn4Click(Sender: TObject);
+begin
+  Form5.Show;
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

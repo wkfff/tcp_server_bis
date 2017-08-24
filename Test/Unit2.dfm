@@ -57,8 +57,8 @@ object Form2: TForm2
     OnClick = btn3Click
   end
   object dbgrd1: TDBGrid
-    Left = 136
-    Top = 8
+    Left = 72
+    Top = 241
     Width = 545
     Height = 210
     DataSource = ds1
@@ -98,6 +98,15 @@ object Form2: TForm2
     TabOrder = 5
     Text = 'edt1'
   end
+  object btn4: TButton
+    Left = 512
+    Top = 48
+    Width = 75
+    Height = 25
+    Caption = 'btn4'
+    TabOrder = 6
+    OnClick = btn4Click
+  end
   object FDPhysSQLiteDriverLink1: TFDPhysSQLiteDriverLink
     Left = 312
     Top = 104
@@ -110,7 +119,7 @@ object Form2: TForm2
     Left = 320
     Top = 155
     Bitmap = {
-      494C0101680198015C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010168019801640010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0050000010020000000000000B0
       0500000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -3,7 +3,7 @@ object Form3: TForm3
   Top = 0
   Caption = 'Form3'
   ClientHeight = 422
-  ClientWidth = 494
+  ClientWidth = 744
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,7 +25,7 @@ object Form3: TForm3
   object ActionMainMenuBar1: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 494
+    Width = 744
     Height = 25
     UseSystemFont = False
     ActionManager = ActionManager1
@@ -41,12 +41,11 @@ object Form3: TForm3
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
-    ExplicitWidth = 455
   end
   object RzToolbar1: TRzToolbar
     Left = 0
     Top = 25
-    Width = 494
+    Width = 744
     Height = 49
     AutoResize = False
     AutoStyle = False
@@ -64,7 +63,6 @@ object Form3: TForm3
     TabOrder = 2
     Transparent = True
     VisualStyle = vsClassic
-    ExplicitWidth = 455
     ToolbarControls = (
       RzToolButton1
       RzToolButton2
@@ -119,13 +117,12 @@ object Form3: TForm3
   object spl1: TRzSplitter
     Left = 0
     Top = 74
-    Width = 494
+    Width = 744
     Height = 348
     Position = 100
-    Percent = 20
+    Percent = 13
     Align = alClient
     TabOrder = 3
-    ExplicitWidth = 455
     BarSize = (
       100
       0
@@ -218,6 +215,58 @@ object Form3: TForm3
         ActionBar = ActionMainMenuBar1
       end
       item
+      end
+      item
+        Items = <
+          item
+            Action = DatasetRefresh1
+            ImageIndex = 9
+          end
+          item
+            Action = DatasetCancel1
+            ImageIndex = 8
+          end
+          item
+            Action = DatasetPost1
+            ImageIndex = 7
+          end
+          item
+            Action = DatasetEdit1
+            ImageIndex = 6
+          end
+          item
+            Action = DatasetDelete1
+            ImageIndex = 5
+          end
+          item
+            Action = DatasetInsert1
+            ImageIndex = 4
+          end
+          item
+            Action = DatasetLast1
+            ImageIndex = 3
+          end
+          item
+            Action = DatasetNext1
+            ImageIndex = 2
+          end
+          item
+            Action = DatasetPrior1
+            ImageIndex = 1
+          end
+          item
+            Action = DatasetFirst1
+            ImageIndex = 0
+          end>
+      end
+      item
+        Items.SmallIcons = False
+        Items = <
+          item
+            Action = EditCopy1
+            ImageIndex = 1
+            ShortCut = 16451
+          end>
       end>
     Images = ilSmall16X16
     Left = 232
@@ -296,6 +345,7 @@ object Form3: TForm3
       Hint = 'Copy|Copies the selection and puts it on the Clipboard'
       ImageIndex = 1
       ShortCut = 16451
+      OnExecute = EditCopy1Execute
     end
     object EditPaste1: TEditPaste
       Category = 'Edit'
@@ -350,7 +400,7 @@ object Form3: TForm3
     Left = 320
     Top = 155
     Bitmap = {
-      494C01016801F801780020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01016801F801840020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000600B0000010020000000000000C0
       1600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
