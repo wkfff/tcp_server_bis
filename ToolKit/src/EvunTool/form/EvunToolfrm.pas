@@ -55,9 +55,7 @@ uses
   RzCommon;
 
 type
-  PDMSDebugInfo = ^TDMSDebugInfo;
-
-  TDMSDebugInfo = record
+  TDMSDebugInfo = class
     PostClient: QStringW;
     PostMethod: QStringW;
     PostTime: QStringW;
@@ -155,9 +153,7 @@ type
     FNotifyIdProgressStart: Integer;
     FNotifyIdProgressEnd: Integer;
     FNotifyManager: IQNotifyManager;
-    FOldPos: TPoint;
     FDragOnRunTime: IDragOnRunTime;
-    InReposition: Boolean;
     FShareMem: TShareMemServer;
     FDMSInfoList: TStringList;
     FDCSInfoList: TStringList;
@@ -189,12 +185,12 @@ begin
   ClearTabControl;
   sedtXML.Clear;
   sedtArgus.Clear;
-  for I := 0 to FDCSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
+//  for I := 0 to FDCSInfoList.Count - 1 do
+//    FDCSInfoList.Objects[I].Free;
   FDCSInfoList.Clear;
 
-  for I := 0 to FDCSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
+//  for I := 0 to FDMSInfoList.Count - 1 do
+//    FDMSInfoList.Objects[I].Free;
   FDMSInfoList.Clear;
 
   DoRefrashVST(vstMethodList);
@@ -211,7 +207,6 @@ var
   AData: string;
   I: Integer;
   AEnd: Integer;
-  AStart: Integer;
   AMethod: string;
 begin
   {TODO -oYU -cGeneral : HttpQueue À≥–Ú÷¥––Http Post}
@@ -222,6 +217,7 @@ begin
 
   if Trim(AData) = '' then
   begin
+    AEnd := 0;
     for I := sedtArgus.CaretY - 1 to sedtArgus.Lines.Count - 1 do
     begin
       if (Trim(sedtArgus.Lines[I]) = '') then
@@ -431,7 +427,7 @@ var
   IsNew: Boolean;
   IsDms: Boolean;
   I: Integer;
-  aData: PDMSDebugInfo;
+  aData: TDMSDebugInfo;
   aInfoList: TStringList;
 const
   AscII_11: PWideChar = #11;
@@ -457,7 +453,7 @@ begin
   I := 0;
   if IsNew then
   begin
-    New(aData);
+    aData := TDMSDebugInfo.Create;
     while pReceive^ <> #0 do
     begin
       ADecode := DecodeTokenW(pReceive, AscII_11, WideChar(0), True);
@@ -496,7 +492,7 @@ begin
         Break;
       Dec(I);
     end;
-    aData := PDMSDebugInfo(aInfoList.Objects[I]);
+    aData := TDMSDebugInfo(aInfoList.Objects[I]);
     aData.ReceiveXML := pReceive;
 
     DoRefrashVST(vstMethodList);
@@ -512,7 +508,7 @@ begin
   if IsNew then
   begin
     sedtArgus.BeginUpdate;
-    pArgus := PWideChar(PDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).PostArgus);
+    pArgus := PWideChar(TDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).PostArgus);
     while pArgus^ <> #0 do
     begin
       ATemp := DecodeTokenW(pArgus, AscII_Enter, WideChar(0), True);
@@ -530,7 +526,7 @@ begin
   else
   begin
     sedtXML.BeginUpdate;
-    sedtXML.Lines.Text := (PDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).ReceiveXML);
+    sedtXML.Lines.Text := (TDMSDebugInfo(aInfoList.Objects[aInfoList.Count - 1]).ReceiveXML);
     sedtXML.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
     sedtXML.EndUpdate;
   end;
@@ -582,14 +578,8 @@ begin
 end;
 
 procedure TfrmEvunTool.FormDestroy(Sender: TObject);
-var
-  I: Integer;
 begin
-  for I := 0 to FDCSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDCSInfoList.Objects[I]));
   FreeAndNilObject(FDCSInfoList);
-  for I := 0 to FDMSInfoList.Count - 1 do
-    Dispose(PDMSDebugInfo(FDMSInfoList.Objects[I]));
   FreeAndNilObject(FDMSInfoList);
 
   Workers.Clear(FShareMem, -1, True);
@@ -664,10 +654,12 @@ begin
         aInfoList := FDCSInfoList;
       1:
         aInfoList := FDMSInfoList;
+    else
+        aInfoList := FDMSInfoList;
     end;
     ClearTabControl;
-    sedtXML.Text := PDMSDebugInfo(aInfoList.Objects[Node.Index]).ReceiveXML;
-    sedtArgus.Text := sedtArgus.Text + PDMSDebugInfo(aInfoList.Objects[Node.Index]).PostArgus
+    sedtXML.Text := TDMSDebugInfo(aInfoList.Objects[Node.Index]).ReceiveXML;
+    sedtArgus.Text := sedtArgus.Text + TDMSDebugInfo(aInfoList.Objects[Node.Index]).PostArgus
       + #13 + #10 + #13 + #10 + #13 + #10;
     sedtArgus.GotoLineAndCenter(sedtArgus.Lines.Count - 1);
     pgcResults.ActivePageIndex := 0;
@@ -677,17 +669,17 @@ end;
 procedure TfrmEvunTool.vstMethodListFreeNode(Sender: TBaseVirtualTree; Node:
   PVirtualNode);
 var
-  Data: PDMSDebugInfo;
+  Data: TDMSDebugInfo;
 begin
-  Data := Sender.GetNodeData(Node);
-  Finalize(Data^);
+  Data := Sender.GetNodeData<TDMSDebugInfo>(Node);
+  Data.Free;
 end;
 
 procedure TfrmEvunTool.vstMethodListGetText(Sender: TBaseVirtualTree; Node:
   PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText:
   string);
 var
-  Data: PDMSDebugInfo;
+  Data: TDMSDebugInfo;
 begin
   case Column of
     0:
@@ -709,7 +701,7 @@ begin
           CellText := '';
           Exit;
         end;
-        Data := Sender.GetNodeData(Node);
+        Data := Sender.GetNodeData<TDMSDebugInfo>(Node);
         CellText := Data.PostMethod;
       end;
   end;
@@ -732,7 +724,7 @@ end;
 procedure TfrmEvunTool.vstMethodListInitNode(Sender: TBaseVirtualTree;
   ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
-  aData: PDMSDebugInfo;
+  aData: TDMSDebugInfo;
   aInfoList: TStringList;
 begin
   if ParentNode = nil then
@@ -747,9 +739,12 @@ begin
         aInfoList := FDCSInfoList;
       1:
         aInfoList := FDMSInfoList;
+    else
+        aInfoList := FDMSInfoList;
     end;
-    PDMSDebugInfo(Sender.GetNodeData(Node)).PostMethod := PDMSDebugInfo(aInfoList.Objects
-      [Node.Index]).PostMethod;
+    aData := TDMSDebugInfo.Create;
+    aData.PostMethod := TDMSDebugInfo(aInfoList.Objects[Node.Index]).PostMethod;
+    Sender.SetNodeData(Node, aData);
   end;
 end;
 

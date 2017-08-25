@@ -43,7 +43,8 @@ requires
   YPubliclibs,
   vclFireDAC,
   FireDAC,
-  RaizeComponentsVclDb;
+  RaizeComponentsVclDb,
+  YxdIocp.D10;
 
 contains
   EvunToolfrm in 'form\EvunToolfrm.pas' {frmEvunTool},
@@ -55,3 +56,4 @@ contains
   DBGridDatafram in 'frame\DBGridDatafram.pas' {framDBGridData: TFrame};
 
 end.
+

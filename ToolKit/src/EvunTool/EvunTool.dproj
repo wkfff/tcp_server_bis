@@ -141,6 +141,7 @@
         <DCCReference Include="vclFireDAC.dcp"/>
         <DCCReference Include="FireDAC.dcp"/>
         <DCCReference Include="RaizeComponentsVclDb.dcp"/>
+        <DCCReference Include="YxdIocp.D10.dcp"/>
         <DCCReference Include="form\EvunToolfrm.pas">
             <Form>frmEvunTool</Form>
             <FormType>dfm</FormType>
