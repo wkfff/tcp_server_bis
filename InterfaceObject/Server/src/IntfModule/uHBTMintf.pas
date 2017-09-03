@@ -205,6 +205,7 @@ var
   ANode: TQXMLNode;
   AInPatientId: string;
   APatientId: string;
+  APatientNumber: string;
   ATestItems: string;
   dtSql: TdfrmEHSB;
   I: Integer;
@@ -217,6 +218,7 @@ begin
   if ATestItems = '' then
     raise Exception.Create('GetTestItemResultInfos Error testitemid is null');
   AInPatientId := ARecvXML.TextByPath('interfacemessage.interfaceparms.inpatientid', '');
+  APatientNumber := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', '');
 
   dtSql := nil;
   try
@@ -226,7 +228,7 @@ begin
     begin
       CnDebugger.LogMsgWithTag(APatientId, 'APatientId');
       CnDebugger.LogMsgWithTag(ATestItems, 'ATestItems');
-      spExecute.ExecProc('proc_getlastresult_bims', [APatientId, AInPatientId, ATestItems]);
+      spExecute.ExecProc('proc_getlastresult_bims', [APatientId, APatientNumber, ATestItems]);
       spExecute.Open;
       if spExecute.RecordCount = 0 then
         raise Exception.Create('ExecProc proc_getlastresult_bims Error. Message: no result return.');
@@ -342,9 +344,15 @@ begin
         raise Exception.Create('xk_saveOrderInfo Error. Message is' + AOut.TextByPath
           ('root.result.ErrorMsg', ''));
 
+//      UpdateSql := 'UPDATE clinical_requisition_order ' + #10 +
+//        'SET    OrderNo         = ''' + AOut.TextByPath('root.result.order_sn',
+//        '') + ''', ' + #10 + '       OrderStatus     = 2 ' + #10 +
+//        'WHERE  OrderID         = ''' + dtSql.qryBIS.FindField('OrderID').AsString + '''';
+
       UpdateSql := 'UPDATE clinical_requisition_order ' + #10 +
         'SET    OrderNo         = ''' + AOut.TextByPath('root.result.order_sn',
-        '') + ''', ' + #10 + '       OrderStatus     = 2 ' + #10 +
+        '') + ''', ' + #10 + '       OrderStatus     = 2 ,' + #10 +
+        ' remark = ''' + AOut.TextByPath('root.result.order_id','') + ''' ' + #10 +
         'WHERE  OrderID         = ''' + dtSql.qryBIS.FindField('OrderID').AsString + '''';
 
       dtSql.qryUpdate.SQL.Clear;
