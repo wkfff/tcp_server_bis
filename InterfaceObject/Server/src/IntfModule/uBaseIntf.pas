@@ -39,7 +39,6 @@ end;
 function TBaseIntf.ExecuteIntf(ARecvXML, ASendXML: TQXMLNode): Boolean;
 var
   intfName: string;
-
 begin
   Result := False;
   intfName := ARecvXML.TextByPath('interfacemessage.interfacename','');

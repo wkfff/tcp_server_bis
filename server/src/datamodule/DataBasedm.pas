@@ -1,0 +1,25 @@
+unit DataBasedm;
+
+interface
+
+uses
+  System.SysUtils, System.Classes;
+
+type
+  TDataModule7 = class(TDataModule)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DataModule7: TDataModule7;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

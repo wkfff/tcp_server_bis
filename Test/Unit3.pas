@@ -53,7 +53,6 @@ type
     N31: TMenuItem;
     Action2: TAction;
     RzToolButton3: TRzToolButton;
-    spl1: TRzSplitter;
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure Action1Execute(Sender: TObject);

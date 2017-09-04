@@ -114,23 +114,6 @@ object Form3: TForm3
       Action = Action2
     end
   end
-  object spl1: TRzSplitter
-    Left = 0
-    Top = 74
-    Width = 744
-    Height = 348
-    Position = 100
-    Percent = 13
-    Align = alClient
-    TabOrder = 3
-    BarSize = (
-      100
-      0
-      104
-      348)
-    UpperLeftControls = ()
-    LowerRightControls = ()
-  end
   object ActionManager1: TActionManager
     ActionBars = <
       item
@@ -400,7 +383,7 @@ object Form3: TForm3
     Left = 320
     Top = 155
     Bitmap = {
-      494C01016801F801840020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01016801F801880020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000600B0000010020000000000000C0
       1600000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

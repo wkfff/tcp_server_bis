@@ -24,6 +24,9 @@
         <Projects Include="Test\Project1.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="server\src\InterfaceServer.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -95,14 +98,23 @@
     <Target Name="Project1:Make">
         <MSBuild Projects="Test\Project1.dproj" Targets="Make"/>
     </Target>
+    <Target Name="InterfaceServer">
+        <MSBuild Projects="server\src\InterfaceServer.dproj"/>
+    </Target>
+    <Target Name="InterfaceServer:Clean">
+        <MSBuild Projects="server\src\InterfaceServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="InterfaceServer:Make">
+        <MSBuild Projects="server\src\InterfaceServer.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;YPubliclibs;ToolKit;EvunTool;Project1"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;YPubliclibs;ToolKit;EvunTool;Project1;InterfaceServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;YPubliclibs:Clean;ToolKit:Clean;EvunTool:Clean;Project1:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;YPubliclibs:Clean;ToolKit:Clean;EvunTool:Clean;Project1:Clean;InterfaceServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;YPubliclibs:Make;ToolKit:Make;EvunTool:Make;Project1:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;YPubliclibs:Make;ToolKit:Make;EvunTool:Make;Project1:Make;InterfaceServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
