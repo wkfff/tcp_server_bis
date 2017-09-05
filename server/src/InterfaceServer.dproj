@@ -129,15 +129,19 @@
         <DCCReference Include="hospitalservices\ServiceHBTM.pas"/>
         <DCCReference Include="interfaces\ICalculateServiceIntf.pas"/>
         <DCCReference Include="datamodule\PythonScriptdm.pas">
-            <Form>DataModule6</Form>
+            <Form>dmPythonScript</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="datamodule\DataBasedm.pas">
-            <Form>DataModule7</Form>
+            <Form>dmDatabase</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="hospitalservices\EwellMqExpts.pas"/>
+        <DCCReference Include="hospitalservices\ServiceFZSE.pas"/>
+        <DCCReference Include="interfaces\IPythonScriptServiceIntf.pas"/>
+        <DCCReference Include="datamodule\AndyDelphiPy.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

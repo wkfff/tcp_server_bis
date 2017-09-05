@@ -16,8 +16,12 @@ uses
   IHospitalBISServiceIntf in 'interfaces\IHospitalBISServiceIntf.pas',
   ServiceHBTM in 'hospitalservices\ServiceHBTM.pas',
   ICalculateServiceIntf in 'interfaces\ICalculateServiceIntf.pas',
-  PythonScriptdm in 'datamodule\PythonScriptdm.pas' {DataModule6: TDataModule},
-  DataBasedm in 'datamodule\DataBasedm.pas' {DataModule7: TDataModule};
+  PythonScriptdm in 'datamodule\PythonScriptdm.pas' {dmPythonScript: TDataModule},
+  DataBasedm in 'datamodule\DataBasedm.pas' {dmDatabase: TDataModule},
+  EwellMqExpts in 'hospitalservices\EwellMqExpts.pas',
+  ServiceFZSE in 'hospitalservices\ServiceFZSE.pas',
+  IPythonScriptServiceIntf in 'interfaces\IPythonScriptServiceIntf.pas',
+  AndyDelphiPy in 'datamodule\AndyDelphiPy.pas';
 
 {$R *.res}
 
@@ -38,9 +42,7 @@ begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
     Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TDataModule6, DataModule6);
-  Application.CreateForm(TDataModule7, DataModule7);
-  Application.Run;
+    Application.Run;
   end;
   ReleaseMutex(hMutex);    // Õ∑≈ª•≥‚∂‘œÛ
 end.

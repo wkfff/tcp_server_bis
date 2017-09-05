@@ -160,7 +160,7 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   //
-  CnDebugger.AutoStart := False;
+  CnDebugger.AutoStart := True;
   CnDebugger.DumpFileName := LOG_FILE_NAME;
   CnDebugger.DumpToFile := True;
   CnDebugger.ExceptTracking := False;
