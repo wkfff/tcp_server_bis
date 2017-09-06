@@ -5,6 +5,7 @@ interface
 uses
   System.SysUtils,
   System.Classes,
+  CnDebug,
   PythonEngine,
   VarPyth,
   AndyDelphiPy,
@@ -12,7 +13,8 @@ uses
   QPlugins,
   qstring,
   qxml,
-  IPythonScriptServiceIntf;
+  IPythonScriptServiceIntf
+  ;
 
 type
   TdmPythonScript = class(TDataModule)
@@ -57,6 +59,8 @@ function TPythonScript.ParamOfMethod(const AXml: TQXML): string;
 var
   __main: Variant;
 begin
+  if not FileExists(ExtractFilePath(ParamStr(0)) + 'script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py') then
+    raise Exception.Create('ParamOfMethod Error not found python file ' + ExtractFilePath(ParamStr(0)) + 'script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py');
   PyExeFile('script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py',
     GetPythonEngine);
   __main := MainModule;
@@ -67,6 +71,8 @@ function TPythonScript.ResultOfMethod(const AMethod, AData: string): string;
 var
   __main: Variant;
 begin
+  if not FileExists(ExtractFilePath(ParamStr(0)) + 'script\' + AMethod + '.py') then
+    raise Exception.Create('ParamOfMethod Error not found python file ' + ExtractFilePath(ParamStr(0)) + 'script\' + AMethod + '.py');
   PyExeFile('script\' + AMethod + '.py',
     GetPythonEngine);
   __main := MainModule;

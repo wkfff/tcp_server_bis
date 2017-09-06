@@ -47,7 +47,6 @@ type
 
   TMQClass = class(TObject)
   private
-    FDllHandle: THandle;
     /// <summary>
     ///连接队列管理器，不带参数则默认连接第一个配置，即“MQMGR1”
     /// </summary>
@@ -164,6 +163,9 @@ type
 
 implementation
 
+var
+  FDllHandle: THandle;
+
 
 { TMQClass }
 
@@ -194,11 +196,8 @@ end;
 
 procedure TMQClass.LoadDllLibray;
 begin
-  if not FileExists(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll') then
-    raise Exception.Create('TMQClass.Create Error not found EwellMq.dll');
-
-  FDllHandle := SafeLoadLibrary(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll');
-
+  if FDllHandle < 32 then
+    raise Exception.Create('not found EwellMq.dll');
   @ConnectMQ := GetProcAddress(FDllHandle, 'ConnectMQ');
   @ConnectMQX := GetProcAddress(FDllHandle, 'ConnectMQX');
   @PutMsgMQ := GetProcAddress(FDllHandle, 'PutMsgMQ');
@@ -207,6 +206,7 @@ begin
   @BrowseMsgMQ := GetProcAddress(FDllHandle, 'BrowseMsgMQ');
   @PutMsgWithId := GetProcAddress(FDllHandle, 'PutMsgWithId');
   @MessageListener := GetProcAddress(FDllHandle, 'MessageListener');
+  @DisConnectMQ := GetProcAddress(FDllHandle, 'DisConnectMQ');
 end;
 
 constructor TMQClass.Create;
@@ -226,16 +226,16 @@ var
   I: Integer;
 begin
   FreeAndNilObject(FrespMsg);
-  for I := 0 to FQueryItems.Count - 1 do
-    FQueryItems.Items[I].Free;
+  if Assigned(FQueryItems) then
+    for I := 0 to FQueryItems.Count - 1 do
+      FQueryItems.Items[I].Free;
   FreeAndNilObject(FQueryItems);
-  for I := 0 to FOrderItems.Count - 1 do
-    FOrderItems.Items[I].Free;
+  if Assigned(FOrderItems) then
+    for I := 0 to FOrderItems.Count - 1 do
+      FOrderItems.Items[I].Free;
   FreeAndNilObject(FOrderItems);
   if Active then
     DisConnect;
-
-  FreeLibrary(FDllHandle);
   inherited;
 end;
 
@@ -383,6 +383,9 @@ begin
     raise MQException.Create('队列管理器未连接');
   Result := 0;
 
+  if ServiceId = '' then
+    raise MQException.Create('QueryByParam Error: ServiceId is null');
+
   pSecId := ConvertStringToAnsiChar(ServiceId);
   CnDebugger.LogMsg('服务ID:' + string(pSecId));
 
@@ -396,8 +399,7 @@ begin
     pPutMsg := ConvertStringToAnsiChar(AParam);
     CnDebugger.LogMsg('MQ Put消息内容:' + string(pPutMsg));
 
-    iReturn := PutMsgMQ(PAnsiChar(AnsiString(ServiceId)), @pMsgId[0], pPutMsg, @pErrorMsg
-      [0]);
+    iReturn := PutMsgMQ(pSecId, @pMsgId[0], pPutMsg, @pErrorMsg[0]);
     CnDebugger.LogMsg('消息ID:' + string(pMsgId));
 
     if iReturn <> 1 then
@@ -406,8 +408,7 @@ begin
         iReturn, pErrorMsg]));
     end;
 
-    iReturn := GetMsgMQ(PAnsiChar(AnsiString(ServiceId)), 10000, @pMsgId[0],
-      pGetMsg, @pErrorMsg[0]);
+    iReturn := GetMsgMQ(pSecId, 1000 * 60 * 10, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
     if iReturn <> 1 then
     begin
       raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
@@ -438,6 +439,16 @@ procedure TMQClass.SetWaitInterval(const Value: Integer);
 begin
   FWaitInterval := Value;
 end;
+
+initialization
+CnDebugger.LogMsg(ExtractFilePath(ParamStr(0)));
+if FileExists(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll') then
+  FDllHandle := SafeLoadLibrary(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll');
+
+finalization
+
+if FDllHandle >= 32 then
+  FreeLibrary(FDllHandle);
 
 end.
 

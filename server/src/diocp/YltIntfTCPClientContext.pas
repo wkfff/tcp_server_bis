@@ -117,31 +117,37 @@ begin
       raise Exception.Create(Format(HOSPITAL_INTERFACE_ERROR, [HospitalCode]));
   end;
 
-  if intfName = 'getwardinfos' then
-    Result := AService.GetWardInfos(ARecvXML, ASendXML)
-  else if intfName = 'getdeptinfos' then
-    Result := AService.GetDeptInfos(ARecvXML, ASendXML)
-  else if intfName = 'getstaffinfos' then
-    Result := AService.GetStaffInfos(ARecvXML, ASendXML)
-  else if intfName = 'getchargeiteminfos' then
-    Result := AService.GetChargeItemInfos(ARecvXML, ASendXML)
-  else if intfName = 'gettreatmentiteminfos' then
-    Result := AService.GetTreatmentItemInfos(ARecvXML, ASendXML)
-  else if intfName = 'getsurgeryinfos' then
-    Result := AService.GetSurgeryInfos(ARecvXML, ASendXML)
-  else if intfName = 'getdiagnosesinfos' then
-    Result := AService.GetDiagnosesInfos(ARecvXML, ASendXML)
-  else if intfName = 'gettestiteminfos' then
-    Result := AService.GetTestItemInfos(ARecvXML, ASendXML)
-  else if intfName = 'getpateintinfos' then
-    Result := AService.GetPateintInfos(ARecvXML, ASendXML)
-  else if intfName = 'gettestitemresultinfos' then
-    Result := AService.GetTestItemResultInfos(ARecvXML, ASendXML)
-  else if intfName = 'sendclinicalrequisitionorder' then
-    Result := AService.SendClinicalRequisitionOrder(ARecvXML, ASendXML)
-  else if intfName = 'deleteclinicalrequisitionorder' then
-    Result := AService.DeleteClinicalRequisitionOrder(ARecvXML, ASendXML)
-
+  try
+    if intfName = 'getwardinfos' then
+      Result := AService.GetWardInfos(ARecvXML, ASendXML)
+    else if intfName = 'getdeptinfos' then
+      Result := AService.GetDeptInfos(ARecvXML, ASendXML)
+    else if intfName = 'getstaffinfos' then
+      Result := AService.GetStaffInfos(ARecvXML, ASendXML)
+    else if intfName = 'getchargeiteminfos' then
+      Result := AService.GetChargeItemInfos(ARecvXML, ASendXML)
+    else if intfName = 'gettreatmentiteminfos' then
+      Result := AService.GetTreatmentItemInfos(ARecvXML, ASendXML)
+    else if intfName = 'getsurgeryinfos' then
+      Result := AService.GetSurgeryInfos(ARecvXML, ASendXML)
+    else if intfName = 'getdiagnosesinfos' then
+      Result := AService.GetDiagnosesInfos(ARecvXML, ASendXML)
+    else if intfName = 'gettestiteminfos' then
+      Result := AService.GetTestItemInfos(ARecvXML, ASendXML)
+    else if intfName = 'getpateintinfos' then
+      Result := AService.GetPateintInfos(ARecvXML, ASendXML)
+    else if intfName = 'gettestitemresultinfos' then
+      Result := AService.GetTestItemResultInfos(ARecvXML, ASendXML)
+    else if intfName = 'sendclinicalrequisitionorder' then
+      Result := AService.SendClinicalRequisitionOrder(ARecvXML, ASendXML)
+    else if intfName = 'deleteclinicalrequisitionorder' then
+      Result := AService.DeleteClinicalRequisitionOrder(ARecvXML, ASendXML)
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('ExecuteIntf Error Message:' + E.Message);
+    end;
+  end;
 end;
 
 procedure TMyTCPClientContext.GenerateErrorXML(AErrorMsg: string;

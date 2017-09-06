@@ -20,7 +20,8 @@ uses
   Vcl.ComCtrls,
   System.IniFiles,
   CnDebug,
-  diocp_coder_tcpServer, Vcl.ExtCtrls;
+  diocp_coder_tcpServer, Vcl.ExtCtrls, Vcl.StdCtrls, PythonEngine,
+  PythonGUIInputOutput;
 
 type
   TfrmMain = class(TForm)
@@ -160,7 +161,7 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   //
-  CnDebugger.AutoStart := True;
+  CnDebugger.AutoStart := False;
   CnDebugger.DumpFileName := LOG_FILE_NAME;
   CnDebugger.DumpToFile := True;
   CnDebugger.ExceptTracking := False;

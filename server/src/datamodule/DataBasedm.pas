@@ -28,7 +28,8 @@ uses
   Data.DB,
   FireDAC.Comp.Client,
   qxml,
-  qstring
+  qstring,
+  CnDebug
   ;
 
 type
@@ -153,48 +154,49 @@ begin
   if Trim(TableName) = '' then
     raise Exception.Create('ConvertXMLToDB Error: TableName not set');
   ASql := 'select * from ' + TableName + ' where ';
-  for I := 0 to AXML.Count - 1 do
+  for I := 0 to AXML.Items[0].Count - 1 do
   begin
-    if AXML.Items[I].Attrs.ValueByName('key', '') = 'true' then
+    if AXML.Items[0].Items[I].Attrs.ValueByName('key', '') = 'true' then
       if AWhere = '' then
-        AWhere := AXML.Items[I].Name + ' = ' + AXML.Items[I].Text
+        AWhere := AXML.Items[0].Items[I].Name + ' = ''' + AXML.Items[0].Items[I].Text + ''''
       else
-        AWhere := AWhere + ' and ' + AXML.Items[I].Name + ' = ' + AXML.Items[I].Text;
-    ASql := ASql + AWhere;
+        AWhere := AWhere + ' and ' + AXML.Items[0].Items[I].Name + ' = ''' + AXML.Items[0].Items[I].Text + '''';
   end;
+  ASql := ASql + AWhere;
+  CnDebugger.LogMsgWithTag(ASql, 'SQLText');
   qryExcute.Connection := BISConnect;
   qryExcute.Open(ASql);
   if qryExcute.RecordCount > 0 then
     qryExcute.Edit
   else
     qryExcute.Append;
-  for I := 0 to AXML.Count - 1 do
+  for I := 0 to AXML.Items[0].Count - 1 do
   begin
-    if Trim(AXML.Items[I].Text) = '' then
+    if Trim(AXML.Items[0].Items[I].Text) = '' then
       Continue;
 
-    AField := qryExcute.FindField(AXML.Items[I].Name);
+    AField := qryExcute.FindField(AXML.Items[0].Items[I].Name);
     if not Assigned(AField) then
       Continue;
 
     case AField.DataType of
       ftFloat:
-        AField.AsFloat := StrToFloatDef(AXML.Items[I].Text, 0.00);
+        AField.AsFloat := StrToFloatDef(AXML.Items[0].Items[I].Text, 0.00);
       ftDateTime:
-        AField.AsDateTime := StrToDateTime(AXML.Items[I].Text, FDateTimeFormat);
+        AField.AsDateTime := StrToDateTime(AXML.Items[0].Items[I].Text, FDateTimeFormat);
       ftInteger:
-        AField.AsInteger := StrToIntDef(AXML.Items[I].Text, 0);
+        AField.AsInteger := StrToIntDef(AXML.Items[0].Items[I].Text, 0);
       ftString:
-        AField.AsString := AXML.Items[I].Text;
+        AField.AsString := AXML.Items[0].Items[I].Text;
       ftLargeint:
-        AField.AsLargeInt := StrToInt64Def(AXML.Items[I].Text, 0);
+        AField.AsLargeInt := StrToInt64Def(AXML.Items[0].Items[I].Text, 0);
       ftBoolean:
-        AField.AsBoolean := StrToBoolDef(AXML.Items[I].Text, False);
+        AField.AsBoolean := StrToBoolDef(AXML.Items[0].Items[I].Text, False);
       ftTimeStamp:
-        AField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AXML.Items
+        AField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AXML.Items[0].Items
           [I].Text, FDateTimeFormat))
     else
-      AField.AsString := AXML.Items[I].Text;
+      AField.AsString := AXML.Items[0].Items[I].Text;
     end;
   end;
   qryExcute.Post;

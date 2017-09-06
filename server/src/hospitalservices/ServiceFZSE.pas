@@ -24,6 +24,8 @@ uses
 
 type
   TFZSEInterfaceObject = class(TQService, IHospitalBISService)
+  private
+    function GetTableNameByClass(AClass: string): string;
   protected
     /// <summary>
     /// 获取病人信息
@@ -51,6 +53,8 @@ type
     function GetStaffInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     function GetWardInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     function GetDeptInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+
+    function QueryHisInfos(const AClass: string; const ARecvXML: TQXML; var ASendXML: TQXML):Boolean;
   public
     constructor Create(const AId: TGuid; AName: QStringW); override;
     destructor Destroy; override;
@@ -87,7 +91,7 @@ end;
 function TFZSEInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getchargeiteminfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetDeptInfos(const ARecvXML: TQXML; var ASendXML:
@@ -104,40 +108,8 @@ end;
 
 function TFZSEInterfaceObject.GetPateintInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
-var
-  AMq: TMQClass;
-  APy: IPythonScriptService;
-  ADB: TdmDatabase;
-  AReturn: string;
-  AReturnXML: TQXML;
-  ATemp: string;
 begin
-  AMq := nil;
-  APy := nil;
-  ADB := nil;
-  AReturnXML := nil;
-  try
-    AMq := TMQClass.Create;
-
-    APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
-    ATemp := APy.ParamOfMethod(ARecvXML);
-    CnDebugger.LogMsgWithTag(ATemp, 'ParamOfMethod');
-    AMq.QueryByParam(ATemp);
-    AReturn := APy.ResultOfMethod('getpateintinfos', AMq.respMsg.Encode(False));
-
-    AReturnXML := TQXML.Create;
-    AReturnXML.Parse(AReturn);
-
-    ADB := TdmDatabase.Create(nil);
-    ADB.TableName := 'Patient_GetInterface_List_Info';
-    ADB.ConvertXMLToDB(AReturnXML);
-
-  finally
-    FreeAndNilObject(ADB);
-    FreeAndNilObject(AReturnXML);
-    FreeAndNilObject(AMq);
-    FreeAndNilObject(APy);
-  end;
+  Result := QueryHisInfos('getpateintinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetStaffInfos(const ARecvXML: TQXML; var ASendXML:
@@ -167,13 +139,74 @@ end;
 function TFZSEInterfaceObject.GetTreatmentItemInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('gettreatmentiteminfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetWardInfos(const ARecvXML: TQXML; var ASendXML:
   TQXML): Boolean;
 begin
 
+end;
+
+function TFZSEInterfaceObject.GetTableNameByClass(AClass: string): string;
+begin
+  if AClass = 'getpateintinfos' then
+    Result := 'Patient_GetInterface_List_Info'
+  else if AClass = 'gettreatmentiteminfos' then
+    Result := 'His_TreatmentItem_Info'
+  else if AClass = 'getchargeiteminfos' then
+    Result := 'His_ChargeItem_Info'
+end;
+
+function TFZSEInterfaceObject.QueryHisInfos(const AClass: string;
+  const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+var
+  AMq: TMQClass;
+  APy: IPythonScriptService;
+  ADB: TdmDatabase;
+  AReturn: string;
+  AReturnXML: TQXML;
+  AXml: TQXML;
+  ASendItem: TQXMLNode;
+  ATemp: string;
+begin
+  AMq := nil;
+  APy := nil;
+  ADB := nil;
+  AXml := nil;
+  AReturnXML := nil;
+  try
+    AMq := TMQClass.Create;
+
+    AXml := TQXML.Create;
+
+    APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+    ATemp := APy.ParamOfMethod(ARecvXML);
+
+    AXml.Parse(ATemp);
+    AMq.Connect;
+    AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid','');
+    AMq.QueryByParam(ATemp);
+    AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename', ''),
+      AMq.respMsg.Encode(False));
+
+    AReturnXML := TQXML.Create;
+    AReturnXML.Parse(AReturn);
+
+    ADB := TdmDatabase.Create(nil);
+    ADB.TableName := GetTableNameByClass(AClass);
+    ADB.ConvertXMLToDB(AReturnXML);
+
+    ASendItem := ASendXML.AddNode('root');
+    ASendItem.AddNode('resultcode').Text := '0';
+    ASendItem.AddNode('resultmessage').Text := '成功';
+    ASendItem.AddNode('results');
+  finally
+    FreeAndNilObject(AXml);
+    FreeAndNilObject(ADB);
+    FreeAndNilObject(AReturnXML);
+    FreeAndNilObject(AMq);
+  end;
 end;
 
 function TFZSEInterfaceObject.SendClinicalRequisitionOrder(const ARecvXML: TQXML;
