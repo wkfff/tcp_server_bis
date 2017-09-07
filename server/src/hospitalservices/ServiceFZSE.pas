@@ -16,6 +16,7 @@ uses
   QPlugins,
   qxml,
   qstring,
+  QWorker,
   CnDebug,
   IHospitalBISServiceIntf,
   YltShareVariable,
@@ -26,6 +27,7 @@ type
   TFZSEInterfaceObject = class(TQService, IHospitalBISService)
   private
     function GetTableNameByClass(AClass: string): string;
+    procedure DoGetChargeItemJob(AJob: PQJob);
   protected
     /// <summary>
     /// 获取病人信息
@@ -88,16 +90,90 @@ begin
   inherited;
 end;
 
+procedure TFZSEInterfaceObject.DoGetChargeItemJob(AJob: PQJob);
+var
+  ARecvXML: TQXML;
+  AMq: TMQClass;
+  APy: IPythonScriptService;
+  ADB: TdmDatabase;
+  AReturn: string;
+  AReturnXML: TQXML;
+  AXml: TQXML;
+  ASendItem: TQXMLNode;
+  ATemp: string;
+begin
+  AMq := nil;
+  APy := nil;
+  ADB := nil;
+  AXml := nil;
+  AReturnXML := nil;
+  ARecvXML := TQXML(AJob.Data);
+
+  CnDebug.CnDebugger.LogMsg(ARecvXML.Encode(False));
+
+  try
+    try
+      AMq := TMQClass.Create;
+
+      AXml := TQXML.Create;
+
+      APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+      CnDebug.CnDebugger.LogMsg('PythonScript ParamOfMethod');
+      ATemp := APy.ParamOfMethod(ARecvXML);
+
+      AXml.Parse(ATemp);
+      CnDebug.CnDebugger.LogMsg('TMQClass Connect');
+      AMq.Connect;
+      AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid','');
+      CnDebugger.LogMsg(ATemp);
+      AMq.QueryByParam(ATemp);
+      AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename', ''),
+        AMq.respMsg.Encode(False));
+
+      AReturnXML := TQXML.Create;
+      AReturnXML.Parse(AReturn);
+
+      ADB := TdmDatabase.Create(nil);
+      ADB.TableName := GetTableNameByClass('getchargeiteminfos');
+      ADB.ConvertXMLToDB(AReturnXML);
+
+      Workers.Post(procedure(AJob: PQJob)
+                   begin
+                     CnDebug.CnDebugger.LogMsg('chargeitem complate');
+                   end, nil, True);
+    except
+      on E:Exception do
+      begin
+        CnDebug.CnDebugger.LogMsg('Error ' + E.Message);
+      end;
+    end;
+  finally
+    FreeAndNilObject(AXml);
+    FreeAndNilObject(ADB);
+    FreeAndNilObject(AReturnXML);
+    FreeAndNilObject(AMq);
+  end;
+end;
+
 function TFZSEInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
+var
+  ASendItem: TQXMLNode;
+  AXml: TQXML;
 begin
-  Result := QueryHisInfos('getchargeiteminfos', ARecvXML, ASendXML);
+  AXml := ARecvXML.Copy;
+  Workers.Post(DoGetChargeItemJob, Pointer(AXml), False, jdfFreeAsObject);
+  ASendItem := ASendXML.AddNode('root');
+  ASendItem.AddNode('resultcode').Text := '0';
+  ASendItem.AddNode('resultmessage').Text := '开始执行';
+  ASendItem.AddNode('results');
+//  Result := QueryHisInfos('getchargeiteminfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetDeptInfos(const ARecvXML: TQXML; var ASendXML:
   TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getdeptinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetDiagnosesInfos(const ARecvXML: TQXML; var
@@ -156,6 +232,8 @@ begin
     Result := 'His_TreatmentItem_Info'
   else if AClass = 'getchargeiteminfos' then
     Result := 'His_ChargeItem_Info'
+  else if AClass = 'getdeptinfos' then
+    Result := 'His_Dept_Info'
 end;
 
 function TFZSEInterfaceObject.QueryHisInfos(const AClass: string;

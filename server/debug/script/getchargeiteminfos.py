@@ -25,7 +25,7 @@ def param_of_method(str_xml):
 def result_of_method(str_xml):
     return_xml = '''
     <root>
-        <ChargeItemId></ChargeItemId>
+        <ChargeItemId key="true"></ChargeItemId>
         <ChargeItemName></ChargeItemName>
         <SpellCode></SpellCode>
         <ChargePric></ChargePric>

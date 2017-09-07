@@ -234,8 +234,6 @@ begin
     for I := 0 to FOrderItems.Count - 1 do
       FOrderItems.Items[I].Free;
   FreeAndNilObject(FOrderItems);
-  if Active then
-    DisConnect;
   inherited;
 end;
 
@@ -408,16 +406,18 @@ begin
         iReturn, pErrorMsg]));
     end;
 
-    iReturn := GetMsgMQ(pSecId, 1000 * 60 * 10, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
+    iReturn := GetMsgMQ(pSecId, 1000 * 60 * 3, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
     if iReturn <> 1 then
     begin
       raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
         iReturn, pErrorMsg]));
     end;
+
     CnDebugger.LogMsg('MQ Get消息内容:' + string(pGetMsg));
     FrespMsg.Parse(PWideChar(string(pGetMsg)));
     Result := iReturn;
   finally
+    CnDebugger.LogMsg('Free Mem');
     FreeMem(pMsgId);
     FreeMem(pErrorMsg);
     FreeMem(pGetMsg);
