@@ -20,8 +20,9 @@ uses
   Vcl.ComCtrls,
   System.IniFiles,
   CnDebug,
-  diocp_coder_tcpServer, Vcl.ExtCtrls, Vcl.StdCtrls, PythonEngine,
-  PythonGUIInputOutput;
+  diocp_coder_tcpServer,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls;
 
 type
   TfrmMain = class(TForm)
