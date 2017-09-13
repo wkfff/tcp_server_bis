@@ -1,5 +1,7 @@
 program InterfaceServer;
 
+{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL，会影响其他接口
+
 uses
   Vcl.Forms,
   Vcl.Themes,
@@ -18,8 +20,10 @@ uses
   ICalculateServiceIntf in 'interfaces\ICalculateServiceIntf.pas',
   PythonScriptdm in 'datamodule\PythonScriptdm.pas' {dmPythonScript: TDataModule},
   DataBasedm in 'datamodule\DataBasedm.pas' {dmDatabase: TDataModule},
+  {$IFDEF FZSE_INTF}
   EwellMqExpts in 'hospitalservices\EwellMqExpts.pas',
   ServiceFZSE in 'hospitalservices\ServiceFZSE.pas',
+  {$ENDIF}
   IPythonScriptServiceIntf in 'interfaces\IPythonScriptServiceIntf.pas',
   AndyDelphiPy in 'datamodule\AndyDelphiPy.pas';
 
@@ -42,7 +46,7 @@ begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
     Application.CreateForm(TfrmMain, frmMain);
-  Application.Run;
+    Application.Run;
   end;
   ReleaseMutex(hMutex);    //释放互斥对象
 end.

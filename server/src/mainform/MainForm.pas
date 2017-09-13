@@ -162,7 +162,11 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   //
+  {$IFDEF DEBUG}
+  CnDebugger.AutoStart := True;
+  {$ELSE}
   CnDebugger.AutoStart := False;
+  {$ENDIF}
   CnDebugger.DumpFileName := LOG_FILE_NAME;
   CnDebugger.DumpToFile := True;
   CnDebugger.ExceptTracking := False;

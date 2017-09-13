@@ -55,8 +55,8 @@ type
     function GetStaffInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     function GetWardInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     function GetDeptInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
-
-    function QueryHisInfos(const AClass: string; const ARecvXML: TQXML; var ASendXML: TQXML):Boolean;
+    function QueryHisInfos(const AClass: string; const ARecvXML: TQXML; var
+      ASendXML: TQXML): Boolean;
   public
     constructor Create(const AId: TGuid; AName: QStringW); override;
     destructor Destroy; override;
@@ -124,11 +124,11 @@ begin
       AXml.Parse(ATemp);
       CnDebug.CnDebugger.LogMsg('TMQClass Connect');
       AMq.Connect;
-      AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid','');
+      AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
       CnDebugger.LogMsg(ATemp);
       AMq.QueryByParam(ATemp);
-      AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename', ''),
-        AMq.respMsg.Encode(False));
+      AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''), AMq.respMsg.Encode(False));
 
       AReturnXML := TQXML.Create;
       AReturnXML.Parse(AReturn);
@@ -137,12 +137,13 @@ begin
       ADB.TableName := GetTableNameByClass('getchargeiteminfos');
       ADB.ConvertXMLToDB(AReturnXML);
 
-      Workers.Post(procedure(AJob: PQJob)
-                   begin
-                     CnDebug.CnDebugger.LogMsg('chargeitem complate');
-                   end, nil, True);
+      Workers.Post(
+        procedure(AJob: PQJob)
+        begin
+          CnDebug.CnDebugger.LogMsg('chargeitem complate');
+        end, nil, True);
     except
-      on E:Exception do
+      on E: Exception do
       begin
         CnDebug.CnDebugger.LogMsg('Error ' + E.Message);
       end;
@@ -208,8 +209,82 @@ end;
 
 function TFZSEInterfaceObject.GetTestItemResultInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
-begin
+var
+  AMq: TMQClass;
+  APy: IPythonScriptService;
+  ADB: TdmDatabase;
+  AClone: TQXML;
+  ASendItem: TQXMLNode;
+  ATestItem: TArray<string>;
+  I: Integer;
 
+  procedure GetTestItemResultByOne(const AXML: TQXML);
+  var
+    ATempXML: TQXML;
+    ATemp: string;
+    AReturn: string;
+    AReturnXML: TQXML;
+  begin
+    ATempXML := nil;
+    AReturnXML := nil;
+    try
+      ATempXML := TQXML.Create;
+      AReturnXML := TQXML.Create;
+
+      ATemp := APy.ParamOfMethod(ARecvXML);
+      AXML.Parse(ATemp);
+
+      AMq.Connect;
+      AMq.ServiceId := AXML.TextByPath('ESBEntry.AccessControl.Fid', '');
+      AMq.QueryByParam(ATemp);
+
+      if AMq.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '0') <> '1' then
+        raise Exception.Create('AMq.QueryByParam Error Message:' + AMq.respMsg.TextByPath
+          ('ESBEntry.RetInfo.RetCon', ''));
+
+      AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''), AMq.respMsg.Encode(False));
+
+      AReturnXML.Parse(AReturn);
+
+      ADB.ConvertXMLToDB(AReturnXML);
+    finally
+      FreeAndNilObject(AReturnXML);
+      FreeAndNilObject(ATempXML);
+    end;
+  end;
+
+begin
+  AMq := nil;
+  APy := nil;
+  ADB := nil;
+  try
+    AMq := TMQClass.Create;
+    APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+    ADB := TdmDatabase.Create(nil);
+    ADB.TableName := GetTableNameByClass('gettestitemresultinfos');
+
+    AClone := ARecvXML.Copy;
+
+    ATestItem := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid',
+      '').Split([',']);
+
+    for I := 0 to High(ATestItem) do
+    begin
+      AClone.ItemByPath('interfacemessage.interfaceparms.testitemid').Text :=
+        ATestItem[I];
+      GetTestItemResultByOne(AClone);
+    end;
+
+    ASendItem := ASendXML.AddNode('root');
+    ASendItem.AddNode('resultcode').Text := '0';
+    ASendItem.AddNode('resultmessage').Text := '³É¹¦';
+    ASendItem.AddNode('results');
+  finally
+    FreeAndNilObject(AClone);
+    FreeAndNilObject(ADB);
+    FreeAndNilObject(AMq);
+  end;
 end;
 
 function TFZSEInterfaceObject.GetTreatmentItemInfos(const ARecvXML: TQXML; var
@@ -227,17 +302,19 @@ end;
 function TFZSEInterfaceObject.GetTableNameByClass(AClass: string): string;
 begin
   if AClass = 'getpateintinfos' then
-    Result := 'Patient_GetInterface_List_Info'
+    Result := 'patient_getinterface_list_info'
   else if AClass = 'gettreatmentiteminfos' then
-    Result := 'His_TreatmentItem_Info'
+    Result := 'his_treatmentitem_info'
   else if AClass = 'getchargeiteminfos' then
-    Result := 'His_ChargeItem_Info'
+    Result := 'his_chargeitem_info'
   else if AClass = 'getdeptinfos' then
-    Result := 'His_Dept_Info'
+    Result := 'his_dept_info'
+  else if AClass = 'gettestitemresultinfos' then
+    Result := 'patient_getinterface_result_info';
 end;
 
-function TFZSEInterfaceObject.QueryHisInfos(const AClass: string;
-  const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+function TFZSEInterfaceObject.QueryHisInfos(const AClass: string; const ARecvXML:
+  TQXML; var ASendXML: TQXML): Boolean;
 var
   AMq: TMQClass;
   APy: IPythonScriptService;
@@ -263,10 +340,15 @@ begin
 
     AXml.Parse(ATemp);
     AMq.Connect;
-    AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid','');
+    AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
     AMq.QueryByParam(ATemp);
-    AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename', ''),
-      AMq.respMsg.Encode(False));
+
+    if AMq.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '0') <> '1' then
+      raise Exception.Create('AMq.QueryByParam Error Message:' + AMq.respMsg.TextByPath
+        ('ESBEntry.RetInfo.RetCon', ''));
+
+    AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename',
+      ''), AMq.respMsg.Encode(False));
 
     AReturnXML := TQXML.Create;
     AReturnXML.Parse(AReturn);

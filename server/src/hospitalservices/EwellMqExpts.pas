@@ -6,123 +6,21 @@ uses
   System.SysUtils,
   System.Classes,
   System.Generics.Collections,
-  Winapi.Windows,
   qplugins_params,
   qxml,
   qstring,
-  CnDebug;
+  CnDebug,
+  utils_safeLogger;
 
 type
   MQException = class(Exception)
+  
   end;
-
+  
   TCALLBACK_FUN = procedure(AMsgID, AMsg: PAnsiChar);
-
-  TConnectMQfuc = function(): Integer; stdcall;
-
-  TConnectMQXfuc = function(serverName: PAnsiChar): Integer; stdcall;
-
-  TDisConnectMQfuc = function(): Integer; stdcall;
-
-  TPutMsgMQfuc = function(Fid: PAnsiChar; QMsgID: PAnsiChar; QMsg: PAnsiChar;
-    ErrMsg: PAnsiChar): Integer; stdcall;
-
-  TGetMsgMQfuc = function(Fid: PAnsiChar; WaitInterval: Integer; QMsgID:
-    PAnsiChar; QMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall;
-
-  TBrowseMsgMQfuc = function(Fid: PAnsiChar; WaitInterval: Integer; QMsgID:
-    PAnsiChar; QMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall;
-
-  TPutMsgWithIdfuc = function(Fid: PAnsiChar; QMsgID: PAnsiChar; QMsg: PAnsiChar;
-    ErrMsg: PAnsiChar): Integer; stdcall;
-
-  TputMsgTCfuc = function(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar;
-    QinMsg: PAnsiChar; QoutMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall;
-
-  TMessageListenerfuc = function(Fid: PAnsiChar; QMsgID: PAnsiChar; func:
-    TCALLBACK_FUN): Integer; stdcall;
-
-  TQueryfuc = function(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar;
-    QinMsg: PAnsiChar; QoutMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall;
 
   TMQClass = class(TObject)
   private
-    /// <summary>
-    ///连接队列管理器，不带参数则默认连接第一个配置，即“MQMGR1”
-    /// </summary>
-    /// <returns> 0：失败 1：成功</returns>
-    ConnectMQ: TConnectMQfuc;
-    /// <summary>
-    ///连接队列管理器，指定连接到某个服务器
-    /// </summary>
-    /// <params>
-    /// serverName 服务参数，从上图ini中，可以是”MQMGR1”或”MQMGR2”
-    /// </params>
-    /// <returns> 0：失败 1：成功</returns>
-    ConnectMQX: TConnectMQXfuc;
-    /// <summary>
-    /// 断开连接
-    /// </summary>
-    /// <returns>0:失败；1：成功； </returns>
-    DisConnectMQ: TDisConnectMQfuc;
-    /// <summary>
-    /// 发送消息到服务器，将返回消息ID
-    /// </summary>
-    /// <param name=" Fid ">服务Id</param>
-    /// <param name=" QMsgID ">消息ID</param>
-    /// <param name=" QMsg ">消息内容D</param>
-    /// <param name=" ErrMsg ">返回错误内容</param>
-    /// <returns>0:失败；1:成功；-1：未连接</returns>
-    PutMsgMQ: TPutMsgMQfuc;
-    /// <summary>
-    /// 根据服务Id从相应队列中获取指定消息Id的第一条消息
-    /// </summary>
-    /// <param name=" Fid ">服务Id</param>
-    /// <param name=" WaitInterval ">等待时间：毫秒</param>
-    /// <param name=" QMsgID ">消息ID</param>
-    /// <param name=" QMsg ">消息内容D</param>
-    /// <param name=" ErrMsg ">返回错误内容</param>
-    /// <returns>0:失败；1:成功；-1：未连接</returns>
-    GetMsgMQ: TGetMsgMQfuc;
-    /// <summary>
-    /// 根据服务Id从相应队列中获取指定消息Id的第一条消息， 方法提供超时等待设置，参数waitInterval为等待时间，单位：毫秒
-    /// </summary>
-    /// <param name=" Fid ">服务id</param>
-    /// <param name=" WaitInterval ">等待时间：毫秒</param>
-    /// <param name=" QMsgID ">消息ID</param>
-    /// <param name=" QMsg ">消息内容</param>
-    /// <param name=" ErrMsg ">返回错误内容</param>
-    /// <returns>0:失败；1:成功；；-1：未连接</returns>
-    BrowseMsgMQ: TBrowseMsgMQfuc;
-    /// <summary>
-    /// 根据服务Id从相应队列中浏览指定消息Id的第一条消息，如果不提供Id，则浏览第一条。方法提供超时等待设置，参数waitInterval为等待时间，单位：毫秒
-    /// </summary>
-    /// <param name=" Fid ">服务id</param>
-    /// <param name=" WaitInterval ">等待时间：毫秒</param>
-    /// <param name=" QMsgID ">消息ID，如果没有消息Id则传空值</param>
-    /// <param name=" QMsg ">消息内容</param>
-    /// <param name=" ErrMsg ">返回错误内容</param>
-    /// <returns>0:失败；1:成功；；-1：未连接</returns>
-    PutMsgWithId: TPutMsgWithIdfuc;
-    /// <summary>
-    ///推送消息到服务器，并等待接收方回传消息后才结束，适用于一对一的推送
-    /// </summary>
-    /// <param name=" Fid ">服务Id</param>
-    /// <param name=" QMsgID ">消息ID</param>
-    /// <param name=" QMsg ">返回消息内容D</param>
-    /// <param name=" QoutMsg ">返回处理结果内容</param>
-    /// <param name=" ErrMsg ">返回错误内容</param>
-    /// <returns>0:失败；1:成功；-1：未连接</returns>
-    putMsgTC: TputMsgTCfuc;
-    /// <summary>
-    ///侦听消息队列，一旦有消息就立即获取，并回调函数
-    /// </summary>
-    /// <param name=" Fid ">服务Id</param>
-    /// <param name=" QMsgID ">消息ID</param>
-    /// <param name=" func">回调函数</param>
-    /// <returns>0:失败；1:成功； </returns>
-    MessageListener: TMessageListenerfuc;
-
     FActive: Boolean;
     FServiceId: string;
     FUserName: string;
@@ -133,7 +31,6 @@ type
     FWaitInterval: Integer;
     FrespMsg: TQXML;
     FSourceSysCode: string;
-    procedure LoadDllLibray;
     function GetActive: Boolean;
     procedure SetActive(const Value: Boolean);
     procedure SetWaitInterval(const Value: Integer);
@@ -143,13 +40,13 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Connect; overload;
-    procedure Connect(AServerName: string); overload;
+    procedure Connect(AServerName:string); overload;
     procedure DisConnect;
     function Query: Integer;
     function QueryByParam(const AParam: string): Integer;
     function PutMQMessage: Integer;
   public
-    property respMsg: TQXML read FrespMsg;
+    property respMsg : TQXML read FrespMsg;
     property WaitInterval: Integer read FWaitInterval write SetWaitInterval;
     property QueryItems: TList<TQParams> read FQueryItems write FQueryItems;
     property OrderItems: TList<TQParams> read FOrderItems write FOrderItems;
@@ -161,11 +58,93 @@ type
     property SourceSysCode: string read FSourceSysCode write FSourceSysCode;
   end;
 
+/// <summary>
+///连接队列管理器，不带参数则默认连接第一个配置，即“MQMGR1”
+/// </summary>
+/// <returns> 0：失败 1：成功</returns>
+function ConnectMQ(): integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+///连接队列管理器，指定连接到某个服务器
+/// </summary>
+/// <params>
+/// serverName 服务参数，从上图ini中，可以是”MQMGR1”或”MQMGR2”
+/// </params>
+/// <returns> 0：失败 1：成功</returns>
+function ConnectMQX(serverName: PAnsiChar): integer; stdcall; external 'EwellMq.dll';
+  /// <summary>
+/// 断开连接
+/// </summary>
+/// <returns>0:失败；1：成功； </returns>
+function DisConnectMQ(): Integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+/// 发送消息到服务器，将返回消息ID
+/// </summary>
+/// <param name=" Fid ">服务Id</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" QMsg ">消息内容D</param>
+/// <param name=" ErrMsg ">返回错误内容</param>
+/// <returns>0:失败；1:成功；-1：未连接</returns>
+function PutMsgMQ(Fid: PAnsiChar; QMsgID: PAnsiChar; QMsg: PAnsiChar; ErrMsg: PAnsiChar):
+  Integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+/// 根据服务Id从相应队列中获取指定消息Id的第一条消息
+/// </summary>
+/// <param name=" Fid ">服务Id</param>
+/// <param name=" WaitInterval ">等待时间：毫秒</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" QMsg ">消息内容D</param>
+/// <param name=" ErrMsg ">返回错误内容</param>
+/// <returns>0:失败；1:成功；-1：未连接</returns>
+function GetMsgMQ(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar; QMsg: PAnsiChar;
+  ErrMsg: PAnsiChar): Integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+/// 根据服务Id从相应队列中获取指定消息Id的第一条消息， 方法提供超时等待设置，参数waitInterval为等待时间，单位：毫秒
+/// </summary>
+/// <param name=" Fid ">服务id</param>
+/// <param name=" WaitInterval ">等待时间：毫秒</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" QMsg ">消息内容</param>
+/// <param name=" ErrMsg ">返回错误内容</param>
+/// <returns>0:失败；1:成功；；-1：未连接</returns>
+function BrowseMsgMQ(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar; QMsg:
+  PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+/// 根据服务Id从相应队列中浏览指定消息Id的第一条消息，如果不提供Id，则浏览第一条。方法提供超时等待设置，参数waitInterval为等待时间，单位：毫秒
+/// </summary>
+/// <param name=" Fid ">服务id</param>
+/// <param name=" WaitInterval ">等待时间：毫秒</param>
+/// <param name=" QMsgID ">消息ID，如果没有消息Id则传空值</param>
+/// <param name=" QMsg ">消息内容</param>
+/// <param name=" ErrMsg ">返回错误内容</param>
+/// <returns>0:失败；1:成功；；-1：未连接</returns>
+function PutMsgWithId(Fid: PAnsiChar; QMsgID: PAnsiChar; QMsg: PAnsiChar; ErrMsg: PAnsiChar):
+  Integer; stdcall; external 'EwellMq.dll';
+/// <summary>
+///推送消息到服务器，并等待接收方回传消息后才结束，适用于一对一的推送
+/// </summary>
+/// <param name=" Fid ">服务Id</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" QMsg ">返回消息内容D</param>
+/// <param name=" QoutMsg ">返回处理结果内容</param>
+/// <param name=" ErrMsg ">返回错误内容</param>
+/// <returns>0:失败；1:成功；-1：未连接</returns>
+function putMsgTC(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar; QinMsg:
+  PAnsiChar; QoutMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall; external
+  'EwellMq.dll';
+/// <summary>
+///侦听消息队列，一旦有消息就立即获取，并回调函数
+/// </summary>
+/// <param name=" Fid ">服务Id</param>
+/// <param name=" QMsgID ">消息ID</param>
+/// <param name=" func">回调函数</param>
+/// <returns>0:失败；1:成功； </returns>
+function MessageListener(Fid :PAnsiChar; QMsgID :PAnsiChar; func:TCALLBACK_FUN) :Integer;
+  stdcall;external 'EwellMq.dll';
+
+function Query(Fid :PAnsiChar; WaitInterval:Integer; QMsgID :PAnsiChar; QinMsg :PAnsiChar;
+  QoutMsg:PAnsiChar; ErrMsg :PAnsiChar):Integer; stdcall; external 'EwellMq.dll';
+
 implementation
-
-var
-  FDllHandle: THandle;
-
 
 { TMQClass }
 
@@ -185,7 +164,7 @@ var
 begin
   iReturn := ConnectMQX(PAnsiChar(AnsiString(AServerName)));
   if iReturn <> 1 then
-    raise MQException.Create('连接队列管理器 ' + AServerName + ' 失败!');
+    raise MQException.Create('连接队列管理器 '+ AServerName +' 失败!');
   FActive := True;
 end;
 
@@ -194,26 +173,9 @@ begin
   Result := PAnsiChar(AnsiString(AData));
 end;
 
-procedure TMQClass.LoadDllLibray;
-begin
-  if FDllHandle < 32 then
-    raise Exception.Create('not found EwellMq.dll');
-  @ConnectMQ := GetProcAddress(FDllHandle, 'ConnectMQ');
-  @ConnectMQX := GetProcAddress(FDllHandle, 'ConnectMQX');
-  @PutMsgMQ := GetProcAddress(FDllHandle, 'PutMsgMQ');
-  @putMsgTC := GetProcAddress(FDllHandle, 'putMsgTC');
-  @GetMsgMQ := GetProcAddress(FDllHandle, 'GetMsgMQ');
-  @BrowseMsgMQ := GetProcAddress(FDllHandle, 'BrowseMsgMQ');
-  @PutMsgWithId := GetProcAddress(FDllHandle, 'PutMsgWithId');
-  @MessageListener := GetProcAddress(FDllHandle, 'MessageListener');
-  @DisConnectMQ := GetProcAddress(FDllHandle, 'DisConnectMQ');
-end;
-
 constructor TMQClass.Create;
 begin
   inherited;
-  LoadDllLibray;
-
   FWaitInterval := 10000;
   FActive := False;
   FQueryItems := TList<TQParams>.Create;
@@ -226,14 +188,13 @@ var
   I: Integer;
 begin
   FreeAndNilObject(FrespMsg);
-  if Assigned(FQueryItems) then
-    for I := 0 to FQueryItems.Count - 1 do
-      FQueryItems.Items[I].Free;
+  for I := 0 to FQueryItems.Count - 1 do
+    FQueryItems.Items[I].Free;
   FreeAndNilObject(FQueryItems);
-  if Assigned(FOrderItems) then
-    for I := 0 to FOrderItems.Count - 1 do
-      FOrderItems.Items[I].Free;
+  for I := 0 to FOrderItems.Count - 1 do
+    FOrderItems.Items[I].Free;
   FreeAndNilObject(FOrderItems);
+
   inherited;
 end;
 
@@ -254,7 +215,7 @@ end;
 
 function TMQClass.PutMQMessage: Integer;
 begin
-
+  Result := 0;
 end;
 
 function TMQClass.CreateQueryParamsMsg: string;
@@ -290,7 +251,7 @@ begin
     AChildNode := AMsgXML.ItemByPath('ESBEntry');
     AChildNode := AChildNode.AddNode('MsgInfo');
     for I := 0 to QueryItems.Count - 1 do
-    begin
+    begin  
       AQueryItem := AChildNode.AddNode('query');
       if Assigned(QueryItems[I].ByName('item')) then
         AQueryItem.Attrs.Add('item').Value := QueryItems[I].ByName('item').AsString;
@@ -302,7 +263,7 @@ begin
         AQueryItem.Attrs.Add('splice').Value := QueryItems[I].ByName('splice').AsString;
     end;
     for I := 0 to OrderItems.Count - 1 do
-    begin
+    begin  
       AQueryItem := AChildNode.AddNode('order');
       if Assigned(OrderItems[I].ByName('item')) then
         AQueryItem.Attrs.Add('item').Value := OrderItems[I].ByName('item').AsString;
@@ -312,59 +273,6 @@ begin
     Result := AMsgXML.Encode(False);
   finally
     FreeAndNilObject(AMsgXML);
-  end;
-end;
-
-function TMQClass.Query: Integer;
-var
-  iReturn: Integer;
-  pSecId: PAnsiChar;
-  pMsgId: PAnsiChar;
-  pErrorMsg: PAnsiChar;
-  pPutMsg: PAnsiChar;
-  pGetMsg: PAnsiChar;
-begin
-  if not Active then
-    raise MQException.Create('队列管理器未连接');
-  Result := 0;
-
-  pSecId := ConvertStringToAnsiChar(ServiceId);
-  CnDebugger.LogMsg('服务ID:' + string(pSecId));
-
-  GetMem(pMsgId, 49);
-  GetMem(pErrorMsg, 2048);
-  GetMem(pGetMsg, 1024 * 1024 * 100);
-  try
-    FillChar(pMsgId[0], 49, #0);
-    FillChar(pErrorMsg[0], 2048, #0);
-
-    pPutMsg := ConvertStringToAnsiChar(CreateQueryParamsMsg);
-    CnDebugger.LogMsg('MQ Put消息内容:' + string(pPutMsg));
-
-    iReturn := PutMsgMQ(PAnsiChar(AnsiString(ServiceId)), @pMsgId[0], pPutMsg, @pErrorMsg
-      [0]);
-    CnDebugger.LogMsg('消息ID:' + string(pMsgId));
-
-    if iReturn <> 1 then
-    begin
-      raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
-        iReturn, pErrorMsg]));
-    end;
-
-    iReturn := GetMsgMQ(PAnsiChar(AnsiString(ServiceId)), 10000, @pMsgId[0],
-      pGetMsg, @pErrorMsg[0]);
-    if iReturn <> 1 then
-    begin
-      raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
-        iReturn, pErrorMsg]));
-    end;
-    CnDebugger.LogMsg('MQ Get消息内容:' + string(pGetMsg));
-    FrespMsg.Parse(PWideChar(string(pGetMsg)));
-    Result := iReturn;
-  finally
-    FreeMem(pMsgId);
-    FreeMem(pErrorMsg);
-    FreeMem(pGetMsg);
   end;
 end;
 
@@ -391,33 +299,91 @@ begin
   GetMem(pErrorMsg, 2048);
   GetMem(pGetMsg, 1024 * 1024 * 100);
   try
+    try
+      FillChar(pMsgId[0], 49, #0);
+      FillChar(pErrorMsg[0], 2048, #0);
+
+      pPutMsg := ConvertStringToAnsiChar(AParam);
+      CnDebugger.LogMsg('MQ Put消息内容:' + string(pPutMsg));
+
+      iReturn := PutMsgMQ(pSecId, @pMsgId[0], pPutMsg, @pErrorMsg[0]);
+      CnDebugger.LogMsg('消息ID:' + string(pMsgId));
+
+      if iReturn <> 1 then
+      begin
+        raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
+          iReturn, pErrorMsg]));
+      end;
+
+      iReturn := GetMsgMQ(pSecId, 1000 * 10, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
+      if iReturn <> 1 then
+      begin
+        raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
+          iReturn, pErrorMsg]));
+      end;
+      if Active then
+        DisConnect;
+      CnDebugger.LogMsg('MQ Get消息内容:' + string(pGetMsg));
+      FrespMsg.Parse(PWideChar(string(pGetMsg)));
+      Result := iReturn;
+    except
+      on E: Exception do
+        CnDebugger.LogMsgWithTag(E.Message, 'QueryByParam_Error');
+    end;
+  finally
+    FreeMem(pMsgId);
+    FreeMem(pErrorMsg);
+    FreeMem(pGetMsg);
+  end;
+end;
+
+function TMQClass.Query: Integer;
+var
+  iReturn: Integer;
+  pSecId: PAnsiChar;
+  pMsgId: PAnsiChar;
+  pErrorMsg: PAnsiChar;
+
+  pPutMsg: PAnsiChar;
+  pGetMsg: PAnsiChar;
+
+begin
+  if not Active then
+    raise MQException.Create('队列管理器未连接');
+  Result := 0;
+
+  pSecId := ConvertStringToAnsiChar(ServiceId);
+  sfLogger.logMessage('服务ID:' + string(pSecId));
+
+  GetMem(pMsgId, 49);
+  GetMem(pErrorMsg, 2048);
+  GetMem(pGetMsg, 1024 * 1024 * 100);
+  try
     FillChar(pMsgId[0], 49, #0);
     FillChar(pErrorMsg[0], 2048, #0);
 
-    pPutMsg := ConvertStringToAnsiChar(AParam);
-    CnDebugger.LogMsg('MQ Put消息内容:' + string(pPutMsg));
+    pPutMsg := ConvertStringToAnsiChar(CreateQueryParamsMsg);
+    sfLogger.logMessage('MQ Put消息内容:' + string(pPutMsg));
 
-    iReturn := PutMsgMQ(pSecId, @pMsgId[0], pPutMsg, @pErrorMsg[0]);
-    CnDebugger.LogMsg('消息ID:' + string(pMsgId));
+    iReturn := PutMsgMQ(PAnsiChar(AnsiString(ServiceId)), @pMsgId[0], pPutMsg, @pErrorMsg[0]);
+    sfLogger.logMessage('消息ID:' + string(pMsgId));
 
     if iReturn <> 1 then
     begin
-      raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
-        iReturn, pErrorMsg]));
+      raise MQException.Create(Format('发送消息失败,服务ID：%s,返回值：%d ,错误信息：%s',
+        [ServiceId, iReturn, pErrorMsg]));
     end;
 
-    iReturn := GetMsgMQ(pSecId, 1000 * 60 * 3, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
+    iReturn := GetMsgMQ(PAnsiChar(AnsiString(ServiceId)), 10000, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
     if iReturn <> 1 then
     begin
-      raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
-        iReturn, pErrorMsg]));
+      raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s',
+        [ServiceId, iReturn, pErrorMsg]));
     end;
-
-    CnDebugger.LogMsg('MQ Get消息内容:' + string(pGetMsg));
+    sfLogger.logMessage('MQ Get消息内容:' + string(pGetMsg));
     FrespMsg.Parse(PWideChar(string(pGetMsg)));
     Result := iReturn;
   finally
-    CnDebugger.LogMsg('Free Mem');
     FreeMem(pMsgId);
     FreeMem(pErrorMsg);
     FreeMem(pGetMsg);
@@ -441,15 +407,7 @@ begin
 end;
 
 initialization
-CnDebugger.LogMsg(ExtractFilePath(ParamStr(0)));
-if FileExists(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll') then
-  FDllHandle := SafeLoadLibrary(ExtractFilePath(ParamStr(0)) + 'EwellMq.dll');
-
-finalization
-
-if FDllHandle >= 32 then
-  FreeLibrary(FDllHandle);
+  CnDebugger.LogMsg('Test');
 
 end.
-
 

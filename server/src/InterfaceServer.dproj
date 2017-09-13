@@ -114,11 +114,9 @@
         <DCCReference Include="publiclibs\CnDebug.pas"/>
         <DCCReference Include="publiclibs\CnPropSheetFrm.pas">
             <Form>CnPropSheetForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="diocp\ServerMMonitorFrame.pas">
             <Form>FMMonitor</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="diocp\YltRunTimeINfoTools.pas"/>
@@ -130,12 +128,10 @@
         <DCCReference Include="interfaces\ICalculateServiceIntf.pas"/>
         <DCCReference Include="datamodule\PythonScriptdm.pas">
             <Form>dmPythonScript</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="datamodule\DataBasedm.pas">
             <Form>dmDatabase</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="hospitalservices\EwellMqExpts.pas"/>

@@ -13,8 +13,7 @@ uses
   QPlugins,
   qstring,
   qxml,
-  IPythonScriptServiceIntf
-  ;
+  IPythonScriptServiceIntf;
 
 type
   TdmPythonScript = class(TDataModule)
@@ -65,6 +64,7 @@ begin
     GetPythonEngine);
   __main := MainModule;
   Result := __main.param_of_method(AXml.Encode(False));
+  CnDebugger.LogMsgWithTag(Result, 'param_of_method');
 end;
 
 function TPythonScript.ResultOfMethod(const AMethod, AData: string): string;
@@ -77,6 +77,7 @@ begin
     GetPythonEngine);
   __main := MainModule;
   Result := __main.result_of_method(AData);
+  CnDebugger.LogMsgWithTag(Result, 'result_of_method');
 end;
 
 initialization
