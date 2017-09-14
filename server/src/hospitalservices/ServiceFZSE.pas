@@ -345,6 +345,8 @@ begin
     Result := 'his_surgery_info'
   else if AClass = 'getdiagnosesinfos' then
     Result := 'his_diagnoses_info'
+  else if AClass = 'sendclinicalrequisitionorder' then
+    Result := 'clinical_requisition_order'
 end;
 
 function TFZSEInterfaceObject.QueryHisInfos(const AClass: string; const ARecvXML:
@@ -374,6 +376,7 @@ begin
         ''));
 
     AXml.Parse(ATemp);
+
     AMq.Connect;
     AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
     AMq.QueryByParam(ATemp);
@@ -417,6 +420,8 @@ var
   APy: IPythonScriptService;
   ATemp: UnicodeString;
   AMq: TMQClass;
+  OrderId: string;
+
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
   if RequisitionID = '' then
@@ -453,6 +458,11 @@ begin
             AValue := VarToStrDef(qryExcute.Fields[I].Value, '');
           end;
           AChild.AddNode(qryExcute.Fields[I].FieldName).Text := AValue;
+          if qryExcute.Fields[I].FieldName = 'OrderID' then
+            if OrderId = '' then
+              OrderId := VarToStrDef(qryExcute.Fields[I].Value, '')
+            else
+              OrderId := OrderId + ';' +VarToStrDef(qryExcute.Fields[I].Value, '');
         end;
         qryExcute.Next;
       end;
@@ -461,15 +471,27 @@ begin
       ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
         ''));
 
+      CnDebugger.StartTimeMark(2999);
       AMq.Connect;
+      CnDebugger.StopTimeMark(2999);
       AFormatXml.Parse(ATemp);
       AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
+      CnDebugger.StartTimeMark(1999);
       AMq.QueryByParam(ATemp);
+      CnDebugger.StopTimeMark(1999);
 
       ATemp := AMq.respMsg.TextByPath('ESBEntry.MsgInfo.Msg', '');
       AFormatXml.Parse(ATemp);
       if AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorCode', '') <> '0' then
+      begin
         raise Exception.Create('MQService BS35006 Error:' + AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
+        Exit;
+      end;
+
+      ATemp := APy.ResultOfMethod('sendclinicalrequisitionorder', OrderId);
+      AFormatXml.Parse(ATemp);
+      TableName := GetTableNameByClass('sendclinicalrequisitionorder');
+      ConvertXMLToDB(AFormatXml);
 
       AChild := ASendXML.AddNode('root');
       AChild.AddNode('resultcode').Text := '0';

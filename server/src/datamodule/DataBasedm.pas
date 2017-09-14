@@ -174,6 +174,7 @@ begin
     qryExcute.Edit
   else
     qryExcute.Append;
+
   for I := 0 to AXML.Count - 1 do
   begin
     if Trim(AXML.Items[I].Text) = '' then

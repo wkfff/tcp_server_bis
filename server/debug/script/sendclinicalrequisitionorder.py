@@ -82,33 +82,19 @@ def param_of_method(str_xml):
     return Value
 
 def result_of_method(str_xml):
-    return ''
+    root = ET.Element('root')
+    for orderId in str_xml.split(';'):
+        record = ET.SubElement(root, 'record')
+        key_ele = ET.SubElement(record, 'OrderID')
+        key_ele.text = orderId
+        key_ele.set('key', 'true')
+        ET.SubElement(record, 'OrderStatus').text = '2'
+    result = ET.tostring(root, encoding='utf-8').decode('utf-8')
+    return result
 
-if __name__ == '__main__':
-    # str_xml = '''
-    #     <ESBEntry>
-    #         <MessageHeader>
-    #             <Fid>BS20011</Fid>
-    #             <SourceSysCode>S11</SourceSysCode>
-    #             <TargetSysCode>S11</TargetSysCode>
-    #             <MsgDate>2017-09-05 10:37:10</MsgDate>
-    #         </MessageHeader>
-    #         <RequestOption>
-    #             <onceFlag>0</onceFlag>
-    #         </RequestOption>
-    #         <MsgCount>1</MsgCount>
-    #         <MsgInfo>
-    #             <Msg>
-    #             <![CDATA[<msg><body><row action="select"><INHOSP_INDEX_NO>10003046</INHOSP_INDEX_NO><INHOSP_NO>2017-0847280-0</INHOSP_NO><LOWER_LIMIT></LOWER_LIMIT><UPPER_LIMIT></UPPER_LIMIT><NORMAL_FLAG></NORMAL_FLAG><TEST_SIMPLE_NAME>DBIL</TEST_SIMPLE_NAME><BAR_CODE_NO>6709020008</BAR_CODE_NO><RECEIVE_DATE>2017-09-02T12:00:22</RECEIVE_DATE><TEST_ITEM_NAME>*直接胆红素</TEST_ITEM_NAME><TEST_ITEM_CODE>100020</TEST_ITEM_CODE><TEST_AIM>辅助临床</TEST_AIM><TEST_CATEG_CODE></TEST_CATEG_CODE><TEST_RESULT_VALUE_UNIT>umol/L</TEST_RESULT_VALUE_UNIT><TEST_RESULT_VALUE>23</TEST_RESULT_VALUE><PAT_INDEX_NO>7094247</PAT_INDEX_NO><REFERENCE_VALUE>0-8</REFERENCE_VALUE><REPORT_DATE>2017-09-02T15:47:18</REPORT_DATE><REPORT_NO>6709020008</REPORT_NO></row></body></msg>]]>
-    #             </Msg>
-    #         </MsgInfo>
-    #         <RetInfo>
-    #             <RetCode>1</RetCode>
-    #             <RetCon>查询成功</RetCon>
-    #         </RetInfo>
-    #         </ESBEntry>
-    # '''
-    # print(result_of_method(str_xml))
+# if __name__ == '__main__':
+#     str_xml = '12312;213123;123'
+#     print(result_of_method(str_xml))
 
 #     str_xml = '''
 #        <root>
@@ -168,7 +154,6 @@ if __name__ == '__main__':
 #         <CreateTime>CreateTime</CreateTime>
 #         <Remark></Remark>
 #     </Requisition>
-    
 # </root>
 #     '''
 #     print(param_of_method(str_xml))
