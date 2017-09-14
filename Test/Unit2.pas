@@ -13,6 +13,7 @@ uses
   Vcl.Forms,
   Vcl.Dialogs,
   Vcl.ExtCtrls,
+  qxml,
   QPlugins,
   qplugins_base,
   qplugins_loader_lib,
@@ -60,12 +61,15 @@ type
     ae1: TApplicationEvents;
     edt1: TEdit;
     btn4: TButton;
+    Memo1: TMemo;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure ae1Exception(Sender: TObject; E: Exception);
     procedure btn4Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -153,6 +157,17 @@ end;
 procedure TForm2.btn4Click(Sender: TObject);
 begin
   Form5.Show;
+end;
+
+procedure TForm2.Button1Click(Sender: TObject);
+var
+  AXML: TQXML;
+begin
+  AXML := TQXML.Create;
+
+  AXML.Parse(PChar(Memo1.Text));
+  Memo1.Text := AXML.TextByPath('ESBEntry.MsgInfo.Msg', '');
+  FreeAndNil(AXml);
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

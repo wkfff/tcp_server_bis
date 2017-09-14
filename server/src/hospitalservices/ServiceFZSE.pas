@@ -12,6 +12,8 @@ interface
 
 uses
   System.SysUtils,
+  System.Variants,
+  Data.DB,
   qplugins_base,
   QPlugins,
   qxml,
@@ -47,14 +49,37 @@ type
     /// 获取病人最近一次检验结果
     /// </summary>
     function GetTestItemResultInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+
     function GetTestItemInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取诊断信息
+    /// </summary>
     function GetDiagnosesInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取手术信息
+    /// </summary>
     function GetSurgeryInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取诊疗项目信息
+    /// </summary>
     function GetTreatmentItemInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取收费项目信息
+    /// </summary>
     function GetChargeItemInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取人员信息
+    /// </summary>
     function GetStaffInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取病区信息
+    /// </summary>
     function GetWardInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 获取科室信息
+    /// </summary>
     function GetDeptInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+
     function QueryHisInfos(const AClass: string; const ARecvXML: TQXML; var
       ASendXML: TQXML): Boolean;
   public
@@ -119,7 +144,7 @@ begin
 
       APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
       CnDebug.CnDebugger.LogMsg('PythonScript ParamOfMethod');
-      ATemp := APy.ParamOfMethod(ARecvXML);
+      ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename' ,''));
 
       AXml.Parse(ATemp);
       CnDebug.CnDebugger.LogMsg('TMQClass Connect');
@@ -162,13 +187,13 @@ var
   ASendItem: TQXMLNode;
   AXml: TQXML;
 begin
-  AXml := ARecvXML.Copy;
-  Workers.Post(DoGetChargeItemJob, Pointer(AXml), False, jdfFreeAsObject);
-  ASendItem := ASendXML.AddNode('root');
-  ASendItem.AddNode('resultcode').Text := '0';
-  ASendItem.AddNode('resultmessage').Text := '开始执行';
-  ASendItem.AddNode('results');
-//  Result := QueryHisInfos('getchargeiteminfos', ARecvXML, ASendXML);
+//  AXml := ARecvXML.Copy;
+//  Workers.Post(DoGetChargeItemJob, Pointer(AXml), False, jdfFreeAsObject);
+//  ASendItem := ASendXML.AddNode('root');
+//  ASendItem.AddNode('resultcode').Text := '0';
+//  ASendItem.AddNode('resultmessage').Text := '开始执行';
+//  ASendItem.AddNode('results');
+  Result := QueryHisInfos('getchargeiteminfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetDeptInfos(const ARecvXML: TQXML; var ASendXML:
@@ -180,7 +205,7 @@ end;
 function TFZSEInterfaceObject.GetDiagnosesInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getdiagnosesinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetPateintInfos(const ARecvXML: TQXML; var
@@ -192,13 +217,13 @@ end;
 function TFZSEInterfaceObject.GetStaffInfos(const ARecvXML: TQXML; var ASendXML:
   TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getstaffinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetSurgeryInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getsurgeryinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetTestItemInfos(const ARecvXML: TQXML; var
@@ -231,7 +256,8 @@ var
       ATempXML := TQXML.Create;
       AReturnXML := TQXML.Create;
 
-      ATemp := APy.ParamOfMethod(ARecvXML);
+      ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
       AXML.Parse(ATemp);
 
       AMq.Connect;
@@ -296,7 +322,7 @@ end;
 function TFZSEInterfaceObject.GetWardInfos(const ARecvXML: TQXML; var ASendXML:
   TQXML): Boolean;
 begin
-
+  Result := QueryHisInfos('getwardinfos', ARecvXML, ASendXML);
 end;
 
 function TFZSEInterfaceObject.GetTableNameByClass(AClass: string): string;
@@ -310,7 +336,15 @@ begin
   else if AClass = 'getdeptinfos' then
     Result := 'his_dept_info'
   else if AClass = 'gettestitemresultinfos' then
-    Result := 'patient_getinterface_result_info';
+    Result := 'patient_getinterface_result_info'
+  else if AClass = 'getstaffinfos' then
+    Result := 'his_staff_info'
+  else if AClass = 'getwardinfos' then
+    Result := 'his_ward_info'
+  else if AClass = 'getsurgeryinfos' then
+    Result := 'his_surgery_info'
+  else if AClass = 'getdiagnosesinfos' then
+    Result := 'his_diagnoses_info'
 end;
 
 function TFZSEInterfaceObject.QueryHisInfos(const AClass: string; const ARecvXML:
@@ -336,13 +370,13 @@ begin
     AXml := TQXML.Create;
 
     APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
-    ATemp := APy.ParamOfMethod(ARecvXML);
+    ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
 
     AXml.Parse(ATemp);
     AMq.Connect;
     AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
     AMq.QueryByParam(ATemp);
-
     if AMq.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '0') <> '1' then
       raise Exception.Create('AMq.QueryByParam Error Message:' + AMq.respMsg.TextByPath
         ('ESBEntry.RetInfo.RetCon', ''));
@@ -371,8 +405,82 @@ end;
 
 function TFZSEInterfaceObject.SendClinicalRequisitionOrder(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
+var
+  dmDB: TdmDatabase;
+  ASql: string;
+  RequisitionID: string;
+  AFormatXml: TQXML;
+  ANode: TQXMLNode;
+  AChild: TQXMLNode;
+  I: Integer;
+  AValue: string;
+  APy: IPythonScriptService;
+  ATemp: UnicodeString;
+  AMq: TMQClass;
 begin
+  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  if RequisitionID = '' then
+    raise Exception.Create('SendClinicalRequisitionOrder Error Message: requisitionid is null');
+  dmDB := nil;
+  AFormatXml := nil;
+  AMq := nil;
+  try
+    AMq := TMQClass.Create;
+    dmDB := TdmDatabase.Create(nil);
+    ASql := 'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
+    ASql := Format(ASql, [RequisitionID]);
+    AFormatXml := TQXML.Create;
+    ANode := AFormatXml.AddNode('root');
+    with dmDB do
+    begin
+      qryExcute.Connection := BISConnect;
+      qryExcute.Open(ASql);
+      if qryExcute.RecordCount = 0 then
+        raise Exception.Create('qryExcute.Open Error Message:not found requisition ' + RequisitionID);
 
+      qryExcute.First;
+      while not qryExcute.Eof do
+      begin
+        AChild := ANode.AddNode('Requisition');
+        for I := 0 to qryExcute.FieldCount - 1 do
+        begin
+          case qryExcute.Fields[I].DataType of
+            ftInteger: AValue := IntToStr(qryExcute.Fields[I].AsInteger);
+            ftString: AValue := qryExcute.Fields[I].AsString;
+            ftDateTime: AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
+            ftFloat: AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
+          else
+            AValue := VarToStrDef(qryExcute.Fields[I].Value, '');
+          end;
+          AChild.AddNode(qryExcute.Fields[I].FieldName).Text := AValue;
+        end;
+        qryExcute.Next;
+      end;
+
+      APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+      ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
+
+      AMq.Connect;
+      AFormatXml.Parse(ATemp);
+      AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
+      AMq.QueryByParam(ATemp);
+
+      ATemp := AMq.respMsg.TextByPath('ESBEntry.MsgInfo.Msg', '');
+      AFormatXml.Parse(ATemp);
+      if AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorCode', '') <> '0' then
+        raise Exception.Create('MQService BS35006 Error:' + AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
+
+      AChild := ASendXML.AddNode('root');
+      AChild.AddNode('resultcode').Text := '0';
+      AChild.AddNode('resultmessage').Text := '成功';
+      AChild.AddNode('results');
+    end;
+  finally
+    FreeAndNilObject(AFormatXml);
+    FreeAndNilObject(dmDB);
+    FreeAndNilObject(AMq);
+  end;
 end;
 
 initialization

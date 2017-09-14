@@ -38,6 +38,7 @@ type
     qryExcute: TFDQuery;
   private
     FTableName: string;
+    procedure ConvertXMLToDBByOne(AXML: TQXMLNode);
   public
     procedure ConvertXMLToDB(AXML: TQXML);
   public
@@ -143,8 +144,7 @@ end;
 {$R *.dfm}
 
 { TdmDatabase }
-
-procedure TdmDatabase.ConvertXMLToDB(AXML: TQXML);
+procedure TdmDatabase.ConvertXMLToDBByOne(AXML: TQXMLNode);
 var
   AField: TField;
   ASql: string;
@@ -153,16 +153,20 @@ var
 begin
   if Trim(TableName) = '' then
     raise Exception.Create('ConvertXMLToDB Error: TableName not set');
+
   ASql := 'select * from ' + TableName + ' where ';
-  for I := 0 to AXML.Items[0].Count - 1 do
+
+  for I := 0 to AXML.Count - 1 do
   begin
-    if AXML.Items[0].Items[I].Attrs.ValueByName('key', '') = 'true' then
+    if AXML.Items[I].Attrs.ValueByName('key', '') = 'true' then
       if AWhere = '' then
-        AWhere := AXML.Items[0].Items[I].Name + ' = ''' + AXML.Items[0].Items[I].Text + ''''
+        AWhere := AXML.Items[I].Name + ' = ''' + AXML.Items[I].Text + ''''
       else
-        AWhere := AWhere + ' and ' + AXML.Items[0].Items[I].Name + ' = ''' + AXML.Items[0].Items[I].Text + '''';
+        AWhere := AWhere + ' and ' + AXML.Items[I].Name + ' = ''' + AXML.Items[I].Text + '''';
   end;
+
   ASql := ASql + AWhere;
+
   CnDebugger.LogMsgWithTag(ASql, 'SQLText');
   qryExcute.Connection := BISConnect;
   qryExcute.Open(ASql);
@@ -170,36 +174,46 @@ begin
     qryExcute.Edit
   else
     qryExcute.Append;
-  for I := 0 to AXML.Items[0].Count - 1 do
+  for I := 0 to AXML.Count - 1 do
   begin
-    if Trim(AXML.Items[0].Items[I].Text) = '' then
+    if Trim(AXML.Items[I].Text) = '' then
       Continue;
 
-    AField := qryExcute.FindField(AXML.Items[0].Items[I].Name);
+    AField := qryExcute.FindField(AXML.Items[I].Name);
     if not Assigned(AField) then
       Continue;
 
     case AField.DataType of
       ftFloat:
-        AField.AsFloat := StrToFloatDef(AXML.Items[0].Items[I].Text, 0.00);
+        AField.AsFloat := StrToFloatDef(AXML.Items[I].Text, 0.00);
       ftDateTime:
-        AField.AsDateTime := StrToDateTime(AXML.Items[0].Items[I].Text, FDateTimeFormat);
+        AField.AsDateTime := StrToDateTime(AXML.Items[I].Text, FDateTimeFormat);
       ftInteger:
-        AField.AsInteger := StrToIntDef(AXML.Items[0].Items[I].Text, 0);
+        AField.AsInteger := StrToIntDef(AXML.Items[I].Text, 0);
       ftString:
-        AField.AsString := AXML.Items[0].Items[I].Text;
+        AField.AsString := AXML.Items[I].Text;
       ftLargeint:
-        AField.AsLargeInt := StrToInt64Def(AXML.Items[0].Items[I].Text, 0);
+        AField.AsLargeInt := StrToInt64Def(AXML.Items[I].Text, 0);
       ftBoolean:
-        AField.AsBoolean := StrToBoolDef(AXML.Items[0].Items[I].Text, False);
+        AField.AsBoolean := StrToBoolDef(AXML.Items[I].Text, False);
       ftTimeStamp:
-        AField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AXML.Items[0].Items
+        AField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AXML.Items
           [I].Text, FDateTimeFormat))
     else
-      AField.AsString := AXML.Items[0].Items[I].Text;
+      AField.AsString := AXML.Items[I].Text;
     end;
   end;
   qryExcute.Post;
+end;
+
+procedure TdmDatabase.ConvertXMLToDB(AXML: TQXML);
+var
+  I: Integer;
+begin
+  for I := 0 to AXML.Items[0].Count - 1 do
+  begin
+    ConvertXMLToDBByOne(AXML.Items[0].Items[I]);
+  end;
 end;
 
 initialization

@@ -8,7 +8,7 @@ uses
 type
   IPythonScriptService = interface
     ['{CDFF2DC9-4C77-43F9-A7A9-CBACFEBE559C}']
-    function ParamOfMethod(const AXml: TQXML): string;
+    function ParamOfMethod(const AXml: TQXML; const AMethod: string): string;
     function ResultOfMethod(const AMethod, AData: string): string;
   end;
 

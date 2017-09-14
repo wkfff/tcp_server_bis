@@ -32,7 +32,7 @@ type
   public
     constructor Create(const AId: TGuid; AName: QStringW); override;
     destructor Destroy; override;
-    function ParamOfMethod(const AXml: TQXML): string;
+    function ParamOfMethod(const AXml: TQXML;const AMethod: string): string;
     function ResultOfMethod(const AMethod, AData: string): string;
   end;
 
@@ -54,13 +54,13 @@ begin
   inherited;
 end;
 
-function TPythonScript.ParamOfMethod(const AXml: TQXML): string;
+function TPythonScript.ParamOfMethod(const AXml: TQXML;const AMethod: string): string;
 var
   __main: Variant;
 begin
-  if not FileExists(ExtractFilePath(ParamStr(0)) + 'script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py') then
-    raise Exception.Create('ParamOfMethod Error not found python file ' + ExtractFilePath(ParamStr(0)) + 'script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py');
-  PyExeFile('script\' + AXml.TextByPath('interfacemessage.interfacename','') + '.py',
+  if not FileExists(ExtractFilePath(ParamStr(0)) + 'script\' + AMethod + '.py') then
+    raise Exception.Create('ParamOfMethod Error not found python file ' + ExtractFilePath(ParamStr(0)) + 'script\' + AMethod + '.py');
+  PyExeFile('script\' + AMethod + '.py',
     GetPythonEngine);
   __main := MainModule;
   Result := __main.param_of_method(AXml.Encode(False));

@@ -17,18 +17,12 @@ def param_of_method(str_xml):
     source_code = cf.get('ESBEntry', 'SourceSysCode')
     target_code = cf.get('ESBEntry', 'TargetSysCode')
 
-    # str_xml = bis_var.Value
-
     root = ET.fromstring(str_xml)
 
     interfaceparms = root.find('interfaceparms')
     patient_id = interfaceparms.find('patientid').text
     patient_number = interfaceparms.find('patientnumber').text
     inpatient_id = interfaceparms.find('inpatientid').text
-
-    # <query item="MR_NO" compy="=" cover="patientid" splice="and" />
-    # <query item="INHOSP_INDEX_NO" compy="=" cover="inpatientid" splice="and" />
-    # <query item="VISIT_CARD_NO" compy="=" cover="patientnumber" splice="and" />
 
     Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>BS10001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>BS10001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
     if not patient_id is None:
@@ -43,6 +37,7 @@ def param_of_method(str_xml):
 def result_of_method(str_xml):
     return_xml = '''
         <root>
+            <record>
             <GetId key="true"></GetId>
             <PatientId></PatientId>
             <PatientNumber></PatientNumber>
@@ -74,13 +69,14 @@ def result_of_method(str_xml):
             <Rev_1></Rev_1>
             <Rev_2></Rev_2>
             <Rev_3></Rev_3>
+            </record>
         </root>
     '''
-    return_root = ET.fromstring(return_xml)
+    root = ET.fromstring(return_xml)
+    return_root = root.find('record')
     
     from_root = ET.fromstring(str_xml)
     FID = from_root.find('MessageHeader').find('Fid').text
-    print(FID)
     from_root = ET.fromstring(from_root.find('MsgInfo').find('Msg').text)
     body = from_root.find('body').find('row')
     if FID == 'BS10001' :
@@ -107,7 +103,7 @@ def result_of_method(str_xml):
     return_root.find('WardCode').text = body.find('CURR_WARD_CODE').text
     return_root.find('WardName').text = body.find('CURR_WARD_NAME').text
     return_root.find('BedNo').text = body.find('CURR_BED_INDEX_NO').text
-    return_xml = ET.tostring(return_root, encoding='utf-8')
+    return_xml = ET.tostring(root, encoding='utf-8')
     return return_xml.decode('utf-8')
 
 # if __name__ == '__main__':
