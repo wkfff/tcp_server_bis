@@ -19,6 +19,7 @@ type
     function GetWardInfos(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
     function GetDeptInfos(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
     function SendClinicalRequisitionOrder(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
+    function SendPatientConsts(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
     function DeleteClinicalRequisitionOrder(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
   end;
 

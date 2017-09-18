@@ -14,6 +14,7 @@ uses
   System.SysUtils,
   System.Variants,
   Data.DB,
+  System.TypInfo,
   qplugins_base,
   QPlugins,
   qxml,
@@ -41,6 +42,10 @@ type
     function SendClinicalRequisitionOrder(const ARecvXML: TQXML; var ASendXML:
       TQXML): Boolean;
     /// <summary>
+    /// 费用回传接口
+    /// </summary>
+    function SendPatientConsts(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
     /// 医嘱删除接口
     /// </summary>
     function DeleteClinicalRequisitionOrder(const ARecvXML: TQXML; var ASendXML:
@@ -49,7 +54,6 @@ type
     /// 获取病人最近一次检验结果
     /// </summary>
     function GetTestItemResultInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
-
     function GetTestItemInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     /// <summary>
     /// 获取诊断信息
@@ -79,11 +83,10 @@ type
     /// 获取科室信息
     /// </summary>
     function GetDeptInfos(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
-
     function QueryHisInfos(const AClass: string; const ARecvXML: TQXML; var
       ASendXML: TQXML): Boolean;
   public
-    constructor Create(const AId: TGuid; AName: QStringW); override;
+    constructor Create(const AId: TGUID; AName: QStringW); override;
     destructor Destroy; override;
   end;
 
@@ -97,7 +100,7 @@ const
 
 { TFZSEInterfaceObject }
 
-constructor TFZSEInterfaceObject.Create(const AId: TGuid; AName: QStringW);
+constructor TFZSEInterfaceObject.Create(const AId: TGUID; AName: QStringW);
 begin
   inherited;
 
@@ -144,7 +147,8 @@ begin
 
       APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
       CnDebug.CnDebugger.LogMsg('PythonScript ParamOfMethod');
-      ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename' ,''));
+      ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
 
       AXml.Parse(ATemp);
       CnDebug.CnDebugger.LogMsg('TMQClass Connect');
@@ -285,22 +289,22 @@ begin
   APy := nil;
   ADB := nil;
   try
-    AMq := TMQClass.Create;
-    APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
-    ADB := TdmDatabase.Create(nil);
-    ADB.TableName := GetTableNameByClass('gettestitemresultinfos');
-
-    AClone := ARecvXML.Copy;
-
-    ATestItem := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid',
-      '').Split([',']);
-
-    for I := 0 to High(ATestItem) do
-    begin
-      AClone.ItemByPath('interfacemessage.interfaceparms.testitemid').Text :=
-        ATestItem[I];
-      GetTestItemResultByOne(AClone);
-    end;
+//    AMq := TMQClass.Create;
+//    APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+//    ADB := TdmDatabase.Create(nil);
+//    ADB.TableName := GetTableNameByClass('gettestitemresultinfos');
+//
+//    AClone := ARecvXML.Copy;
+//
+//    ATestItem := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid',
+//      '').Split([',']);
+//
+//    for I := 0 to High(ATestItem) do
+//    begin
+//      AClone.ItemByPath('interfacemessage.interfaceparms.testitemid').Text :=
+//        ATestItem[I];
+//      GetTestItemResultByOne(AClone);
+//    end;
 
     ASendItem := ASendXML.AddNode('root');
     ASendItem.AddNode('resultcode').Text := '0';
@@ -347,6 +351,8 @@ begin
     Result := 'his_diagnoses_info'
   else if AClass = 'sendclinicalrequisitionorder' then
     Result := 'clinical_requisition_order'
+  else if AClass = 'sendpatientconsts' then
+    Result := 'clinical_requisition_order'
 end;
 
 function TFZSEInterfaceObject.QueryHisInfos(const AClass: string; const ARecvXML:
@@ -373,7 +379,7 @@ begin
 
     APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
     ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename',
-        ''));
+      ''));
 
     AXml.Parse(ATemp);
 
@@ -421,9 +427,9 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
-
 begin
-  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
+    '');
   if RequisitionID = '' then
     raise Exception.Create('SendClinicalRequisitionOrder Error Message: requisitionid is null');
   dmDB := nil;
@@ -432,7 +438,8 @@ begin
   try
     AMq := TMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
-    ASql := 'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
+    ASql :=
+      'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
     ASql := Format(ASql, [RequisitionID]);
     AFormatXml := TQXML.Create;
     ANode := AFormatXml.AddNode('root');
@@ -441,7 +448,8 @@ begin
       qryExcute.Connection := BISConnect;
       qryExcute.Open(ASql);
       if qryExcute.RecordCount = 0 then
-        raise Exception.Create('qryExcute.Open Error Message:not found requisition ' + RequisitionID);
+        raise Exception.Create('qryExcute.Open Error Message:not found requisition '
+          + RequisitionID);
 
       qryExcute.First;
       while not qryExcute.Eof do
@@ -450,10 +458,14 @@ begin
         for I := 0 to qryExcute.FieldCount - 1 do
         begin
           case qryExcute.Fields[I].DataType of
-            ftInteger: AValue := IntToStr(qryExcute.Fields[I].AsInteger);
-            ftString: AValue := qryExcute.Fields[I].AsString;
-            ftDateTime: AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
-            ftFloat: AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
+            ftInteger:
+              AValue := IntToStr(qryExcute.Fields[I].AsInteger);
+            ftString:
+              AValue := qryExcute.Fields[I].AsString;
+            ftDateTime:
+              AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
+            ftFloat:
+              AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
           else
             AValue := VarToStrDef(qryExcute.Fields[I].Value, '');
           end;
@@ -462,7 +474,7 @@ begin
             if OrderId = '' then
               OrderId := VarToStrDef(qryExcute.Fields[I].Value, '')
             else
-              OrderId := OrderId + ';' +VarToStrDef(qryExcute.Fields[I].Value, '');
+              OrderId := OrderId + ';' + VarToStrDef(qryExcute.Fields[I].Value, '');
         end;
         qryExcute.Next;
       end;
@@ -484,13 +496,118 @@ begin
       AFormatXml.Parse(ATemp);
       if AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorCode', '') <> '0' then
       begin
-        raise Exception.Create('MQService BS35006 Error:' + AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
+        raise Exception.Create('MQService BS35006 Error:' + AFormatXml.TextByPath
+          ('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
         Exit;
       end;
 
       ATemp := APy.ResultOfMethod('sendclinicalrequisitionorder', OrderId);
       AFormatXml.Parse(ATemp);
       TableName := GetTableNameByClass('sendclinicalrequisitionorder');
+      ConvertXMLToDB(AFormatXml);
+
+      AChild := ASendXML.AddNode('root');
+      AChild.AddNode('resultcode').Text := '0';
+      AChild.AddNode('resultmessage').Text := '成功';
+      AChild.AddNode('results');
+    end;
+  finally
+    FreeAndNilObject(AFormatXml);
+    FreeAndNilObject(dmDB);
+    FreeAndNilObject(AMq);
+  end;
+end;
+
+function TFZSEInterfaceObject.SendPatientConsts(const ARecvXML: TQXML; var
+  ASendXML: TQXML): Boolean;
+var
+  dmDB: TdmDatabase;
+  ASql: string;
+  RequisitionID: string;
+  AFormatXml: TQXML;
+  ANode: TQXMLNode;
+  AChild: TQXMLNode;
+  I: Integer;
+  AValue: string;
+  APy: IPythonScriptService;
+  ATemp: UnicodeString;
+  AMq: TMQClass;
+  OrderId: string;
+begin
+  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
+    '');
+  if RequisitionID = '' then
+    raise Exception.Create('SendPatientConsts Error Message: requisitionid is null');
+  dmDB := nil;
+  AFormatXml := nil;
+  AMq := nil;
+  try
+    AMq := TMQClass.Create;
+    dmDB := TdmDatabase.Create(nil);
+    ASql :=
+      'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
+    ASql := Format(ASql, [RequisitionID]);
+    AFormatXml := TQXML.Create;
+    ANode := AFormatXml.AddNode('root');
+    with dmDB do
+    begin
+      qryExcute.Connection := BISConnect;
+      qryExcute.Open(ASql);
+      if qryExcute.RecordCount = 0 then
+        raise Exception.Create('qryExcute.Open Error Message:not found requisition '
+          + RequisitionID);
+
+      qryExcute.First;
+      while not qryExcute.Eof do
+      begin
+        AChild := ANode.AddNode('Requisition');
+        for I := 0 to qryExcute.FieldCount - 1 do
+        begin
+//          CnDebugger.LogMsg('FieldName:' + qryExcute.Fields[I].FieldName +';FieldType:'
+//            + GetEnumname(TypeInfo(TFieldType), Ord(qryExcute.Fields[I].DataType)));
+          case qryExcute.Fields[I].DataType of
+            ftInteger:
+              AValue := IntToStr(qryExcute.Fields[I].AsInteger);
+            ftString:
+              AValue := qryExcute.Fields[I].AsString;
+            ftDateTime, ftTimeStamp:
+              AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
+            ftFloat:
+              AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
+          else
+            AValue := VarToStrDef(qryExcute.Fields[I].Value, '');
+          end;
+          AChild.AddNode(qryExcute.Fields[I].FieldName).Text := AValue;
+          if qryExcute.Fields[I].FieldName = 'OrderID' then
+            if OrderId = '' then
+              OrderId := VarToStrDef(qryExcute.Fields[I].Value, '')
+            else
+              OrderId := OrderId + ';' + VarToStrDef(qryExcute.Fields[I].Value, '');
+        end;
+        qryExcute.Next;
+      end;
+
+      APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+      ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
+
+      AMq.Connect;
+      AFormatXml.Parse(ATemp);
+      AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
+      AMq.QueryByParam(ATemp);
+
+      ATemp := AMq.respMsg.TextByPath('ESBEntry.MsgInfo.Msg', '');
+      AFormatXml.Parse(ATemp);
+      if AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorCode', '') <> '0' then
+      begin
+        raise Exception.Create('MQService BS15030 Error:' + AFormatXml.TextByPath
+          ('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
+        Exit;
+      end;
+
+      ATemp := APy.ResultOfMethod('sendpatientconsts', OrderId);
+      AFormatXml.Parse(ATemp);
+      TableName := GetTableNameByClass('sendpatientconsts');
       ConvertXMLToDB(AFormatXml);
 
       AChild := ASendXML.AddNode('root');

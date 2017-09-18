@@ -140,6 +140,8 @@ begin
       Result := AService.GetTestItemResultInfos(ARecvXML, ASendXML)
     else if intfName = 'sendclinicalrequisitionorder' then
       Result := AService.SendClinicalRequisitionOrder(ARecvXML, ASendXML)
+    else if intfName = 'sendpatientconsts' then
+      Result := AService.SendPatientConsts(ARecvXML, ASendXML)
     else if intfName = 'deleteclinicalrequisitionorder' then
       Result := AService.DeleteClinicalRequisitionOrder(ARecvXML, ASendXML)
   except
