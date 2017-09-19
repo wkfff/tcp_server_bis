@@ -29,8 +29,7 @@ uses
   FireDAC.Comp.Client,
   qxml,
   qstring,
-  CnDebug
-  ;
+  CnDebug;
 
 type
   TdmDatabase = class(TDataModule)

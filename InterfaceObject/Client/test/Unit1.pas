@@ -14,7 +14,7 @@ uses
   Vcl.Dialogs,
   Vcl.StdCtrls,
   qxml,
-  SynEdit, SynEditHighlighter, SynHighlighterXML;
+  SynEdit, SynEditHighlighter, SynHighlighterXML, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -23,6 +23,9 @@ type
     sedt1: TSynEdit;
     SynXMLSyn1: TSynXMLSyn;
     SynEdit1: TSynEdit;
+    pnl1: TPanel;
+    spl1: TSplitter;
+    sedt2: TSynEdit;
     procedure btnSendClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
@@ -64,7 +67,7 @@ begin
   //
   sSend := sedt1.Text;
   ASend := IntfGetHisInfo(PWideChar(sSend));
-  sedt1.Text := ASend;
+  sedt2.Text := ASend;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

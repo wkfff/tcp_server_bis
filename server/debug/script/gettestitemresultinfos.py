@@ -121,7 +121,7 @@ def result_of_method(str_xml):
 #                 <patientid>907321</patientid>
 #                 <patientnumber>patientnumber</patientnumber>
 #                 <inpatientid>inpatientid</inpatientid>
-#                 <testitemid>HCT,PLT</testitemid>
+#                 <testitemid>HCT</testitemid>
 #             </interfaceparms>
 #         </interfacemessage>
 #     '''

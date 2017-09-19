@@ -36,7 +36,7 @@ def result_of_method(str_xml):
         key_element.set('key', 'true')
         ET.SubElement(data_element, 'ChargeItemName').text = body.find('CHARGE_ITEM_NAME').text
         ET.SubElement(data_element, 'SpellCode').text = body.find('PINYIN_CODE').text
-        ET.SubElement(data_element, 'ChargePric').text = body.find('UNIT_PRICE').text
+        ET.SubElement(data_element, 'ChargePrice').text = body.find('UNIT_PRICE').text
         ET.SubElement(data_element, 'ChargeAmount').text = body.find('UNIT').text
         ET.SubElement(data_element, 'IncomeCode').text = body.find('ITEM_CATEG_CODE').text
         ET.SubElement(data_element, 'OrganizationCode').text = body.find('SPECIFICATIONS').text
