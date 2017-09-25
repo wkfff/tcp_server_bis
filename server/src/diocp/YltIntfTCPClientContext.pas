@@ -101,7 +101,7 @@ begin
   Result := False;
   intfName := ARecvXML.TextByPath('interfacemessage.interfacename','');
   if intfName = '' then
-    raise Exception.Create('interfacemessage.interfacename 为空，无法执行相应服务');
+    raise Exception.Create('interfacemessage.interfacename is null');
 
   HospitalCode := ARecvXML.TextByPath(HOSPITAL_CODE_XMLPATH, '-1');
   if HospitalCode = '-1' then
@@ -144,6 +144,8 @@ begin
       Result := AService.SendPatientConsts(ARecvXML, ASendXML)
     else if intfName = 'deleteclinicalrequisitionorder' then
       Result := AService.DeleteClinicalRequisitionOrder(ARecvXML, ASendXML)
+    else if intfName = 'chargefees' then
+      Result := AService.ChargeFees(ARecvXML, ASendXML)
   except
     on E: Exception do
     begin

@@ -15,6 +15,7 @@ uses
   System.Variants,
   Data.DB,
   System.TypInfo,
+  System.DateUtils,
   qplugins_base,
   QPlugins,
   qxml,
@@ -45,6 +46,10 @@ type
     /// 费用回传接口
     /// </summary>
     function SendPatientConsts(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    /// <summary>
+    /// 计费/退费接口
+    /// </summary>
+    function ChargeFees(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
     /// <summary>
     /// 医嘱删除接口
     /// </summary>
@@ -100,6 +105,111 @@ const
 
 { TFZSEInterfaceObject }
 
+function TFZSEInterfaceObject.ChargeFees(const ARecvXML: TQXML; var ASendXML:
+  TQXML): Boolean;
+var
+  dmDB: TdmDatabase;
+  ASql: string;
+  RequisitionID: string;
+  AFormatXml: TQXML;
+  ANode: TQXMLNode;
+  AChild: TQXMLNode;
+  I: Integer;
+  AValue: string;
+  APy: IPythonScriptService;
+  ATemp: UnicodeString;
+  AMq: TMQClass;
+  OrderId: string;
+  dtTemp: TDateTime;
+begin
+  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.produceno', '');
+
+  if RequisitionID = '' then
+    raise Exception.Create('ChargeFees Error Message: produceno is null');
+  dmDB := nil;
+  AFormatXml := nil;
+  AMq := nil;
+  try
+    AMq := TMQClass.Create;
+    dmDB := TdmDatabase.Create(nil);
+    ASql := 'select * from ins_charge_list_infos where produceno  = ''%s'' ';
+    ASql := Format(ASql, [RequisitionID]);
+    AFormatXml := TQXML.Create;
+    ANode := AFormatXml.AddNode('root');
+    with dmDB do
+    begin
+      qryExcute.Connection := BISConnect;
+      qryExcute.Open(ASql);
+      if qryExcute.RecordCount = 0 then
+        raise Exception.Create('ChargeFees qryExcute.Open Error Message:not found requisition '
+          + RequisitionID);
+
+      qryExcute.First;
+      while not qryExcute.Eof do
+      begin
+        AChild := ANode.AddNode('Requisition');
+        for I := 0 to qryExcute.FieldCount - 1 do
+        begin
+          case qryExcute.Fields[I].DataType of
+            ftInteger:
+              AValue := IntToStr(qryExcute.Fields[I].AsInteger);
+            ftString:
+              AValue := qryExcute.Fields[I].AsString;
+            ftDateTime, ftTimeStamp:
+              AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
+            ftFloat:
+              AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
+          else
+            AValue := VarToStrDef(qryExcute.Fields[I].Value, '');
+          end;
+          AChild.AddNode(qryExcute.Fields[I].FieldName).Text := AValue;
+          if qryExcute.Fields[I].FieldName = 'SerialNo' then
+            if OrderId = '' then
+              OrderId := VarToStrDef(qryExcute.Fields[I].Value, '')
+            else
+              OrderId := OrderId + ';' + VarToStrDef(qryExcute.Fields[I].Value, '');
+        end;
+        qryExcute.Next;
+      end;
+
+      APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
+
+      AFormatXml.Parse(PChar(AFormatXml.Encode(False) + ARecvXML.Encode(False)));
+
+      ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
+        ''));
+
+      AMq.Connect;
+      AFormatXml.Parse(ATemp);
+      AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
+      AMq.QueryByParam(ATemp);
+
+      ATemp := AMq.respMsg.TextByPath('ESBEntry.MsgInfo.Msg', '');
+      AFormatXml.Parse(ATemp);
+      if AFormatXml.TextByPath('msg.body.row.MsgInfo.Msg.ErrorCode', '') <> '0' then
+      begin
+        raise Exception.Create('MQService BS15030 Error:' + AFormatXml.TextByPath
+          ('msg.body.row.MsgInfo.Msg.ErrorInfo', ''));
+        Exit;
+      end;
+
+      ATemp := APy.ResultOfMethod('chargefees', OrderId);
+      AFormatXml.Parse(ATemp);
+      TableName := GetTableNameByClass('chargefees');
+      ConvertXMLToDB(AFormatXml);
+
+      AChild := ASendXML.AddNode('root');
+      AChild.AddNode('resultcode').Text := '0';
+      AChild.AddNode('resultmessage').Text := '成功';
+      AChild.AddNode('results');
+    end;
+  finally
+    FreeAndNilObject(AFormatXml);
+    FreeAndNilObject(dmDB);
+    FreeAndNilObject(AMq);
+  end;
+end;
+
 constructor TFZSEInterfaceObject.Create(const AId: TGUID; AName: QStringW);
 begin
   inherited;
@@ -121,6 +231,7 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
+  dtTemp: TDateTime;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
@@ -157,7 +268,7 @@ begin
               AValue := IntToStr(qryExcute.Fields[I].AsInteger);
             ftString:
               AValue := qryExcute.Fields[I].AsString;
-            ftDateTime:
+            ftDateTime, ftTimeStamp:
               AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
             ftFloat:
               AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
@@ -456,8 +567,8 @@ begin
     Result := 'his_diagnoses_info'
   else if AClass = 'sendclinicalrequisitionorder' then
     Result := 'clinical_requisition_order'
-  else if AClass = 'sendpatientconsts' then
-    Result := 'clinical_requisition_order'
+  else if AClass = 'chargefees' then
+    Result := 'ins_charge_list_infos'
   else if AClass = 'deleteclinicalrequisitionorder' then
     Result := 'clinical_requisition_order'
 
@@ -535,6 +646,7 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
+  dtTemp: TDateTime;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
@@ -570,7 +682,7 @@ begin
               AValue := IntToStr(qryExcute.Fields[I].AsInteger);
             ftString:
               AValue := qryExcute.Fields[I].AsString;
-            ftDateTime:
+            ftDateTime, ftTimeStamp:
               AValue := FormatDateTime('yyyy-mm-dd hh:mm:ss', qryExcute.Fields[I].AsDateTime);
             ftFloat:
               AValue := FloatToStr(qryExcute.Fields[I].AsFloat);
@@ -637,6 +749,7 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
+  dtTemp: TDateTime;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');

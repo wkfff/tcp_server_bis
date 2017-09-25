@@ -44,3 +44,6 @@ print(ET.dump(format_xml))
 def format_datetime(str_date):
     return time.strftime('%Y%m%d%H%M%S', time.strptime(str_date, '%Y-%m-%d %H:%M:%S'))
 print(format_datetime('2016-01-05 12:55:00'))
+
+log_file_path = 'log\\' + time.strftime("%Y-%m-%d")
+print(log_file_path)

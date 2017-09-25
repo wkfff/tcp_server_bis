@@ -21,6 +21,7 @@ type
     function SendClinicalRequisitionOrder(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
     function SendPatientConsts(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
     function DeleteClinicalRequisitionOrder(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
+    function ChargeFees(const ARecvXML: TQXML;var ASendXML: TQXML): Boolean;
   end;
 
 implementation

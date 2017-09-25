@@ -6,10 +6,13 @@ except ImportError:
 import time
 import configparser 
 import os
+from Txlogger import logger
 
 def param_of_method(str_xml):
     cf = configparser.ConfigParser()
-    cf.read(os.getcwd()  + '\TCPServer.ini')
+
+    # cf.read(os.path.dirname(os.getcwd()) + '\TCPServer.ini')
+    cf.read(os.getcwd() + '\TCPServer.ini')
 
     user_name = cf.get('ESBEntry', 'UserName')
     pass_word = cf.get('ESBEntry', 'PassWord')
