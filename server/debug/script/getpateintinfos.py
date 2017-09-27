@@ -25,7 +25,7 @@ def get_param_patient_inpatient(str_xml):
     patient_number = interfaceparms.find('patientnumber').text
     inpatient_id = interfaceparms.find('inpatientid').text
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>BS10001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>BS10001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>BS10001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>BS10001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
     if not patient_id is None:
         Value = Value + '<query item="PAT_INDEX_NO" compy="=" value="\''+ patient_id +'\'" splice="and"/>'
     if not patient_number is None:

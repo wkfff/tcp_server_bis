@@ -63,6 +63,7 @@ type
     btn4: TButton;
     Memo1: TMemo;
     Button1: TButton;
+    Button2: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
@@ -70,6 +71,7 @@ type
     procedure ae1Exception(Sender: TObject; E: Exception);
     procedure btn4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -168,6 +170,19 @@ begin
   AXML.Parse(PChar(Memo1.Text));
   Memo1.Text := AXML.TextByPath('ESBEntry.MsgInfo.Msg', '');
   FreeAndNil(AXml);
+end;
+
+procedure TForm2.Button2Click(Sender: TObject);
+var
+  dtTemp: TDateTime;
+  FDateTimeFormat: TFormatSettings;
+begin
+  FDateTimeFormat.ShortDateFormat := 'yyyy-mm-dd';
+  FDateTimeFormat.DateSeparator := '-';
+  FDateTimeFormat.LongTimeFormat := 'hh:nn:ss';
+  FDateTimeFormat.TimeSeparator := ':';
+  dtTemp := StrToDateTime('2017-09-08 25:14:00', FDateTimeFormat);
+  ShowMessage(DateTimeToStr(dtTemp));
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

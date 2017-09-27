@@ -14,10 +14,24 @@ uses
   Vcl.Dialogs,
   Vcl.StdCtrls,
   QPlugins,
-  qplugins_base, Vcl.StdActns, Vcl.DBActns, System.Actions, Vcl.ActnList,
-  Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ActnMenus,
-  Vcl.PlatformDefaultStyleActnCtrls, System.ImageList, Vcl.ImgList, JvImageList,
-  Vcl.ExtCtrls, RzPanel, Vcl.Menus, RzButton, RzSplit;
+  qplugins_base,
+  Vcl.StdActns,
+  Vcl.DBActns,
+  System.Actions,
+  Vcl.ActnList,
+  Vcl.ToolWin,
+  Vcl.ActnMan,
+  Vcl.ActnCtrls,
+  Vcl.ActnMenus,
+  Vcl.PlatformDefaultStyleActnCtrls,
+  System.ImageList,
+  Vcl.ImgList,
+  JvImageList,
+  Vcl.ExtCtrls,
+  RzPanel,
+  Vcl.Menus,
+  RzButton,
+  RzSplit;
 
 type
   TForm3 = class(TForm)
@@ -93,17 +107,20 @@ var
   I: Int64;
 begin
   //
-  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName('ProgressStart'), nil);
-   for I := 0 to 1000000000 do
-   begin
-     GetTickCount();
-   end;
-  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName('ProgressEnd'), nil);
+  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName
+    ('ProgressStart'), nil);
+  for I := 0 to 1000000000 do
+  begin
+    GetTickCount();
+  end;
+  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName
+    ('ProgressEnd'), nil);
 end;
 
 procedure TForm3.btn2Click(Sender: TObject);
 begin
-  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName('ProgressEnd'), nil);
+  (PluginsManager as IQNotifyManager).Send((PluginsManager as IQNotifyManager).IdByName
+    ('ProgressEnd'), nil);
 end;
 
 procedure TForm3.EditCopy1Execute(Sender: TObject);

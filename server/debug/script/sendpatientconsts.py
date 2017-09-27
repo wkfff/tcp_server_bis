@@ -74,7 +74,7 @@ def param_of_method(str_xml):
         fee_info.append(record_xml)
 
     Value = '<ESBEntry>' + '<AccessControl>' + '<UserName>' + user_name + '</UserName>' + '<Password>' + pass_word + '</Password>' + '<Fid>BS15030</Fid>' + '</AccessControl>' + '<MessageHeader>' + '<Fid>BS15030</Fid>' + '<SourceSysCode>' + source_code + '</SourceSysCode>' + '<TargetSysCode>' + target_code + \
-        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d%H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
+        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d %H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
         '<endNum/>' + '</RequestOption>' + '<MsgInfo><Msg><![CDATA[' + ET.tostring(
             format_xml, encoding='utf-8').decode('utf-8') + ']]></Msg></MsgInfo></ESBEntry>'
     return Value

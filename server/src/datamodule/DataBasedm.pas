@@ -186,7 +186,7 @@ begin
     case AField.DataType of
       ftFloat:
         AField.AsFloat := StrToFloatDef(AXML.Items[I].Text, 0.00);
-      ftDateTime:
+      ftDateTime, ftTimeStamp:
         AField.AsDateTime := StrToDateTime(AXML.Items[I].Text, FDateTimeFormat);
       ftInteger:
         AField.AsInteger := StrToIntDef(AXML.Items[I].Text, 0);
@@ -196,9 +196,6 @@ begin
         AField.AsLargeInt := StrToInt64Def(AXML.Items[I].Text, 0);
       ftBoolean:
         AField.AsBoolean := StrToBoolDef(AXML.Items[I].Text, False);
-      ftTimeStamp:
-        AField.AsSQLTimeStamp := DateTimeToSQLTimeStamp(StrToDateTime(AXML.Items
-          [I].Text, FDateTimeFormat))
     else
       AField.AsString := AXML.Items[I].Text;
     end;

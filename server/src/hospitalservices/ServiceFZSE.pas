@@ -110,7 +110,12 @@ function TFZSEInterfaceObject.ChargeFees(const ARecvXML: TQXML; var ASendXML:
 var
   dmDB: TdmDatabase;
   ASql: string;
-  RequisitionID: string;
+  produceno: string;
+  patientid: string;
+  patientnumber: string;
+  inpatientid: string;
+  chargetype: string;
+
   AFormatXml: TQXML;
   ANode: TQXMLNode;
   AChild: TQXMLNode;
@@ -122,9 +127,13 @@ var
   OrderId: string;
   dtTemp: TDateTime;
 begin
-  RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.produceno', '');
+  produceno := ARecvXML.TextByPath('interfacemessage.interfaceparms.produceno', '');
+  patientid := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid', '');
+  patientnumber := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', '');
+  inpatientid := ARecvXML.TextByPath('interfacemessage.interfaceparms.inpatientid', '');
+  chargetype := ARecvXML.TextByPath('interfacemessage.interfaceparms.chargetype', '');
 
-  if RequisitionID = '' then
+  if produceno = '' then
     raise Exception.Create('ChargeFees Error Message: produceno is null');
   dmDB := nil;
   AFormatXml := nil;
@@ -132,8 +141,9 @@ begin
   try
     AMq := TMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
-    ASql := 'select * from ins_charge_list_infos where produceno  = ''%s'' ';
-    ASql := Format(ASql, [RequisitionID]);
+    ASql := 'select * from View_Ins_Fee_List where produceno  = ''%s'' '
+      +' and PAT_INDEX_NO = ''%s'' and PatientNumber = ''%s'' and INHOSP_NO = ''%s'' ';
+    ASql := Format(ASql, [produceno, patientid, patientnumber, inpatientid]);
     AFormatXml := TQXML.Create;
     ANode := AFormatXml.AddNode('root');
     with dmDB do
@@ -142,7 +152,7 @@ begin
       qryExcute.Open(ASql);
       if qryExcute.RecordCount = 0 then
         raise Exception.Create('ChargeFees qryExcute.Open Error Message:not found requisition '
-          + RequisitionID);
+          + produceno);
 
       qryExcute.First;
       while not qryExcute.Eof do

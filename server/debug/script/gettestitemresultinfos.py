@@ -28,7 +28,7 @@ def param_of_method(str_xml):
 
     Value = '<ESBEntry>' + '<AccessControl>' + '<UserName>' + user_name + '</UserName>' + '<Password>' + pass_word + '</Password>' + '<Fid>BS20011</Fid>' + '</AccessControl>' + '<MessageHeader>' + '<Fid>BS20011</Fid>' + '<SourceSysCode>' + source_code + '</SourceSysCode>' + \
         '<TargetSysCode>' + target_code + '</TargetSysCode>' + '<MsgDate>' + \
-            time.strftime("%Y-%m-%d%H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + \
+            time.strftime("%Y-%m-%d %H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + \
         '<startNum/>' + '<endNum/>' + '</RequestOption>' + \
             '<MsgInfo><Msg><![CDATA[<msg><body><row>'
 

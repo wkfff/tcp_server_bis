@@ -16,7 +16,7 @@ def param_of_method(str_xml):
     source_code = cf.get('ESBEntry', 'SourceSysCode')
     target_code = cf.get('ESBEntry', 'TargetSysCode')
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS02001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS02001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS02001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS02001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
     Value = Value + '<query item="DEPT_INDEX_NO" compy="=" value="\'100\' or 1=1" splice="and"/>'
     Value = Value + '<query item="INVALID_FLAG" compy="=" value="\'0\'" splice="and"/>'
     Value = Value + '<order item="" sort=""/>'+'</MsgInfo>'+'</ESBEntry>'

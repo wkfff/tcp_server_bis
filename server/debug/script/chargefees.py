@@ -58,25 +58,25 @@ def param_of_method(str_xml):
     fee_info = format_xml.find('body').find('row').find('FEE_INFO')
 
     for child_of_child in root:
-        format_xml.find('body').find('row').find('ELECTR_REQUISITION_NO').text = ''
-        format_xml.find('body').find('row').find('SYS_FLAG').text = child_of_child.find('PatientType').text
+        format_xml.find('body').find('row').find('ELECTR_REQUISITION_NO').text = child_of_child.find('ELECTR_REQUISITION_NO').text
+        format_xml.find('body').find('row').find('SYS_FLAG').text = child_of_child.find('SYS_FLAG').text
         record_xml = ET.fromstring(record_str)
-        record_xml.find('PAT_INDEX_NO').text = child_of_child.find('PatientId').text
-        record_xml.find('INHOSP_NO').text = child_of_child.find('InPatientId').text
+        record_xml.find('PAT_INDEX_NO').text = child_of_child.find('PAT_INDEX_NO').text
+        record_xml.find('INHOSP_NO').text = child_of_child.find('INHOSP_NO').text
         record_xml.find('ORDER_NO').text = child_of_child.find('OrderNo').text
-        record_xml.find('CHARGE_ITEM_CODE').text = child_of_child.find('HisItemId').text
-        record_xml.find('CHARGE_DATE').text = format_datetime(child_of_child.find('Create_Time').text)
-        record_xml.find('AMOUNT').text = child_of_child.find('ChargeNum').text
-        record_xml.find('CHARGE_STAFF_CODE').text = '00'
-        # record_xml.find('DEPT_CODE').text = child_of_child.find('DeptCode').text
-        record_xml.find('EXECUT_DEPT_CODE').text = '120026'
+        record_xml.find('CHARGE_ITEM_CODE').text = child_of_child.find('CHARGE_ITEM_CODE').text
+        record_xml.find('CHARGE_DATE').text = format_datetime(child_of_child.find('MODIFY_DATE').text)
+        record_xml.find('AMOUNT').text = child_of_child.find('AMOUNT').text
+        record_xml.find('CHARGE_STAFF_CODE').text = child_of_child.find('MODIFY_STAFF_CODE').text
+        record_xml.find('DEPT_CODE').text = child_of_child.find('MODIFY_DEPT_CODE').text
+        record_xml.find('EXECUT_DEPT_CODE').text = child_of_child.find('EXECUT_DEPT_CODE').text
         # record_xml.find('EXECUT_DEPT_NAME').text = '血库'
-        record_xml.find('EXECUT_DR_CODE').text = child_of_child.find('RequisitionDoctor').text
-        record_xml.find('EXECUT_HS_CODE').text = '120026'
+        record_xml.find('EXECUT_DR_CODE').text = child_of_child.find('EXECUT_DR_CODE').text
+        record_xml.find('EXECUT_HS_CODE').text = child_of_child.find('FEE_ACCOUT_CODE').text
         fee_info.append(record_xml)
 
     Value = '<ESBEntry>' + '<AccessControl>' + '<UserName>' + user_name + '</UserName>' + '<Password>' + pass_word + '</Password>' + '<Fid>BS15030</Fid>' + '</AccessControl>' + '<MessageHeader>' + '<Fid>BS15030</Fid>' + '<SourceSysCode>' + source_code + '</SourceSysCode>' + '<TargetSysCode>' + target_code + \
-        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d%H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
+        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d %H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
         '<endNum/>' + '</RequestOption>' + '<MsgInfo><Msg><![CDATA[' + ET.tostring(
             format_xml, encoding='utf-8').decode('utf-8') + ']]></Msg></MsgInfo></ESBEntry>'
     return Value
@@ -90,11 +90,12 @@ def result_of_method(str_xml):
         key_ele.text = orderId
         key_ele.set('key', 'true')
         ET.SubElement(record, 'HisChargeState').text = '1'
+        ET.SubElement(record, 'HisChargeTime').text = time.strftime("%Y-%m-%d %H:%M:%S")
     result = ET.tostring(root, encoding='utf-8').decode('utf-8')
     return result
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # str_xml = '''
     #     <ESBEntry>
     #         <MessageHeader>
@@ -120,7 +121,70 @@ if __name__ == '__main__':
     # '''
     # print(result_of_method(str_xml))
 
-        str_xml = '''
-          <xml><root><Requisition><SerialNo>10</SerialNo><OperationType>1</OperationType><BackSerialNo>0</BackSerialNo><PatientId>000476507400</PatientId><PatientNumber>914799</PatientNumber><InPatientId>4246305</InPatientId><PatientType>2</PatientType><ChargeType>3</ChargeType><ChargeSource>0</ChargeSource><InspectionId>100</InspectionId><PurposeCode>1</PurposeCode><PurposeNameCh>微柱凝胶法+凝聚胺法</PurposeNameCh><BloodBagNo>=0181717001856</BloodBagNo><ChargeCode>44</ChargeCode><ChargeName>血液交叉费盐水法</ChargeName><ChargePrice>8</ChargePrice><ChargeNum>2</ChargeNum><ChargeAmount>16</ChargeAmount><ProduceNo>48</ProduceNo><OrderNo/><OrderListNo/><HisItemId>F5007</HisItemId><HisSerialNo/><HisChargeState>0</HisChargeState><FailedReason/><HisChargeTime>1899-12-30 00:00:00</HisChargeTime><HisChargeUseID/><HisChargeUserName/><Create_Time>2017-09-06 13:44:59</Create_Time><Create_UserId>00664</Create_UserId><Create_UserName>周洁</Create_UserName></Requisition><Requisition><SerialNo>11</SerialNo><OperationType>1</OperationType><BackSerialNo>0</BackSerialNo><PatientId>000476507400</PatientId><PatientNumber>914799</PatientNumber><InPatientId>4246305</InPatientId><PatientType>2</PatientType><ChargeType>3</ChargeType><ChargeSource>0</ChargeSource><InspectionId>100</InspectionId><PurposeCode>1</PurposeCode><PurposeNameCh>微柱凝胶法+凝聚胺法</PurposeNameCh><BloodBagNo>=0181717001856</BloodBagNo><ChargeCode>45</ChargeCode><ChargeName>血液交叉费聚凝法</ChargeName><ChargePrice>5</ChargePrice><ChargeNum>2</ChargeNum><ChargeAmount>10</ChargeAmount><ProduceNo>48</ProduceNo><OrderNo/><OrderListNo/><HisItemId>F5008</HisItemId><HisSerialNo/><HisChargeState>0</HisChargeState><FailedReason/><HisChargeTime>1899-12-30 00:00:00</HisChargeTime><HisChargeUseID/><HisChargeUserName/><Create_Time>2017-09-06 13:44:59</Create_Time><Create_UserId>00664</Create_UserId><Create_UserName>周洁</Create_UserName></Requisition></root><interfacemessage><hospitalcode>00001</hospitalcode><interfacename>chargefees</interfacename><interfaceparms><patienttype>patienttype</patienttype><patientid>patientid</patientid><patientnumber>patientnumber</patientnumber><inpatientid>inpatientid</inpatientid><chargetype>chargetype</chargetype><produceno>48</produceno></interfaceparms></interfacemessage></xml>
-        '''
-        print(param_of_method(str_xml))
+#         str_xml = '''
+#           <xml>
+#     <root>
+#         <record>
+#             <OperationType>1</OperationType>
+#             <ChargeType>1</ChargeType>
+#             <ChargeSource>0</ChargeSource>
+#             <PAT_INDEX_NO>000476507400</PAT_INDEX_NO>
+#             <PatientNumber>914799</PatientNumber>
+#             <INHOSP_NO>4246305</INHOSP_NO>
+#             <ELECTR_REQUISITION_NO>0181717001856</ELECTR_REQUISITION_NO>
+#             <SYS_FLAG>2</SYS_FLAG>
+#             <ChargeCode>45</ChargeCode>
+#             <CHARGE_ITEM_CODE>F5008</CHARGE_ITEM_CODE>
+#             <ChargeName>血液交叉费聚凝法</ChargeName>
+#             <ChargePrice>5</ChargePrice>
+#             <AMOUNT>2</AMOUNT>
+#             <OrderNo>16</OrderNo>
+#             <ChargeAmount>2</ChargeAmount>
+#             <MODIFY_DATE>2017-09-06 13:44:59</MODIFY_DATE>
+#             <MODIFY_STAFF_CODE>00</MODIFY_STAFF_CODE>
+#             <MODIFY_DEPT_CODE>12006</MODIFY_DEPT_CODE>
+#             <EXECUT_DR_CODE>00</EXECUT_DR_CODE>
+#             <EXECUT_DEPT_CODE>12006</EXECUT_DEPT_CODE>
+#             <FEE_ACCOUT_CODE>12006</FEE_ACCOUT_CODE>
+#             <ProduceNo>48</ProduceNo>
+#         </record>
+#         <record>
+#             <OperationType>1</OperationType>
+#             <ChargeType>1</ChargeType>
+#             <ChargeSource>0</ChargeSource>
+#             <PAT_INDEX_NO>000476507400</PAT_INDEX_NO>
+#             <PatientNumber>914799</PatientNumber>
+#             <INHOSP_NO>4246305</INHOSP_NO>
+#             <ELECTR_REQUISITION_NO>0181717001856</ELECTR_REQUISITION_NO>
+#             <SYS_FLAG>2</SYS_FLAG>
+#             <ChargeCode>45</ChargeCode>
+#             <CHARGE_ITEM_CODE>F5008</CHARGE_ITEM_CODE>
+#             <ChargeName>血液交叉费聚凝法</ChargeName>
+#             <ChargePrice>5</ChargePrice>
+#             <AMOUNT>2</AMOUNT>
+#             <ChargeAmount>2</ChargeAmount>
+#             <MODIFY_DATE>2017-09-06 13:44:59</MODIFY_DATE>
+#             <MODIFY_STAFF_CODE>00</MODIFY_STAFF_CODE>
+#             <MODIFY_DEPT_CODE>12006</MODIFY_DEPT_CODE>
+#             <EXECUT_DR_CODE>00</EXECUT_DR_CODE>
+#             <EXECUT_DEPT_CODE>12006</EXECUT_DEPT_CODE>
+#             <FEE_ACCOUT_CODE>12006</FEE_ACCOUT_CODE>
+#             <ProduceNo>48</ProduceNo>
+#             <OrderNo>16</OrderNo>
+#         </record>
+#     </root>
+#     <interfacemessage>
+#         <hospitalcode>00001</hospitalcode>
+#         <interfacename>chargefees</interfacename>
+#         <interfaceparms>
+#             <patienttype>patienttype</patienttype>
+#             <patientid>patientid</patientid>
+#             <patientnumber>patientnumber</patientnumber>
+#             <inpatientid>inpatientid</inpatientid>
+#             <chargetype>chargetype</chargetype>
+#             <produceno>48</produceno>
+#         </interfaceparms>
+#     </interfacemessage>
+# </xml>
+#         '''
+#         print(param_of_method(str_xml))
