@@ -4,12 +4,36 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 import time
+import datetime
 import configparser 
 import os
 
+def get_age_by_birthday(birthday):
+    def set_return_value(retuen_value, Age, Type):
+        retuen_value['Age'] = str(Age)
+        retuen_value['Type'] = str(Type)
+        
+    birthday = birthday.split('-')
+    birthday = datetime.date(int(birthday[0]), int(birthday[1]), int(birthday[2]))
+    Today = datetime.date.today()
+    return_value = {'Age':'0','Type':'5'}
+    if (Today.year == birthday.year):
+        if (Today.month == birthday.month):
+            if (Today.day == birthday.day):
+                set_return_value(return_value, 1, 4)
+            else:
+                if (Today.day - birthday.day > 6):
+                    set_return_value(return_value, (Today.day - birthday.day) // 7, 3)
+                else:
+                    set_return_value(return_value, Today.day - birthday.day, 4)
+        else:
+            set_return_value(return_value, Today.month - birthday.month, 2)
+    else:
+        set_return_value(return_value, Today.year - birthday.year, 1)
+    return return_value
+                    
 def get_param_patient_inpatient(str_xml):
     cf = configparser.ConfigParser()
-
     # cf.read(os.path.dirname(os.getcwd()) + '\TCPServer.ini')
     cf.read(os.getcwd() + '\TCPServer.ini')
 
@@ -25,7 +49,21 @@ def get_param_patient_inpatient(str_xml):
     patient_number = interfaceparms.find('patientnumber').text
     inpatient_id = interfaceparms.find('inpatientid').text
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>BS10001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>BS10001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry>'\
+    '<AccessControl>'\
+    '<UserName>'+ user_name +'</UserName>'\
+    '<Password>'+ pass_word +'</Password>'\
+    '<Fid>BS10001</Fid>'\
+    '</AccessControl>'\
+    '<MessageHeader>'\
+    '<Fid>BS10001</Fid>'\
+    '<SourceSysCode>'+ source_code +'</SourceSysCode>'\
+    '<TargetSysCode>'+ target_code +'</TargetSysCode>'\
+    '<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'\
+    '</MessageHeader>'\
+    '<RequestOption><onceFlag/>'\
+    '<startNum/><endNum/></RequestOption><MsgInfo>'
+
     if not patient_id is None:
         Value = Value + '<query item="PAT_INDEX_NO" compy="=" value="\''+ patient_id +'\'" splice="and"/>'
     if not patient_number is None:
@@ -53,7 +91,15 @@ def get_param_patient_outpatient(str_xml):
     patient_number = interfaceparms.find('patientnumber').text
     inpatient_id = interfaceparms.find('inpatientid').text
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>BS10005</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>BS10005</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry><AccessControl>' \
+    '<UserName>'+ user_name +'</UserName><Password>'+ pass_word +'</Password>' \
+    '<Fid>BS10005</Fid></AccessControl>'\
+    '<MessageHeader><Fid>BS10005</Fid>' \
+    '<SourceSysCode>'+ source_code +'</SourceSysCode>'\
+    '<TargetSysCode>'+ target_code +'</TargetSysCode>'\
+    '<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'\
+    '</MessageHeader><RequestOption>'+'<onceFlag/><startNum/>'\
+    '<endNum/></RequestOption><MsgInfo>'
     if not patient_number is None:
         Value = Value + '<query item="VISIT_CARD_NO" compy="=" value="\''+ patient_number +'\'" splice="and"/>'
     if not inpatient_id is None:
@@ -114,7 +160,9 @@ def get_result_inpatient(str_xml):
     return_root.find('InPatientId').text = body.find('INHOSP_NO').text
     return_root.find('PatientName').text = body.find('PAT_NAME').text
     return_root.find('PatientSex').text = body.find('PHYSI_SEX_CODE').text
-    return_root.find('PatientAge').text = body.find('AGE').text
+    dict_age = get_age_by_birthday(body.find('DATE_BIRTH').text)
+    return_root.find('PatientAge').text = str(dict_age['Age'])
+    return_root.find('AgeUnit').text = str(dict_age['Type'])
     return_root.find('IdCardNo').text = body.find('ID_NUMBER').text
     return_root.find('Address').text = body.find('CONTACT_ADDR').text
     return_root.find('MobilePhoneNo').text = body.find('PHONE_NO').text
@@ -187,7 +235,11 @@ def get_result_outpatient(str_xml):
     return_root.find('PatientId').text = body.find('PAT_INDEX_NO').text
     return_root.find('InPatientId').text = body.find('OUTHOSP_NO').text
     return_root.find('PatientNumber').text = body.find('VISIT_CARD_NO').text
-    return_root.find('PatientAge').text = body.find('AGE').text
+    dict_age = get_age_by_birthday(body.find('DATE_BIRTH').text)
+    return_root.find('PatientAge').text = dict_age['Age']
+    return_root.find('AgeUnit').text = dict_age['Type']
+    # return_root.find('PatientAge').text = str(12)
+    # return_root.find('AgeUnit').text = str(1)
     return_root.find('CompanyName').text = body.find('COMPANY').text
     return_root.find('MobilePhoneNo').text = body.find('CONTACT_PHONE_NO').text
     return_root.find('Address').text = body.find('CONTACT_ADDR').text
@@ -197,6 +249,7 @@ def get_result_outpatient(str_xml):
     return_root.find('TelePhoneNo').text = body.find('PHONE_NO').text
     return_root.find('PatientSex').text = body.find('PHYSI_SEX_CODE').text
     return_xml = ET.tostring(root, encoding='utf-8')
+    # print(return_xml)
     return return_xml.decode('utf-8')
 
 def param_of_method(str_xml):
@@ -218,7 +271,6 @@ def result_of_method(str_xml):
             return get_result_inpatient(str_xml)
         else:
             return get_result_outpatient(str_xml)
-    
 
 # if __name__ == '__main__':
 #     str_xml = '''

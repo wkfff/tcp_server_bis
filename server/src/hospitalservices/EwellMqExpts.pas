@@ -284,6 +284,7 @@ var
   pErrorMsg: PAnsiChar;
   pPutMsg: PAnsiChar;
   pGetMsg: PAnsiChar;
+  iCount: Integer;
 begin
   if not Active then
     raise MQException.Create('队列管理器未连接');
@@ -314,6 +315,15 @@ begin
       end;
 
       iReturn := GetMsgMQ(ConvertStringToAnsiChar(ServiceId), 1000 * 60 * 5, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
+
+      iCount := 0;
+      while (iCount < 5) and (iReturn <> 1) do
+      begin
+        Connect;
+        iReturn := GetMsgMQ(ConvertStringToAnsiChar(ServiceId), 1000 * 60 * 5, @pMsgId[0], pGetMsg, @pErrorMsg[0]);
+        iCount := iCount + 1;
+      end;
+
       if iReturn <> 1 then
       begin
         raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
