@@ -1,6 +1,6 @@
 program InterfaceServer;
 
-{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL，会影响其他接口
+{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
 
 uses
   Vcl.Forms,
@@ -20,10 +20,15 @@ uses
   ICalculateServiceIntf in 'interfaces\ICalculateServiceIntf.pas',
   PythonScriptdm in 'datamodule\PythonScriptdm.pas' {dmPythonScript: TDataModule},
   DataBasedm in 'datamodule\DataBasedm.pas' {dmDatabase: TDataModule},
-  {$IFDEF FZSE_INTF}
-  EwellMqExpts in 'hospitalservices\EwellMqExpts.pas',
+{$IFDEF FZSE_INTF}
   ServiceFZSE in 'hospitalservices\ServiceFZSE.pas',
-  {$ENDIF}
+  ManagerEntity in 'hospitalservices\EwllMQClass\ManagerEntity.pas',
+  EWellMQClass in 'hospitalservices\EwllMQClass\EWellMQClass.pas',
+  MQClass in 'hospitalservices\EwllMQClass\mq\MQClass.pas',
+  MQI in 'hospitalservices\EwllMQClass\mq\MQI.pas',
+  MQIC in 'hospitalservices\EwllMQClass\mq\MQIC.pas',
+  EwellMqExpts in 'hospitalservices\EwllMQClass\EwellMqExpts.pas',
+{$ENDIF}
   IPythonScriptServiceIntf in 'interfaces\IPythonScriptServiceIntf.pas',
   AndyDelphiPy in 'datamodule\AndyDelphiPy.pas';
 
@@ -39,7 +44,7 @@ begin
   ReportMemoryLeaksOnShutdown := True;
 {$ENDIF}
   Application.Initialize;
-  hMutex := CreateMutex(nil, False, PChar('INTERFACESERVER_BIS'));//创建互斥对象
+  hMutex := CreateMutex(nil, False, PChar('INTERFACESERVER_BIS_TEST'));//创建互斥对象
   iRet := GetLastError;
   if iRet <> ERROR_ALREADY_EXISTS then //创建成功, 运行程序
   begin

@@ -125,8 +125,8 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
-  dtTemp: TDateTime;
 begin
+  Result := False;
   produceno := ARecvXML.TextByPath('interfacemessage.interfaceparms.produceno', '');
   patientid := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientid', '');
   patientnumber := ARecvXML.TextByPath('interfacemessage.interfaceparms.patientnumber', '');
@@ -189,7 +189,7 @@ begin
       ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
         ''));
 
-      AMq.Connect;
+//      AMq.Connect;
       AFormatXml.Parse(ATemp);
       AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
       AMq.QueryByParam(ATemp);
@@ -241,8 +241,8 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
-  dtTemp: TDateTime;
 begin
+  Result := False;
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
   if RequisitionID = '' then
@@ -296,7 +296,7 @@ begin
         ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
           ''));
 
-        AMq.Connect;
+//        AMq.Connect;
         AFormatXml.Parse(ATemp);
         AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
         AMq.QueryByParam(ATemp);
@@ -348,7 +348,6 @@ var
   AReturn: string;
   AReturnXML: TQXML;
   AXml: TQXML;
-  ASendItem: TQXMLNode;
   ATemp: string;
 begin
   AMq := nil;
@@ -373,7 +372,7 @@ begin
 
       AXml.Parse(ATemp);
       CnDebug.CnDebugger.LogMsg('TMQClass Connect');
-      AMq.Connect;
+//      AMq.Connect;
       AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
       CnDebugger.LogMsg(ATemp);
       AMq.QueryByParam(ATemp);
@@ -408,9 +407,6 @@ end;
 
 function TFZSEInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
-var
-  ASendItem: TQXMLNode;
-  AXml: TQXML;
 begin
 //  AXml := ARecvXML.Copy;
 //  Workers.Post(DoGetChargeItemJob, Pointer(AXml), False, jdfFreeAsObject);
@@ -454,7 +450,7 @@ end;
 function TFZSEInterfaceObject.GetTestItemInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 begin
-
+  Result := False;
 end;
 
 function TFZSEInterfaceObject.GetTestItemResultInfos(const ARecvXML: TQXML; var
@@ -489,7 +485,7 @@ var
 
       AXML.Parse(ATemp);
 
-      AMq.Connect;
+//      AMq.Connect;
       AMq.ServiceId := AXML.TextByPath('ESBEntry.AccessControl.Fid', '');
       AMq.QueryByParam(ATemp);
 
@@ -541,6 +537,7 @@ begin
     FreeAndNilObject(ADB);
     FreeAndNilObject(AMq);
   end;
+  Result := True;
 end;
 
 function TFZSEInterfaceObject.GetTreatmentItemInfos(const ARecvXML: TQXML; var
@@ -612,7 +609,7 @@ begin
 
     AXml.Parse(ATemp);
 
-    AMq.Connect;
+//    AMq.Connect;
     AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
     AMq.QueryByParam(ATemp);
     if AMq.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '0') <> '1' then
@@ -639,6 +636,7 @@ begin
     FreeAndNilObject(AReturnXML);
     FreeAndNilObject(AMq);
   end;
+  Result := True;
 end;
 
 function TFZSEInterfaceObject.SendClinicalRequisitionOrder(const ARecvXML: TQXML;
@@ -656,7 +654,6 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
-  dtTemp: TDateTime;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
@@ -713,7 +710,7 @@ begin
       ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
         ''));
 
-      AMq.Connect;
+//      AMq.Connect;
       AFormatXml.Parse(ATemp);
       AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
       AMq.QueryByParam(ATemp);
@@ -742,6 +739,7 @@ begin
     FreeAndNilObject(dmDB);
     FreeAndNilObject(AMq);
   end;
+  Result := True;
 end;
 
 function TFZSEInterfaceObject.SendPatientConsts(const ARecvXML: TQXML; var
@@ -759,8 +757,8 @@ var
   ATemp: UnicodeString;
   AMq: TMQClass;
   OrderId: string;
-  dtTemp: TDateTime;
 begin
+  Result := False;
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
   if RequisitionID = '' then
@@ -816,7 +814,7 @@ begin
       ATemp := APy.ParamOfMethod(AFormatXml, ARecvXML.TextByPath('interfacemessage.interfacename',
         ''));
 
-      AMq.Connect;
+//      AMq.Connect;
       AFormatXml.Parse(ATemp);
       AMq.ServiceId := AFormatXml.TextByPath('ESBEntry.AccessControl.Fid', '');
       AMq.QueryByParam(ATemp);
@@ -845,6 +843,7 @@ begin
     FreeAndNilObject(dmDB);
     FreeAndNilObject(AMq);
   end;
+  Result := True;
 end;
 
 initialization

@@ -134,8 +134,13 @@
             <Form>dmDatabase</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="hospitalservices\EwellMqExpts.pas"/>
         <DCCReference Include="hospitalservices\ServiceFZSE.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\ManagerEntity.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\EWellMQClass.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\mq\MQClass.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\mq\MQI.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\mq\MQIC.pas"/>
+        <DCCReference Include="hospitalservices\EwllMQClass\EwellMqExpts.pas"/>
         <DCCReference Include="interfaces\IPythonScriptServiceIntf.pas"/>
         <DCCReference Include="datamodule\AndyDelphiPy.pas"/>
         <BuildConfiguration Include="Release">
