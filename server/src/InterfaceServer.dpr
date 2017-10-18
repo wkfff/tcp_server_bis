@@ -1,6 +1,6 @@
 program InterfaceServer;
 
-{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
+//{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
 
 uses
   Vcl.Forms,
@@ -20,17 +20,12 @@ uses
   ICalculateServiceIntf in 'interfaces\ICalculateServiceIntf.pas',
   PythonScriptdm in 'datamodule\PythonScriptdm.pas' {dmPythonScript: TDataModule},
   DataBasedm in 'datamodule\DataBasedm.pas' {dmDatabase: TDataModule},
-{$IFDEF FZSE_INTF}
+  {$IFDEF FZSE_INTF}
   ServiceFZSE in 'hospitalservices\ServiceFZSE.pas',
-  ManagerEntity in 'hospitalservices\EwllMQClass\ManagerEntity.pas',
-  EWellMQClass in 'hospitalservices\EwllMQClass\EWellMQClass.pas',
-  MQClass in 'hospitalservices\EwllMQClass\mq\MQClass.pas',
-  MQI in 'hospitalservices\EwllMQClass\mq\MQI.pas',
-  MQIC in 'hospitalservices\EwllMQClass\mq\MQIC.pas',
-  EwellMqExpts in 'hospitalservices\EwllMQClass\EwellMqExpts.pas',
-{$ENDIF}
+  {$ENDIF }
   IPythonScriptServiceIntf in 'interfaces\IPythonScriptServiceIntf.pas',
-  AndyDelphiPy in 'datamodule\AndyDelphiPy.pas';
+  AndyDelphiPy in 'datamodule\AndyDelphiPy.pas',
+  ServiceZXHospital in 'hospitalservices\ServiceZXHospital.pas';
 
 {$R *.res}
 
