@@ -91,6 +91,9 @@ type
 
 implementation
 
+const
+  HospitalCode = '00003';
+
 function TZXHospitalInterfaceObject.ChargeFees(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
@@ -112,7 +115,7 @@ end;
 
 destructor TZXHospitalInterfaceObject.Destroy;
 begin
-  FreeAndNil(FPythonEng);
+  FPythonEng := nil;
   inherited;
 end;
 
@@ -153,19 +156,23 @@ var
   AResult: string;
   objDataBase: TdmDatabase;
   AHisData: TQXML;
+  AConvert: TQXML;
   ARoot: TQXMLNode;
   ANode: TQXMLNode;
   AFieldNode: TQXMLNode;
   I: Integer;
+  ARowNum: Integer;
 begin
   AMethod := ARecvXML.TextByPath('interfacemessage.interfacename', '');
   objDataBase := nil;
   AHisData := nil;
+  AConvert := nil;
   try
     ASql := FPythonEng.ParamOfMethod(ARecvXML, AMethod);
     objDataBase := TdmDatabase.Create(nil);
     objDataBase.TableName := GetTableNameByClass(AMethod);
     AHisData := TQXML.Create;
+    AConvert := TQXML.Create;
     ARoot := AHisData.AddNode('root');
 
     with objDataBase.qryHis do
@@ -175,7 +182,8 @@ begin
 
       if RecordCount <= 0 then
         raise Exception.Create('GetBaseDataFromTableView Error: not found his base data');
-
+      First;
+      ARowNum := 0;
       while not Eof do
       begin
         ANode := ARoot.AddNode('record');
@@ -190,21 +198,32 @@ begin
             ftInteger:
               AFieldNode.Text := IntToStr(Fields[I].AsInteger);
             ftString:
-              AFieldNode.Text := Fields[I].AsString;
+              AFieldNode.Text := Trim(Fields[I].AsString);
             ftLargeint:
               AFieldNode.Text := IntToStr(Fields[I].AsLargeInt);
             ftBoolean:
               AFieldNode.Text := BoolToStr(Fields[I].AsBoolean);
           else
-            AFieldNode.Text := Fields[I].AsString;
+            AFieldNode.Text := Trim(Fields[I].AsString);
           end;
+        end;
+        Inc(ARowNum);
+        if ARowNum > 100 then
+        begin
+          ARowNum := 0;
+          AResult := FPythonEng.ResultOfMethod(AMethod, AHisData.Encode(False));
+          AConvert.Parse(AResult);
+          objDataBase.ConvertXMLToDB(AConvert);
+          AHisData.Clear;
+          ARoot := AHisData.AddNode('root');
         end;
         Next;
       end;
 
       AResult := FPythonEng.ResultOfMethod(AMethod, AHisData.Encode(False));
-      AHisData.Parse(AResult);
-      objDataBase.ConvertXMLToDB(AHisData);
+
+      AConvert.Parse(AResult);
+      objDataBase.ConvertXMLToDB(AConvert);
 
       ANode := ASendXML.AddNode('root');
       ANode.AddNode('resultcode').Text := '0';
@@ -212,6 +231,7 @@ begin
       ANode.AddNode('results');
     end;
   finally
+    FreeAndNil(AConvert);
     FreeAndNil(AHisData);
     FreeAndNil(objDataBase);
   end;
@@ -289,5 +309,14 @@ function TZXHospitalInterfaceObject.SendPatientConsts(const ARecvXML: TQXML;
 begin
   Result := True;
 end;
+
+initialization
+// 注册 Services/Interface 服务
+  RegisterServices('Services/Interface', [TZXHospitalInterfaceObject.Create(IHospitalBISService,
+    HospitalCode)]);
+
+finalization
+// 取消服务注册
+  UnregisterServices('Services/Interface', [HospitalCode]);
 
 end.

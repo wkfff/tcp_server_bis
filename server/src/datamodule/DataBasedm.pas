@@ -35,7 +35,6 @@ type
   TdmDatabase = class(TDataModule)
     msdlBIS: TFDPhysMSSQLDriverLink;
     qryExcute: TFDQuery;
-    qryQuery: TFDQuery;
     qryHis: TFDQuery;
     msdOra: TFDPhysOracleDriverLink;
   private
@@ -77,8 +76,7 @@ begin
       UserName := AIni.ReadString(ASection, 'User_Name', '');
       Password := AIni.ReadString(ASection, 'Password', '');
       Pooled := True;
-      if IndexOf('Server') <> -1 then
-        Values['Server'] := AIni.ReadString(ASection, 'Server', '');
+      Values['Server'] := AIni.ReadString(ASection, 'Server', '');
     end;
     ibDef.Apply;
   end;
@@ -176,7 +174,7 @@ begin
 
   ASql := ASql + AWhere;
 
-  CnDebugger.LogMsgWithTag(ASql, 'SQLText');
+//  CnDebugger.LogMsgWithTag(ASql, 'SQLText');
   qryExcute.Connection := BISConnect;
   qryExcute.Open(ASql);
   if qryExcute.RecordCount > 0 then
@@ -224,7 +222,6 @@ begin
 end;
 
 initialization
-  CnDebugger.LogMsg('Test');
   try
     if not Assigned(conBIS) then
       CreateBISConnect;
