@@ -300,7 +300,117 @@ end;
 
 function TZXHospitalInterfaceObject.SendClinicalRequisitionOrder(
   const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+var
+  AReqArray: TArray<string>;
+  AMethod: string;
+  ARequisitionIds: string;
+
+  procedure SendReqOrderByOne(ARequistionId: string);
+  var
+    AParam: string;
+    objDataBase: TdmDatabase;
+    I: Integer;
+    AData: TQXML;
+    ARoot: TQXMLNode;
+    ANode: TQXMLNode;
+    AFieldNode: TQXMLNode;
+    AError: string;
+    AOrderNum: string;
+  begin
+    objDataBase := nil;
+    AData := nil;
+    try
+      objDataBase := TdmDatabase.Create(nil);
+      AData := TQXML.Create;
+      with objDataBase do
+      begin
+        qryQuery.Connection := BISConnect;
+        qryQuery.Open('select * from Clinical_Requisition_Order where RequisitionID = '''+ ARequistionId +''' ');
+
+        if qryQuery.RecordCount <= 0 then
+          raise Exception.Create('SendClinicalRequisitionOrder qryQuery Error not found Clinical_Requisition_Order:' + ARequistionId );
+
+        ARoot := AData.AddNode('root');
+        qryQuery.First;
+        while not qryQuery.Eof do
+        begin
+          ANode := ARoot.AddNode('record');
+          for I := 0 to qryQuery.FieldCount - 1 do
+          begin
+            AFieldNode := ANode.AddNode(qryQuery.Fields[I].FieldName);
+            case qryQuery.Fields[I].DataType of
+              ftFloat:
+                AFieldNode.Text := FloatToStr(qryQuery.Fields[I].AsFloat);
+              ftDateTime, ftTimeStamp:
+                AFieldNode.Text := FormatDateTime('yyyy-mm-dd hh:mm:ss',qryQuery.Fields[I].AsDateTime);
+              ftInteger:
+                AFieldNode.Text := IntToStr(qryQuery.Fields[I].AsInteger);
+              ftString:
+                AFieldNode.Text := Trim(qryQuery.Fields[I].AsString);
+              ftLargeint:
+                AFieldNode.Text := IntToStr(qryQuery.Fields[I].AsLargeInt);
+              ftBoolean:
+                AFieldNode.Text := BoolToStr(qryQuery.Fields[I].AsBoolean);
+            else
+              AFieldNode.Text := Trim(qryQuery.Fields[I].AsString);
+            end;
+          end;
+          qryQuery.Next;
+        end;
+        AParam := FPythonEng.ParamOfMethod(AData, AMethod);
+        AData.Parse(AParam);
+        ARoot := AData.ItemByName('root');
+        spHis.Connection := HISConnect;
+        for I := 0 to ARoot.Count - 1 do
+        begin
+          ANode := ARoot.Items[I];
+          spHis.Params.Clear;
+          spHis.ExecProc('YTHIS.PROC_HIS_DOC_ADVICE',[ANode.TextByPath('param.InPatientId', ''),
+            ANode.TextByPath('param.vdoct_code', ''),
+            ANode.TextByPath('param.vdept_code', ''),
+            ANode.TextByPath('param.vitem_code', ''),
+            ANode.TextByPath('param.doctor_advice', ''),
+            1,
+            ANode.TextByPath('param.apply_num', ''),'','','']);
+          AError := spHis.ParamByName('err_msg').AsString;
+          if AError <> '' then
+            raise Exception.Create(ARequistionId + ' Excute YTHIS.PROC_HIS_DOC_ADVICE Error:' + AError);
+
+          AOrderNum := spHis.ParamByName('Order_num').AsString;
+          qryExcute.Connection := BISConnect;
+          qryExcute.SQL.Clear;
+          qryExcute.SQL.Add('UPDATE clinical_requisition_order ' + #10 +
+            'SET    OrderNo         = ''' + AOrderNum + ''', ' + #10 +
+            '       OrderStatus     = 2 ' + #10 +
+            'WHERE  OrderID         = ''' + ARequistionId + '''');
+          qryExcute.ExecSQL;
+        end;
+      end;
+    finally
+      FreeAndNil(AData);
+      FreeAndNil(objDataBase);
+    end;
+  end;
+var
+  I: Integer;
+
 begin
+
+  AMethod := ARecvXML.TextByPath('interfacemessage.interfacename', '');
+  ARequisitionIds :=  ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid', '');
+  if Trim(ARequisitionIds) = '' then
+    raise Exception.Create('SendClinicalRequisitionOrder Error requisitionid is null');
+
+  AReqArray := ARequisitionIds.Split([',']);
+
+  try
+    for I := 0 to Length(AReqArray) - 1 do
+    begin
+      SendReqOrderByOne(AReqArray[I]);
+    end;
+  finally
+    SetLength(AReqArray, 0);
+  end;
   Result := True;
 end;
 

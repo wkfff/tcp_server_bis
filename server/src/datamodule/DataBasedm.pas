@@ -38,6 +38,8 @@ type
     qryExcute: TFDQuery;
     qryHis: TFDQuery;
     msdOra: TFDPhysOracleDriverLink;
+    spHis: TFDStoredProc;
+    qryQuery: TFDQuery;
   private
     FTableName: string;
     procedure ConvertXMLToDBByOne(AXML: TQXMLNode);
