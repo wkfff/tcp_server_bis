@@ -26,6 +26,7 @@ uses
   FireDAC.Comp.DataSet,
   Data.SqlTimSt,
   Data.DB,
+  System.TypInfo,
   FireDAC.Comp.Client,
   qxml,
   qstring,
@@ -126,7 +127,6 @@ begin
     except
       on E: Exception do
         CnDebugger.LogMsgWithTag(E.Message, 'Error');
-
     end;
   finally
     FreeAndNilObject(AdbIni);
@@ -146,7 +146,6 @@ begin
     CreateHISConnect;
   Result := conHIS;
 end;
-
 
 {$R *.dfm}
 
@@ -190,11 +189,13 @@ begin
     AField := qryExcute.FindField(AXML.Items[I].Name);
     if not Assigned(AField) then
       Continue;
-
+//        CnDebugger.LogMsg('FieldName:' + AXML.Items[I].Name + ';FieldValue:'
+//      + AXML.Items[I].Text + ';FieldType:'
+//      + GetEnumname(TypeInfo(TFieldType), Ord(AField.DataType)));
     case AField.DataType of
       ftFloat:
         AField.AsFloat := StrToFloatDef(AXML.Items[I].Text, 0.00);
-      ftDateTime, ftTimeStamp:
+      ftDateTime, ftTimeStamp,ftDate:
         AField.AsDateTime := StrToDateTime(AXML.Items[I].Text, FDateTimeFormat);
       ftInteger:
         AField.AsInteger := StrToIntDef(AXML.Items[I].Text, 0);
