@@ -14,8 +14,8 @@ uses
   qstring,
   QWorker,
   CnDebug,
-  IHospitalBISServiceIntf,
   DataBasedm,
+  IHospitalBISServiceIntf,
   YltShareVariable,
   IPythonScriptServiceIntf;
 
@@ -23,7 +23,8 @@ type
   TZXHospitalInterfaceObject = class(TQService, IHospitalBISService)
   private
     FPythonEng: IPythonScriptService;
-    function GetDataFromTableView(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    function GetBaseDataFromTableView(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+    function GetTableNameByClass(AClass: string): string;
   protected
     /// <summary>
     /// 获取病人信息
@@ -96,7 +97,8 @@ begin
   Result := True;
 end;
 
-constructor TZXHospitalInterfaceObject.Create(const AId: TGUID; AName: QStringW);
+constructor TZXHospitalInterfaceObject.Create(const AId: TGUID;
+  AName: QStringW);
 begin
   inherited;
   FPythonEng := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
@@ -110,48 +112,70 @@ end;
 
 destructor TZXHospitalInterfaceObject.Destroy;
 begin
-  FreeAndNilObject(FPythonEng);
+  FreeAndNil(FPythonEng);
   inherited;
 end;
 
-function TZXHospitalInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML;
-  var ASendXML: TQXML): Boolean;
+function TZXHospitalInterfaceObject.GetTableNameByClass(AClass: string): string;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  if AClass = 'getpateintinfos' then
+    Result := 'patient_getinterface_list_info'
+  else if AClass = 'gettreatmentiteminfos' then
+    Result := 'his_treatmentitem_info'
+  else if AClass = 'getchargeiteminfos' then
+    Result := 'his_chargeitem_info'
+  else if AClass = 'getdeptinfos' then
+    Result := 'his_dept_info'
+  else if AClass = 'gettestitemresultinfos' then
+    Result := 'patient_getinterface_result_info'
+  else if AClass = 'getstaffinfos' then
+    Result := 'his_staff_info'
+  else if AClass = 'getwardinfos' then
+    Result := 'his_ward_info'
+  else if AClass = 'getsurgeryinfos' then
+    Result := 'his_surgery_info'
+  else if AClass = 'getdiagnosesinfos' then
+    Result := 'his_diagnoses_info'
+  else if AClass = 'sendclinicalrequisitionorder' then
+    Result := 'clinical_requisition_order'
+  else if AClass = 'chargefees' then
+    Result := 'ins_charge_list_infos'
+  else if AClass = 'deleteclinicalrequisitionorder' then
+    Result := 'clinical_requisition_order'
+
 end;
 
-function TZXHospitalInterfaceObject.GetDataFromTableView(const ARecvXML: TQXML;
-  var ASendXML: TQXML): Boolean;
+function TZXHospitalInterfaceObject.GetBaseDataFromTableView(
+  const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
 var
   AMethod: string;
   ASql: string;
-  AResultXML: string;
+  AResult: string;
   objDataBase: TdmDatabase;
-  I: Integer;
-  ADataXml: TQXML;
+  AHisData: TQXML;
+  ARoot: TQXMLNode;
   ANode: TQXMLNode;
   AFieldNode: TQXMLNode;
-  ARoot: TQXMLNode;
+  I: Integer;
 begin
-  //
   AMethod := ARecvXML.TextByPath('interfacemessage.interfacename', '');
-  ASql := FPythonEng.ParamOfMethod(ARecvXML, AMethod);
-
   objDataBase := nil;
-  ADataXml := nil;
-
+  AHisData := nil;
   try
+    ASql := FPythonEng.ParamOfMethod(ARecvXML, AMethod);
     objDataBase := TdmDatabase.Create(nil);
-    ADataXml := TQXML.Create;
-    ARoot := ADataXml.AddNode('root');
+    objDataBase.TableName := GetTableNameByClass(AMethod);
+    AHisData := TQXML.Create;
+    ARoot := AHisData.AddNode('root');
 
-    with objDataBase.qryQuery do
+    with objDataBase.qryHis do
     begin
       Connection := HISConnect;
       Open(ASql);
+
       if RecordCount <= 0 then
-        raise Exception.Create(AMethod + ' found`t HIS base data');
-      First;
+        raise Exception.Create('GetBaseDataFromTableView Error: not found his base data');
+
       while not Eof do
       begin
         ANode := ARoot.AddNode('record');
@@ -162,25 +186,25 @@ begin
             ftFloat:
               AFieldNode.Text := FloatToStr(Fields[I].AsFloat);
             ftDateTime, ftTimeStamp:
-              AFieldNode.Text := FormatDateTime('yyyy-mm-dd hh:mm:ss',
-                Fields[I].AsDateTime);
+              AFieldNode.Text := FormatDateTime('yyyy-mm-dd hh:mm:ss',Fields[I].AsDateTime);
             ftInteger:
               AFieldNode.Text := IntToStr(Fields[I].AsInteger);
             ftString:
-              AFieldNode.Text := (Fields[I].AsString);
+              AFieldNode.Text := Fields[I].AsString;
+            ftLargeint:
+              AFieldNode.Text := IntToStr(Fields[I].AsLargeInt);
             ftBoolean:
               AFieldNode.Text := BoolToStr(Fields[I].AsBoolean);
           else
-            AFieldNode.Text := (Fields[I].AsString);
+            AFieldNode.Text := Fields[I].AsString;
           end;
         end;
         Next;
       end;
 
-      AResultXML := FPythonEng.ResultOfMethod(AMethod, ADataXml.Encode(False));
-
-      ADataXml.Parse(AResultXML);
-      objDataBase.ConvertXMLToDB(ADataXml);
+      AResult := FPythonEng.ResultOfMethod(AMethod, AHisData.Encode(False));
+      AHisData.Parse(AResult);
+      objDataBase.ConvertXMLToDB(AHisData);
 
       ANode := ASendXML.AddNode('root');
       ANode.AddNode('resultcode').Text := '0';
@@ -188,64 +212,70 @@ begin
       ANode.AddNode('results');
     end;
   finally
-    FreeAndNil(ADataXml);
+    FreeAndNil(AHisData);
     FreeAndNil(objDataBase);
   end;
   Result := True;
 end;
 
+function TZXHospitalInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML;
+  var ASendXML: TQXML): Boolean;
+begin
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
+end;
+
 function TZXHospitalInterfaceObject.GetDeptInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetDiagnosesInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetPateintInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := True;
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetStaffInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetSurgeryInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetTestItemInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
-function TZXHospitalInterfaceObject.GetTestItemResultInfos(const ARecvXML: TQXML;
-  var ASendXML: TQXML): Boolean;
+function TZXHospitalInterfaceObject.GetTestItemResultInfos(
+  const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
 begin
-  Result := True;
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetTreatmentItemInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.GetWardInfos(const ARecvXML: TQXML;
   var ASendXML: TQXML): Boolean;
 begin
-  Result := GetDataFromTableView(ARecvXML, ASendXML);
+  Result := GetBaseDataFromTableView(ARecvXML, ASendXML);
 end;
 
 function TZXHospitalInterfaceObject.SendClinicalRequisitionOrder(

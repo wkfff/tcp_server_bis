@@ -1,0 +1,9 @@
+diff a/server/src/hospitalservices/ServiceZXHospital.pas b/server/src/hospitalservices/ServiceZXHospital.pas	(rejected hunks)
+@@ -28,6 +28,7 @@
+     function GetDataFromTableView(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+     function GetBaseDataFromTableView(const ARecvXML: TQXML; var ASendXML: TQXML): Boolean;
+     function GetTableNameByClass(AClass: string): string;
++>>>>>>> 338f15dd1794c30ef97638118b550629a0b579b8
+   protected
+     /// <summary>
+     /// ��ȡ������Ϣ

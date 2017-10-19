@@ -29,13 +29,15 @@ uses
   FireDAC.Comp.Client,
   qxml,
   qstring,
-  CnDebug;
+  CnDebug, FireDAC.Phys.OracleDef, FireDAC.Phys.Oracle;
 
 type
   TdmDatabase = class(TDataModule)
     msdlBIS: TFDPhysMSSQLDriverLink;
     qryExcute: TFDQuery;
     qryQuery: TFDQuery;
+    qryHis: TFDQuery;
+    msdOra: TFDPhysOracleDriverLink;
   private
     FTableName: string;
     procedure ConvertXMLToDBByOne(AXML: TQXMLNode);
@@ -119,9 +121,15 @@ begin
   AdbIni := nil;
   try
     AdbIni := TIniFile.Create(ExtractFilePath(ParamStr(0)) + SERVER_INI_FILE_PATH);
-    IniDBConnect(AdbIni, 'HISDataBase');
-    conHIS.ConnectionDefName := 'HISDataBase';
-    conHIS.Connected := True;
+    try
+      IniDBConnect(AdbIni, 'HISDataBase');
+      conHIS.ConnectionDefName := 'HISDataBase';
+      conHIS.Connected := True;
+    except
+      on E: Exception do
+        CnDebugger.LogMsgWithTag(E.Message, 'Error');
+
+    end;
   finally
     FreeAndNilObject(AdbIni);
   end;
@@ -216,10 +224,16 @@ begin
 end;
 
 initialization
-  if not Assigned(conBIS) then
-    CreateBISConnect;
-  if not Assigned(conHIS) then
-    CreateHISConnect;
+  CnDebugger.LogMsg('Test');
+  try
+    if not Assigned(conBIS) then
+      CreateBISConnect;
+    if not Assigned(conHIS) then
+      CreateHISConnect;
+  except
+    on E: Exception do
+      CnDebugger.LogMsgWithTag(E.Message, 'Error');
+  end;
 
 finalization
   if Assigned(conBIS) then

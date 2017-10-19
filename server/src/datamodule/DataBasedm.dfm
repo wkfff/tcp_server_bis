@@ -14,4 +14,12 @@ object dmDatabase: TdmDatabase
     Left = 128
     Top = 16
   end
+  object qryHis: TFDQuery
+    Left = 128
+    Top = 16
+  end
+  object msdOra: TFDPhysOracleDriverLink
+    Left = 200
+    Top = 24
+  end
 end
