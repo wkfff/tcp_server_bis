@@ -31,7 +31,6 @@ type
   TFZSEInterfaceObject = class(TQService, IHospitalBISService)
   private
     function GetTableNameByClass(AClass: string): string;
-    procedure DoGetChargeItemJob(AJob: PQJob);
   protected
     /// <summary>
     /// 获取病人信息
@@ -337,72 +336,6 @@ destructor TFZSEInterfaceObject.Destroy;
 begin
 
   inherited;
-end;
-
-procedure TFZSEInterfaceObject.DoGetChargeItemJob(AJob: PQJob);
-var
-  ARecvXML: TQXML;
-  AMq: TMQClass;
-  APy: IPythonScriptService;
-  ADB: TdmDatabase;
-  AReturn: string;
-  AReturnXML: TQXML;
-  AXml: TQXML;
-  ATemp: string;
-begin
-  AMq := nil;
-  APy := nil;
-  ADB := nil;
-  AXml := nil;
-  AReturnXML := nil;
-  ARecvXML := TQXML(AJob.Data);
-
-  CnDebug.CnDebugger.LogMsg(ARecvXML.Encode(False));
-
-  try
-    try
-      AMq := TMQClass.Create;
-
-      AXml := TQXML.Create;
-
-      APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
-      CnDebug.CnDebugger.LogMsg('PythonScript ParamOfMethod');
-      ATemp := APy.ParamOfMethod(ARecvXML, ARecvXML.TextByPath('interfacemessage.interfacename',
-        ''));
-
-      AXml.Parse(ATemp);
-      CnDebug.CnDebugger.LogMsg('TMQClass Connect');
-//      AMq.Connect;
-      AMq.ServiceId := AXml.TextByPath('ESBEntry.AccessControl.Fid', '');
-      CnDebugger.LogMsg(ATemp);
-      AMq.QueryByParam(ATemp);
-      AReturn := APy.ResultOfMethod(ARecvXML.TextByPath('interfacemessage.interfacename',
-        ''), AMq.respMsg.Encode(False));
-
-      AReturnXML := TQXML.Create;
-      AReturnXML.Parse(AReturn);
-
-      ADB := TdmDatabase.Create(nil);
-      ADB.TableName := GetTableNameByClass('getchargeiteminfos');
-      ADB.ConvertXMLToDB(AReturnXML);
-
-      Workers.Post(
-        procedure(AJob: PQJob)
-        begin
-          CnDebug.CnDebugger.LogMsg('chargeitem complate');
-        end, nil, True);
-    except
-      on E: Exception do
-      begin
-        CnDebug.CnDebugger.LogMsg('Error ' + E.Message);
-      end;
-    end;
-  finally
-    FreeAndNilObject(AXml);
-    FreeAndNilObject(ADB);
-    FreeAndNilObject(AReturnXML);
-    FreeAndNilObject(AMq);
-  end;
 end;
 
 function TFZSEInterfaceObject.GetChargeItemInfos(const ARecvXML: TQXML; var
@@ -758,7 +691,6 @@ var
   AMq: TMQClass;
   OrderId: string;
 begin
-  Result := False;
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
     '');
   if RequisitionID = '' then

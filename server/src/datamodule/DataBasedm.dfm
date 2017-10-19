@@ -10,4 +10,8 @@ object dmDatabase: TdmDatabase
     Left = 72
     Top = 16
   end
+  object qryQuery: TFDQuery
+    Left = 128
+    Top = 16
+  end
 end

@@ -64,6 +64,7 @@ type
     Memo1: TMemo;
     Button1: TButton;
     Button2: TButton;
+    Button3: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
@@ -72,6 +73,7 @@ type
     procedure btn4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
     FNotifyIdProgressStart: Integer;
@@ -103,7 +105,6 @@ uses Unit3, Unit5;
 procedure TForm2.ae1Exception(Sender: TObject; E: Exception);
 begin
   //
-  ShowMessage('2');
 end;
 
 procedure TForm2.btn1Click(Sender: TObject);
@@ -183,6 +184,16 @@ begin
   FDateTimeFormat.TimeSeparator := ':';
   dtTemp := StrToDateTime('2017-09-08 25:14:00', FDateTimeFormat);
   ShowMessage(DateTimeToStr(dtTemp));
+end;
+
+procedure TForm2.Button3Click(Sender: TObject);
+begin
+  try
+    raise Exception.Create('Error Message');
+  finally
+    ShowMessage('finally');
+  end;
+  ShowMessage('1');
 end;
 
 procedure TForm2.ControlMouseDown(Sender: TObject; Button: TMouseButton; Shift:

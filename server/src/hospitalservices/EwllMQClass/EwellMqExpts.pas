@@ -245,7 +245,6 @@ var
   pErrorMsg: PAnsiChar;
   pPutMsg: PAnsiChar;
   pGetMsg: PAnsiChar;
-  iCount: Integer;
 begin
   Result := 0;
 
@@ -273,7 +272,7 @@ begin
         raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
           iReturn, pErrorMsg]));
       end;
-
+{$REGION ''}
 //      iReturn := PutMsgMQ(ConvertStringToAnsiChar(ServiceId), pMsgId,
 //        pPutMsg, pErrorMsg);
 //      CnDebugger.LogMsgWithTag(string(pMsgId), 'MQMessageID');
@@ -301,6 +300,7 @@ begin
 //      end;
 //      if Active then
 //        DisConnect;
+{$ENDREGION}
       CnDebugger.LogMsgWithTag(string(pGetMsg), 'MQGet');
       FrespMsg.Parse(PWideChar(string(pGetMsg)));
       Result := iReturn;
@@ -315,6 +315,7 @@ begin
   end;
 end;
 
+{$REGION ''}
 //function TMQClass.QueryByParam(const AParam: string): Integer;
 //var
 //  iReturn: Integer;
@@ -378,6 +379,7 @@ end;
 //    FreeMem(pGetMsg);
 //  end;
 //end;
+{$ENDREGION}
 
 function TMQClass.Query: Integer;
 var

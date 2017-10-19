@@ -35,6 +35,7 @@ type
   TdmDatabase = class(TDataModule)
     msdlBIS: TFDPhysMSSQLDriverLink;
     qryExcute: TFDQuery;
+    qryQuery: TFDQuery;
   private
     FTableName: string;
     procedure ConvertXMLToDBByOne(AXML: TQXMLNode);
@@ -74,7 +75,8 @@ begin
       UserName := AIni.ReadString(ASection, 'User_Name', '');
       Password := AIni.ReadString(ASection, 'Password', '');
       Pooled := True;
-      Values['Server'] := AIni.ReadString(ASection, 'Server', '');
+      if IndexOf('Server') <> -1 then
+        Values['Server'] := AIni.ReadString(ASection, 'Server', '');
     end;
     ibDef.Apply;
   end;
