@@ -21,26 +21,27 @@ def param_of_method(str_xml):
             awhere = awhere + ' or testitemid = \'' + testitemid + '\''
     awhere = awhere + ')'
     sql = sql + awhere
-    if not patientid is None:
-        sql = sql + ' and patientid = \'' + patientid + '\''
-    if not patientnumber is None:
-        sql = sql + ' and patientnumber = \'' + patientnumber + '\''
+    #if not patientid is None:
+    #    sql = sql + ' and patientid = \'' + patientid + '\''
+    #if not patientnumber is None:
+    #    sql = sql + ' and patientnumber = \'' + patientnumber + '\''
     if not inpatientid is None:
         sql = sql + ' and inpatientid = \'' + inpatientid + '\''
     return sql
 
-def result_of_method(str_xml):
+def result_of_method(str_xml):        
     return_root = ET.Element('root')
     from_root = ET.fromstring(str_xml)
+    records_xml = from_root.find('root')
 
-    for child_element in from_root:
+    for child_element in records_xml:
         data_element = ET.SubElement(return_root, 'record')
         key_element = ET.SubElement(data_element, 'GetId') 
         key_element.text = child_element.find('PATIENTID').text + child_element.find('TEST_NO').text + child_element.find('TESTITEMID').text
         key_element.set('key', 'true')
-        ET.SubElement(data_element, 'PatientId').text = child_element.find('PATIENTID').text
-        ET.SubElement(data_element, 'PatientNumber').text = child_element.find('PATIENTNUMBER').text
-        ET.SubElement(data_element, 'InPatientId').text = child_element.find('INPATIENTID').text
+        ET.SubElement(data_element, 'PatientId').text = from_root.find('interfacemessage').find('interfaceparms').find('patientid').text
+        ET.SubElement(data_element, 'PatientNumber').text = from_root.find('interfacemessage').find('interfaceparms').find('patientnumber').text
+        ET.SubElement(data_element, 'InPatientId').text = from_root.find('interfacemessage').find('interfaceparms').find('inpatientid').text
         ET.SubElement(data_element, 'TestPurposeCH').text = child_element.find('TESTPURPOSECH').text
         ET.SubElement(data_element, 'Barcode').text = child_element.find('TEST_NO').text
         ET.SubElement(data_element, 'TestDate').text = child_element.find('TESTDATE').text
@@ -49,12 +50,24 @@ def result_of_method(str_xml):
         ET.SubElement(data_element, 'TestItemCN').text = child_element.find('TESTITEMCN').text
         ET.SubElement(data_element, 'TestItemEN').text = child_element.find('TESTITEMEN').text
         ET.SubElement(data_element, 'TestIResult1').text = child_element.find('TESTIRESULT').text
-        
+
     return_xml = ET.tostring(return_root, encoding='utf-8')
     return return_xml.decode('utf-8')
 
 # if __name__ == '__main__':
 #     str_xml = '''
+#         <Root>
+#         <interfacemessage>
+#             <hospitalcode>00003</hospitalcode>
+#             <interfacename>getpateintinfos</interfacename>
+#             <interfaceparms>
+#                 <patienttype>1</patienttype>
+#                 <patientid>patientid</patientid>
+#                 <patientnumber>patientnumber</patientnumber>
+#                 <inpatientid>inpatientid</inpatientid>
+#                 <testitemid>ABO+Rh,DAT,FK,YK</testitemid>
+#             </interfaceparms>
+#         </interfacemessage>
 #         <root>
 #             <record>
 #                 <PATIENTID>0002000195</PATIENTID>
@@ -109,6 +122,7 @@ def result_of_method(str_xml):
 #                 <TESTIRESULT>阴性(-)</TESTIRESULT>
 #             </record>
 #         </root>
+#         </Root>
 #     '''
 #     print(result_of_method(str_xml))
 

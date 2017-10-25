@@ -39,9 +39,9 @@ def result_of_method(str_xml):
     result = ET.tostring(root, encoding='utf-8').decode('utf-8')
     return result
 
-if __name__ == '__main__':
-    str_xml = '12312;213123;123'
-    print(result_of_method(str_xml))
+# if __name__ == '__main__':
+#     str_xml = '12312;213123;123'
+#     print(result_of_method(str_xml))
 
     str_xml = '''
         <root>
@@ -59,9 +59,9 @@ if __name__ == '__main__':
         <ExecUnit>2140100</ExecUnit>
         <OrderType>2</OrderType>
         <ItemCode>I00000017622</ItemCode>
-        <ItemName>äº¤å‰é…è¡€</ItemName>
+        <ItemName>½»²æÅäÑª</ItemName>
         <HisItemCode>I00000017622</HisItemCode>
-        <HisItemName>äº¤å‰é…è¡€</HisItemName>
+        <HisItemName>½»²æÅäÑª</HisItemName>
         <ItemCount>1</ItemCount>
         <ItemUnit></ItemUnit>
         <ItemPrice></ItemPrice>

@@ -162,6 +162,7 @@ var
   AFieldNode: TQXMLNode;
   I: Integer;
   ARowNum: Integer;
+  ATemp: string;
 begin
   AMethod := ARecvXML.TextByPath('interfacemessage.interfacename', '');
   objDataBase := nil;
@@ -220,7 +221,9 @@ begin
         Next;
       end;
 
-      AResult := FPythonEng.ResultOfMethod(AMethod, AHisData.Encode(False));
+      ATemp := '<Root>' + AHisData.Encode(False) + ARecvXML.Encode(False) + '</Root>';
+      CnDebugger.LogMsgWithTag(ATemp, 'ResultOfMethod');
+      AResult := FPythonEng.ResultOfMethod(AMethod, ATemp);
 
       AConvert.Parse(AResult);
       objDataBase.ConvertXMLToDB(AConvert);
@@ -304,6 +307,9 @@ var
   AReqArray: TArray<string>;
   AMethod: string;
   ARequisitionIds: string;
+  ARoot: TQXMLNode;
+  ANode: TQXMLNode;
+  AFieldNode: TQXMLNode;
 
   procedure SendReqOrderByOne(ARequistionId: string);
   var
@@ -311,11 +317,9 @@ var
     objDataBase: TdmDatabase;
     I: Integer;
     AData: TQXML;
-    ARoot: TQXMLNode;
-    ANode: TQXMLNode;
-    AFieldNode: TQXMLNode;
     AError: string;
     AOrderNum: string;
+    UpdateSql: string;
   begin
     objDataBase := nil;
     AData := nil;
@@ -355,36 +359,37 @@ var
               AFieldNode.Text := Trim(qryQuery.Fields[I].AsString);
             end;
           end;
+          AParam := FPythonEng.ParamOfMethod(AData, AMethod);
+          AData.Parse(AParam);
+          ARoot := AData.ItemByName('root');
+          spHis.Connection := HISConnect;
+          for I := 0 to ARoot.Count - 1 do
+          begin
+            CnDebugger.LogInteger(I);
+            ANode := ARoot.Items[I];
+            spHis.ExecProc('YTHIS.PROC_HIS_DOC_ADVICE',[ANode.TextByPath('InPatientId', ''),
+              ANode.TextByPath('vdoct_code', ''),
+              ANode.TextByPath('vdept_code', ''),
+              ANode.TextByPath('vitem_code', ''),
+              ANode.TextByPath('doctor_advice', ''),
+              1,
+              ANode.TextByPath('apply_num', ''),'','','']);
+            AError := spHis.ParamByName('err_msg').AsString;
+            if AError <> '' then
+              raise Exception.Create(ARequistionId + ' Excute YTHIS.PROC_HIS_DOC_ADVICE Error:' + AError);
+
+            AOrderNum := spHis.ParamByName('Order_num').AsString;
+            CnDebugger.LogMsg(AOrderNum);
+            qryQuery.Edit;
+            qryQuery.FindField('OrderNo').AsString := AOrderNum;
+            qryQuery.FindField('OrderStatus').AsInteger := 2;
+            qryQuery.Post;
+          end;
+          AData.Clear;
+          ARoot := AData.AddNode('root');
           qryQuery.Next;
         end;
-        AParam := FPythonEng.ParamOfMethod(AData, AMethod);
-        AData.Parse(AParam);
-        ARoot := AData.ItemByName('root');
-        spHis.Connection := HISConnect;
-        for I := 0 to ARoot.Count - 1 do
-        begin
-          ANode := ARoot.Items[I];
-          spHis.Params.Clear;
-          spHis.ExecProc('YTHIS.PROC_HIS_DOC_ADVICE',[ANode.TextByPath('param.InPatientId', ''),
-            ANode.TextByPath('param.vdoct_code', ''),
-            ANode.TextByPath('param.vdept_code', ''),
-            ANode.TextByPath('param.vitem_code', ''),
-            ANode.TextByPath('param.doctor_advice', ''),
-            1,
-            ANode.TextByPath('param.apply_num', ''),'','','']);
-          AError := spHis.ParamByName('err_msg').AsString;
-          if AError <> '' then
-            raise Exception.Create(ARequistionId + ' Excute YTHIS.PROC_HIS_DOC_ADVICE Error:' + AError);
 
-          AOrderNum := spHis.ParamByName('Order_num').AsString;
-          qryExcute.Connection := BISConnect;
-          qryExcute.SQL.Clear;
-          qryExcute.SQL.Add('UPDATE clinical_requisition_order ' + #10 +
-            'SET    OrderNo         = ''' + AOrderNum + ''', ' + #10 +
-            '       OrderStatus     = 2 ' + #10 +
-            'WHERE  OrderID         = ''' + ARequistionId + '''');
-          qryExcute.ExecSQL;
-        end;
       end;
     finally
       FreeAndNil(AData);
@@ -411,6 +416,10 @@ begin
   finally
     SetLength(AReqArray, 0);
   end;
+  ANode := ASendXML.AddNode('root');
+  ANode.AddNode('resultcode').Text := '0';
+  ANode.AddNode('resultmessage').Text := '³É¹¦';
+  ANode.AddNode('results');
   Result := True;
 end;
 
