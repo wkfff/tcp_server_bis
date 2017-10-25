@@ -418,13 +418,11 @@ var
 
       AXML.Parse(ATemp);
 
-//      AMq.Connect;
       AMq.ServiceId := AXML.TextByPath('ESBEntry.AccessControl.Fid', '');
       AMq.QueryByParam(ATemp);
 
       if AMq.respMsg.TextByPath('ESBEntry.RetInfo.RetCode', '0') <> '1' then
-        raise Exception.Create('AMq.QueryByParam Error Message:' + AMq.respMsg.TextByPath
-          ('ESBEntry.RetInfo.RetCon', ''));
+        Exit;
 
       AReturn := APy.ResultOfMethod(AXMLByOne.TextByPath('interfacemessage.interfacename',
         ''), AMq.respMsg.Encode(False));
