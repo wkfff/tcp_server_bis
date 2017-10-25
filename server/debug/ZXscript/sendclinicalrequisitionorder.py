@@ -4,6 +4,8 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 
+from Txlogger import logger
+
 def param_of_method(str_xml):
     return_root = ET.Element('root')
     data_xml = ET.fromstring(str_xml)
@@ -13,13 +15,17 @@ def param_of_method(str_xml):
         ET.SubElement(data_element, 'InPatientId').text = child_of_child.find('InPatientId').text
         ET.SubElement(data_element, 'vdoct_code').text = child_of_child.find('RequisitionDoctor').text
         ET.SubElement(data_element, 'vdept_code').text = child_of_child.find('DeptCode').text
-        ET.SubElement(data_element, 'vitem_code').text = child_of_child.find('ItemCode').text
-        if doctor_advice == '':
-            doctor_advice = child_of_child.find('ItemName').text
-        else:
-            doctor_advice = doctor_advice + ',' + child_of_child.find('ItemName').text
+        ET.SubElement(data_element, 'vitem_code').text = child_of_child.find('HisItemCode').text
+        
+        doctor_advice = child_of_child.find('HisItemName').text
+        if child_of_child.find('OrderType').text == '1':
+            if  child_of_child.find('ItemCount').text is not None:
+                doctor_advice = doctor_advice + child_of_child.find('ItemCount').text
+            if  child_of_child.find('ItemUnit').text is not None:
+                doctor_advice = doctor_advice + child_of_child.find('ItemUnit').text
         ET.SubElement(data_element, 'apply_num').text = child_of_child.find('RequisitionID').text
     ET.SubElement(data_element, 'doctor_advice').text = doctor_advice
+    logger.debug(ET.tostring(return_root, encoding='utf-8').decode('utf-8'))
     return ET.tostring(return_root, encoding='utf-8').decode('utf-8')
 
 def result_of_method(str_xml):
@@ -39,62 +45,34 @@ if __name__ == '__main__':
 
     str_xml = '''
         <root>
-            <Requisition>
-                <OrderID>1</OrderID>
-                <RequisitionID>RequisitionID</RequisitionID>
-                <RequisitionDoctor></RequisitionDoctor>
-                <RequisitionTime></RequisitionTime>
-                <PatientId>PatientId</PatientId>
-                <PatientNumber>PatientNumber</PatientNumber>
-                <InPatientId>InPatientId</InPatientId>
-                <PatientType>2</PatientType>
-                <DeptCode>DeptCode</DeptCode>
-                <WardCode></WardCode>
-                <ExecUnit>ExecUnit</ExecUnit>
-                <OrderType>1</OrderType>
-                <ItemCode></ItemCode>
-                <ItemName>ItemName</ItemName>
-                <HisItemCode></HisItemCode>
-                <HisItemName></HisItemName>
-                <ItemCount>ItemCount</ItemCount>
-                <ItemUnit>ItemUnit</ItemUnit>
-                <ItemPrice></ItemPrice>
-                <Costs></Costs>
-                <OrderStatus></OrderStatus>
-                <OrderNo></OrderNo>
-                <OrderTime></OrderTime>
-                <CreateUser>CreateUser</CreateUser>
-                <CreateTime>CreateTime</CreateTime>
-                <Remark></Remark>
-            </Requisition>
-            <Requisition>
-                <OrderID>1</OrderID>
-                <RequisitionID>RequisitionID</RequisitionID>
-                <RequisitionDoctor></RequisitionDoctor>
-                <RequisitionTime></RequisitionTime>
-                <PatientId>PatientId</PatientId>
-                <PatientNumber>PatientNumber</PatientNumber>
-                <InPatientId>InPatientId</InPatientId>
-                <PatientType>2</PatientType>
-                <DeptCode>DeptCode</DeptCode>
-                <WardCode></WardCode>
-                <ExecUnit>ExecUnit</ExecUnit>
-                <OrderType>2</OrderType>
-                <ItemCode></ItemCode>
-                <ItemName>ItemName</ItemName>
-                <HisItemCode></HisItemCode>
-                <HisItemName></HisItemName>
-                <ItemCount>ItemCount</ItemCount>
-                <ItemUnit>ItemUnit</ItemUnit>
-                <ItemPrice></ItemPrice>
-                <Costs></Costs>
-                <OrderStatus></OrderStatus>
-                <OrderNo></OrderNo>
-                <OrderTime></OrderTime>
-                <CreateUser>CreateUser</CreateUser>
-                <CreateTime>CreateTime</CreateTime>
-                <Remark></Remark>
-            </Requisition>
-        </root>
+    <record>
+        <OrderID>17</OrderID>
+        <RequisitionID>170000942</RequisitionID>
+        <RequisitionDoctor>9999</RequisitionDoctor>
+        <RequisitionTime>2017-10-24 22:02:56</RequisitionTime>
+        <PatientId>0081041717</PatientId>
+        <PatientNumber>0002009568</PatientNumber>
+        <InPatientId>ZY010002009568</InPatientId>
+        <PatientType>2</PatientType>
+        <DeptCode>0046</DeptCode>
+        <WardCode>0121</WardCode>
+        <ExecUnit>2140100</ExecUnit>
+        <OrderType>2</OrderType>
+        <ItemCode>I00000017622</ItemCode>
+        <ItemName>交叉配血</ItemName>
+        <HisItemCode>I00000017622</HisItemCode>
+        <HisItemName>交叉配血</HisItemName>
+        <ItemCount>1</ItemCount>
+        <ItemUnit></ItemUnit>
+        <ItemPrice></ItemPrice>
+        <Costs></Costs>
+        <OrderStatus>2</OrderStatus>
+        <OrderNo>26448821USER_SEX</OrderNo>
+        <OrderTime>1899-12-30 00:00:00</OrderTime>
+        <CreateUser>9999</CreateUser>
+        <CreateTime>2017-10-24 22:03:25</CreateTime>
+        <Remark></Remark>
+    </record>
+</root>
     '''
     print(param_of_method(str_xml))
