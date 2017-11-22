@@ -221,7 +221,10 @@ begin
         Next;
       end;
 
-      ATemp := '<Root>' + AHisData.Encode(False) + ARecvXML.Encode(False) + '</Root>';
+      if AMethod = 'gettestitemresultinfos' then
+        ATemp := '<Root>' + AHisData.Encode(False) + ARecvXML.Encode(False) + '</Root>'
+      else
+        ATemp := AHisData.Encode(False);
       CnDebugger.LogMsgWithTag(ATemp, 'ResultOfMethod');
       AResult := FPythonEng.ResultOfMethod(AMethod, ATemp);
 
@@ -319,7 +322,6 @@ var
     AData: TQXML;
     AError: string;
     AOrderNum: string;
-    UpdateSql: string;
   begin
     objDataBase := nil;
     AData := nil;
@@ -365,20 +367,19 @@ var
           spHis.Connection := HISConnect;
           for I := 0 to ARoot.Count - 1 do
           begin
-            CnDebugger.LogInteger(I);
             ANode := ARoot.Items[I];
             spHis.ExecProc('YTHIS.PROC_HIS_DOC_ADVICE',[ANode.TextByPath('InPatientId', ''),
               ANode.TextByPath('vdoct_code', ''),
               ANode.TextByPath('vdept_code', ''),
               ANode.TextByPath('vitem_code', ''),
               ANode.TextByPath('doctor_advice', ''),
-              1,
+              strtoint(ANode.TextByPath('v_qty', '1')),
               ANode.TextByPath('apply_num', ''),'','','']);
             AError := spHis.ParamByName('err_msg').AsString;
             if AError <> '' then
               raise Exception.Create(ARequistionId + ' Excute YTHIS.PROC_HIS_DOC_ADVICE Error:' + AError);
 
-            AOrderNum := spHis.ParamByName('Order_num').AsString;
+            AOrderNum := spHis.ParamByName('Order_num').AsAnsiString;
             CnDebugger.LogMsg(AOrderNum);
             qryQuery.Edit;
             qryQuery.FindField('OrderNo').AsString := AOrderNum;
