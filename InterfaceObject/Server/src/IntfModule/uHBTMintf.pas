@@ -296,6 +296,7 @@ begin
     '       ''1''                         AS ''1'', ' + #10 +
     '       cro.HisItemCode, ' + #10 + '       cro.RequisitionTime, ' + #10 +
     '       cro.RequisitionDoctor, ' + #10 + '       cro.ItemCount, ' + #10 +
+    '       cro.ItemUnit, ' + #10 +
     '       cro.ExecUnit, ' + #10 + '       cro.WardCode, ' + #10 +
     '       cro.DeptCode, ' + #10 + '       cro.RequisitionID, cro.OrderID ' +
     #10 + 'FROM   clinical_requisition_order  AS cro ' + #10 +
