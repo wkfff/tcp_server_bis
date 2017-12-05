@@ -6,14 +6,13 @@ except ImportError:
 import time
 import configparser
 import os
-from Txlogger import logger
 
 def format_datetime(str_date):
     return time.strftime('%Y%m%d%H%M%S', time.strptime(str_date, '%Y-%m-%d %H:%M:%S'))
 def param_of_method(str_xml):
-    logger.debug(str_xml)
+##    return str_xml
     cf = configparser.ConfigParser()
-    # cf.read(os.path.dirname(os.getcwd()) + '\TCPServer.ini')
+##    cf.read(os.path.dirname(os.getcwd()) + '\TCPServer.ini')
     cf.read(os.getcwd() + '\TCPServer.ini')
 
     user_name = cf.get('ESBEntry', 'UserName')
@@ -55,6 +54,8 @@ def param_of_method(str_xml):
     format_xml = ET.fromstring(format_input)
     fee_info = format_xml.find('body').find('row').find('FEE_INFO')
 
+    APPLY_CONTENT = ''
+
     for child_of_child in root:
         format_xml.find('body').find('row').find('ELECTR_REQUISITION_NO').text = child_of_child.find('RequisitionID').text
         format_xml.find('body').find('row').find('SYS_FLAG').text = child_of_child.find('PatientType').text
@@ -62,19 +63,19 @@ def param_of_method(str_xml):
         record_xml.find('PAT_INDEX_NO').text = child_of_child.find('PatientId').text
         record_xml.find('INHOSP_NO').text = child_of_child.find('InPatientId').text
         record_xml.find('ORDER_NO').text = child_of_child.find('OrderNo').text
-        record_xml.find('CHARGE_ITEM_CODE').text = child_of_child.find('HisItemId').text
-        record_xml.find('CHARGE_DATE').text = format_datetime(child_of_child.find('Create_Time').text)
-        record_xml.find('AMOUNT').text = child_of_child.find('ChargeNum').text
-        record_xml.find('CHARGE_STAFF_CODE').text = '00'
-        # record_xml.find('DEPT_CODE').text = child_of_child.find('DeptCode').text
-        record_xml.find('EXECUT_DEPT_CODE').text = '120026'
+        record_xml.find('CHARGE_ITEM_CODE').text = child_of_child.find('HisItemCode').text
+        record_xml.find('CHARGE_DATE').text = format_datetime(child_of_child.find('CreateTime').text)
+        record_xml.find('AMOUNT').text = child_of_child.find('ItemCount').text
+        # record_xml.find('CHARGE_STAFF_CODE').text = '00'
+        record_xml.find('DEPT_CODE').text = child_of_child.find('DeptCode').text
+        # record_xml.find('EXECUT_DEPT_CODE').text = '120026'
         # record_xml.find('EXECUT_DEPT_NAME').text = '血库'
         record_xml.find('EXECUT_DR_CODE').text = child_of_child.find('RequisitionDoctor').text
-        record_xml.find('EXECUT_HS_CODE').text = '120026'
+        # record_xml.find('EXECUT_HS_CODE').text = '120026'
         fee_info.append(record_xml)
 
     Value = '<ESBEntry>' + '<AccessControl>' + '<UserName>' + user_name + '</UserName>' + '<Password>' + pass_word + '</Password>' + '<Fid>BS15030</Fid>' + '</AccessControl>' + '<MessageHeader>' + '<Fid>BS15030</Fid>' + '<SourceSysCode>' + source_code + '</SourceSysCode>' + '<TargetSysCode>' + target_code + \
-        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d %H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
+        '</TargetSysCode>' + '<MsgDate>' + time.strftime("%Y-%m-%d%H:%M:%S") + '</MsgDate>' + '</MessageHeader>' + '<RequestOption>' + '<onceFlag/>' + '<startNum/>' + \
         '<endNum/>' + '</RequestOption>' + '<MsgInfo><Msg><![CDATA[' + ET.tostring(
             format_xml, encoding='utf-8').decode('utf-8') + ']]></Msg></MsgInfo></ESBEntry>'
     return Value
@@ -84,15 +85,15 @@ def result_of_method(str_xml):
     root = ET.Element('root')
     for orderId in str_xml.split(';'):
         record = ET.SubElement(root, 'record')
-        key_ele = ET.SubElement(record, 'SerialNo')
+        key_ele = ET.SubElement(record, 'OrderID')
         key_ele.text = orderId
         key_ele.set('key', 'true')
-        ET.SubElement(record, 'HisChargeState').text = '1'
+        ET.SubElement(record, 'OrderStatus').text = '2'
     result = ET.tostring(root, encoding='utf-8').decode('utf-8')
     return result
 
 
-# if __name__ == '__main__':
+##if __name__ == '__main__':
     # str_xml = '''
     #     <ESBEntry>
     #         <MessageHeader>
@@ -118,64 +119,64 @@ def result_of_method(str_xml):
     # '''
     # print(result_of_method(str_xml))
 
-    #     str_xml = '''
-    #        <root>
-    #     <Requisition>
-    #         <OrderID>1</OrderID>
-    #         <RequisitionID>RequisitionID</RequisitionID>
-    #         <RequisitionDoctor></RequisitionDoctor>
-    #         <RequisitionTime></RequisitionTime>
-    #         <PatientId>PatientId</PatientId>
-    #         <PatientNumber>PatientNumber</PatientNumber>
-    #         <InPatientId>InPatientId</InPatientId>
-    #         <PatientType>2</PatientType>
-    #         <DeptCode>DeptCode</DeptCode>
-    #         <WardCode></WardCode>
-    #         <ExecUnit>ExecUnit</ExecUnit>
-    #         <OrderType>1</OrderType>
-    #         <ItemCode></ItemCode>
-    #         <ItemName>ItemName</ItemName>
-    #         <HisItemCode></HisItemCode>
-    #         <HisItemName></HisItemName>
-    #         <ItemCount>ItemCount</ItemCount>
-    #         <ItemUnit>ItemUnit</ItemUnit>
-    #         <ItemPrice></ItemPrice>
-    #         <Costs></Costs>
-    #         <OrderStatus></OrderStatus>
-    #         <OrderNo></OrderNo>
-    #         <OrderTime></OrderTime>
-    #         <CreateUser>CreateUser</CreateUser>
-    #         <CreateTime>2017-09-18 12:55:55</CreateTime>
-    #         <Remark></Remark>
-    #     </Requisition>
-    #     <Requisition>
-    #         <OrderID>1</OrderID>
-    #         <RequisitionID>RequisitionID</RequisitionID>
-    #         <RequisitionDoctor></RequisitionDoctor>
-    #         <RequisitionTime></RequisitionTime>
-    #         <PatientId>PatientId</PatientId>
-    #         <PatientNumber>PatientNumber</PatientNumber>
-    #         <InPatientId>InPatientId</InPatientId>
-    #         <PatientType>2</PatientType>
-    #         <DeptCode>DeptCode</DeptCode>
-    #         <WardCode></WardCode>
-    #         <ExecUnit>ExecUnit</ExecUnit>
-    #         <OrderType>2</OrderType>
-    #         <ItemCode></ItemCode>
-    #         <ItemName>ItemName</ItemName>
-    #         <HisItemCode></HisItemCode>
-    #         <HisItemName></HisItemName>
-    #         <ItemCount>ItemCount</ItemCount>
-    #         <ItemUnit>ItemUnit</ItemUnit>
-    #         <ItemPrice></ItemPrice>
-    #         <Costs></Costs>
-    #         <OrderStatus></OrderStatus>
-    #         <OrderNo></OrderNo>
-    #         <OrderTime></OrderTime>
-    #         <CreateUser>CreateUser</CreateUser>
-    #         <CreateTime>2017-09-18 12:55:55</CreateTime>
-    #         <Remark></Remark>
-    #     </Requisition>
-    # </root>
-    #     '''
-    #     print(param_of_method(str_xml))
+##        str_xml = '''
+##           <root>
+##        <Requisition>
+##            <OrderID>1</OrderID>
+##            <RequisitionID>RequisitionID</RequisitionID>
+##            <RequisitionDoctor></RequisitionDoctor>
+##            <RequisitionTime></RequisitionTime>
+##            <PatientId>PatientId</PatientId>
+##            <PatientNumber>PatientNumber</PatientNumber>
+##            <InPatientId>InPatientId</InPatientId>
+##            <PatientType>2</PatientType>
+##            <DeptCode>DeptCode</DeptCode>
+##            <WardCode></WardCode>
+##            <ExecUnit>ExecUnit</ExecUnit>
+##            <OrderType>1</OrderType>
+##            <ItemCode></ItemCode>
+##            <ItemName>ItemName</ItemName>
+##            <HisItemCode></HisItemCode>
+##            <HisItemName></HisItemName>
+##            <ItemCount>ItemCount</ItemCount>
+##            <ItemUnit>ItemUnit</ItemUnit>
+##            <ItemPrice></ItemPrice>
+##            <Costs></Costs>
+##            <OrderStatus></OrderStatus>
+##            <OrderNo></OrderNo>
+##            <OrderTime></OrderTime>
+##            <CreateUser>CreateUser</CreateUser>
+##            <CreateTime>2017-09-18 12:55:55</CreateTime>
+##            <Remark></Remark>
+##        </Requisition>
+##        <Requisition>
+##            <OrderID>1</OrderID>
+##            <RequisitionID>RequisitionID</RequisitionID>
+##            <RequisitionDoctor></RequisitionDoctor>
+##            <RequisitionTime></RequisitionTime>
+##            <PatientId>PatientId</PatientId>
+##            <PatientNumber>PatientNumber</PatientNumber>
+##            <InPatientId>InPatientId</InPatientId>
+##            <PatientType>2</PatientType>
+##            <DeptCode>DeptCode</DeptCode>
+##            <WardCode></WardCode>
+##            <ExecUnit>ExecUnit</ExecUnit>
+##            <OrderType>2</OrderType>
+##            <ItemCode></ItemCode>
+##            <ItemName>ItemName</ItemName>
+##            <HisItemCode></HisItemCode>
+##            <HisItemName></HisItemName>
+##            <ItemCount>ItemCount</ItemCount>
+##            <ItemUnit>ItemUnit</ItemUnit>
+##            <ItemPrice></ItemPrice>
+##            <Costs></Costs>
+##            <OrderStatus></OrderStatus>
+##            <OrderNo></OrderNo>
+##            <OrderTime></OrderTime>
+##            <CreateUser>CreateUser</CreateUser>
+##            <CreateTime>2017-09-18 12:55:55</CreateTime>
+##            <Remark></Remark>
+##        </Requisition>
+##    </root>
+##        '''
+##        print(param_of_method(str_xml))

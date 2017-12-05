@@ -6,20 +6,17 @@ except ImportError:
 import time
 import configparser 
 import os
-from Txlogger import logger
 
 def param_of_method(str_xml):
     cf = configparser.ConfigParser()
-
-    # cf.read(os.path.dirname(os.getcwd()) + '\TCPServer.ini')
-    cf.read(os.getcwd() + '\TCPServer.ini')
+    cf.read(os.getcwd()  + '\TCPServer.ini')
 
     user_name = cf.get('ESBEntry', 'UserName')
     pass_word = cf.get('ESBEntry', 'PassWord')
     source_code = cf.get('ESBEntry', 'SourceSysCode')
     target_code = cf.get('ESBEntry', 'TargetSysCode')
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS15001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS15001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS15001</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS15001</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
     Value = Value + '<query item="CHARGE_ITEM_CODE" compy="=" value="\'011010000101\' or 1= 1" splice="and"/>'
     Value = Value + '<query item="INVALID_FLAG" compy="=" value="\'0\'" splice="and"/>'
     Value = Value + '<order item="" sort=""/>'+'</MsgInfo>'+'</ESBEntry>'

@@ -395,7 +395,7 @@ var
   AClone: TQXML;
   ASendItem: TQXMLNode;
   ATestItem: TArray<string>;
-  I: Integer;
+//  I: Integer;
 
   procedure GetTestItemResultByOne(const AXMLByOne: TQXML);
   var
@@ -452,12 +452,12 @@ begin
     ATestItem := ARecvXML.TextByPath('interfacemessage.interfaceparms.testitemid',
       '').Split([',']);
 
-    for I := 0 to High(ATestItem) do
-    begin
-      AClone.ItemByPath('interfacemessage.interfaceparms.testitemid').Text :=
-        ATestItem[I];
+//    for I := 0 to High(ATestItem) do
+//    begin
+//      AClone.ItemByPath('interfacemessage.interfaceparms.testitemid').Text :=
+//        ATestItem[I];
       GetTestItemResultByOne(AClone);
-    end;
+//    end;
 
     ASendItem := ASendXML.AddNode('root');
     ASendItem.AddNode('resultcode').Text := '0';

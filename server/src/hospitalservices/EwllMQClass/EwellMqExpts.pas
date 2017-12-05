@@ -265,7 +265,7 @@ begin
       pPutMsg := ConvertStringToAnsiChar(AParam);
 
       iReturn := GetInfoFromMQ(ConvertStringToAnsiChar(ServiceId),
-        1000 * 60 * 5, pMsgId, pPutMsg, pGetMsg, pErrorMsg);
+        1000 * 60, pMsgId, pPutMsg, pGetMsg, pErrorMsg);
 
       if iReturn <> 1 then
       begin

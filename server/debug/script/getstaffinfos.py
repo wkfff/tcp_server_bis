@@ -17,7 +17,7 @@ def param_of_method(str_xml):
     source_code = cf.get('ESBEntry', 'SourceSysCode')
     target_code = cf.get('ESBEntry', 'TargetSysCode')
 
-    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS02003</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS02003</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d %H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
+    Value = '<ESBEntry>'+'<AccessControl>'+'<UserName>'+ user_name +'</UserName>'+'<Password>'+ pass_word +'</Password>'+'<Fid>MS02003</Fid>'+'</AccessControl>'+'<MessageHeader>'+'<Fid>MS02003</Fid>'+'<SourceSysCode>'+ source_code +'</SourceSysCode>'+'<TargetSysCode>'+ target_code +'</TargetSysCode>'+'<MsgDate>'+ time.strftime("%Y-%m-%d%H:%M:%S") +'</MsgDate>'+'</MessageHeader>'+'<RequestOption>'+'<onceFlag/>'+'<startNum/>'+'<endNum/>'+'</RequestOption>'+'<MsgInfo>'
     Value = Value + '<query item="STAFF_INDEX_NO" compy="=" value="\'100\' or 1=1" splice="and"/>'
     Value = Value + '<query item="INVALID_FLAG" compy="=" value="\'0\'" splice="and"/>'
     Value = Value + '<order item="" sort=""/>'+'</MsgInfo>'+'</ESBEntry>'
@@ -43,7 +43,7 @@ def result_of_method(str_xml):
         ET.SubElement(data_element, 'User_Email').text = body.find('EMAIL').text
         ET.SubElement(data_element, 'User_Dept').text = body.find('SUBOR_DEPT_CODE').text
         ET.SubElement(data_element, 'User_Level').text = body.find('STAFF_CATEG_CODE').text
-        ET.SubElement(data_element, 'User_Remark').text = body.find('STAFF_CATEG_NAME').text
+        ET.SubElement(data_element, 'User_Remark').text = body.find('TITLE_LEVEL_NAME').text
 
     return_xml = ET.tostring(return_root, encoding='utf-8')
     return return_xml.decode('utf-8')

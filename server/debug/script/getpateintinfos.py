@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -142,6 +142,7 @@ def get_result_inpatient(str_xml):
             <Rev_1></Rev_1>
             <Rev_2></Rev_2>
             <Rev_3></Rev_3>
+            <Times></Times>
             </record>
         </root>
     '''
@@ -178,6 +179,7 @@ def get_result_inpatient(str_xml):
     return_root.find('WardCode').text = body.find('CURR_WARD_CODE').text
     return_root.find('WardName').text = body.find('CURR_WARD_NAME').text
     return_root.find('BedNo').text = body.find('CURR_BED_INDEX_NO').text
+    return_root.find('Times').text = body.find('INHOSP_NUM').text
     return_xml = ET.tostring(root, encoding='utf-8')
     return return_xml.decode('utf-8')
 
