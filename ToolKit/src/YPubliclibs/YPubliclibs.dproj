@@ -131,12 +131,10 @@
         <DCCReference Include="dbrtl.dcp"/>
         <DCCReference Include="QDAC3.dcp"/>
         <DCCReference Include="SynEdit_R.dcp"/>
-        <DCCReference Include="diocpVcl.dcp"/>
         <DCCReference Include="unit\uDragOnRunTime.pas"/>
         <DCCReference Include="unit\uPubliclibsBase.pas"/>
         <DCCReference Include="form\Logfrm.pas">
             <Form>frmLogger</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

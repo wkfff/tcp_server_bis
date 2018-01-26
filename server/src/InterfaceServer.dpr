@@ -45,14 +45,14 @@ begin
   ReportMemoryLeaksOnShutdown := True;
 {$ENDIF}
   Application.Initialize;
-//  hMutex := CreateMutex(nil, False, PChar('INTERFACESERVER_BIS_TEST'));//创建互斥对象
-//  iRet := GetLastError;
-//  if iRet <> ERROR_ALREADY_EXISTS then //创建成功, 运行程序
-//  begin
+  hMutex := CreateMutex(nil, False, PChar('INTERFACESERVER_BIS_TEST'));//创建互斥对象
+  iRet := GetLastError;
+  if iRet <> ERROR_ALREADY_EXISTS then //创建成功, 运行程序
+  begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
     Application.CreateForm(TfrmMain, frmMain);
     Application.Run;
-//  end;
-//  ReleaseMutex(hMutex);    //释放互斥对象
+  end;
+  ReleaseMutex(hMutex);    //释放互斥对象
 end.
