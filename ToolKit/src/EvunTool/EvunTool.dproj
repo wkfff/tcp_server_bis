@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{859C9F82-814F-4B5D-85A6-8AEADE62A8E8}</ProjectGuid>
         <MainSource>EvunTool.dpk</MainSource>
-        <ProjectVersion>18.2</ProjectVersion>
+        <ProjectVersion>18.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

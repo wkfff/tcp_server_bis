@@ -12,10 +12,10 @@
         <Projects Include="InterfaceObject\Server\src\DIOCPTCPServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ToolKit\src\YPubliclibs\YPubliclibs.dproj">
+        <Projects Include="ToolKit\src\Main\ToolKit.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ToolKit\src\Main\ToolKit.dproj">
+        <Projects Include="ToolKit\src\YPubliclibs\YPubliclibs.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="ToolKit\src\EvunTool\EvunTool.dproj">
@@ -62,15 +62,6 @@
     <Target Name="DIOCPTCPServer:Make">
         <MSBuild Projects="InterfaceObject\Server\src\DIOCPTCPServer.dproj" Targets="Make"/>
     </Target>
-    <Target Name="YPubliclibs">
-        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj"/>
-    </Target>
-    <Target Name="YPubliclibs:Clean">
-        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="YPubliclibs:Make">
-        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Make"/>
-    </Target>
     <Target Name="ToolKit">
         <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj"/>
     </Target>
@@ -79,6 +70,15 @@
     </Target>
     <Target Name="ToolKit:Make">
         <MSBuild Projects="ToolKit\src\Main\ToolKit.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="YPubliclibs">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj"/>
+    </Target>
+    <Target Name="YPubliclibs:Clean">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="YPubliclibs:Make">
+        <MSBuild Projects="ToolKit\src\YPubliclibs\YPubliclibs.dproj" Targets="Make"/>
     </Target>
     <Target Name="EvunTool">
         <MSBuild Projects="ToolKit\src\EvunTool\EvunTool.dproj"/>
@@ -108,13 +108,13 @@
         <MSBuild Projects="server\src\InterfaceServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;YPubliclibs;ToolKit;EvunTool;Project1;InterfaceServer"/>
+        <CallTarget Targets="DIOCPTcpClient;TestTcpDll;DIOCPTCPServer;ToolKit;YPubliclibs;EvunTool;Project1;InterfaceServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;YPubliclibs:Clean;ToolKit:Clean;EvunTool:Clean;Project1:Clean;InterfaceServer:Clean"/>
+        <CallTarget Targets="DIOCPTcpClient:Clean;TestTcpDll:Clean;DIOCPTCPServer:Clean;ToolKit:Clean;YPubliclibs:Clean;EvunTool:Clean;Project1:Clean;InterfaceServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;YPubliclibs:Make;ToolKit:Make;EvunTool:Make;Project1:Make;InterfaceServer:Make"/>
+        <CallTarget Targets="DIOCPTcpClient:Make;TestTcpDll:Make;DIOCPTCPServer:Make;ToolKit:Make;YPubliclibs:Make;EvunTool:Make;Project1:Make;InterfaceServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

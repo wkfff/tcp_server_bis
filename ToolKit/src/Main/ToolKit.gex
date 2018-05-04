@@ -1,0 +1,8 @@
+[General]
+Name=ToolKit
+BaseDir=E:\tcp_server_bis\ToolKit\src\Main\
+Project=1
+[Classes]
+Count=2
+Class0="TfrmToolBox","TForm, IQNotify","Mainfrm","42","E:\tcp_server_bis\ToolKit\src\Main\form\Mainfrm.pas"
+Class1="TfrmVersionInfo","TForm","VersionInfofrm","34","E:\tcp_server_bis\ToolKit\src\Main\form\VersionInfofrm.pas"

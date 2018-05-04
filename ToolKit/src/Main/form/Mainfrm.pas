@@ -36,8 +36,7 @@ uses
   qplugins_vcl_messages,
   qplugins_vcl_formsvc,
   qworker,
-  utils_safeLogger,
-  Logfrm;
+  utils_safeLogger;
 
 type
   TfrmToolBox = class(TForm, IQNotify)
@@ -81,7 +80,6 @@ type
     procedure pgcClientClose(Sender: TObject; var AllowClose: Boolean);
     procedure pgcClientChanging(Sender: TObject; NewIndex: Integer;
       var AllowChange: Boolean);
-    procedure btnLogClick(Sender: TObject);
     procedure actConfigExecute(Sender: TObject);
     procedure rpsMainClick(Sender: TObject);
     procedure actVersionInfoExecute(Sender: TObject);
@@ -122,12 +120,6 @@ end;
 procedure TfrmToolBox.actVersionInfoExecute(Sender: TObject);
 begin
   DoShowDockForm('VersionInfo', actVersionInfo.ImageIndex);
-end;
-
-procedure TfrmToolBox.btnLogClick(Sender: TObject);
-begin
-  if Assigned(frmLogger) then
-    frmLogger.Show;
 end;
 
 procedure TfrmToolBox.DockPage(AFormService: IQFormService; AImageIndex: Integer; AHoldNeeded: Boolean);

@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdActns, System.Actions,
   Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, Vcl.ToolWin,
-  Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.ExtActns, Vcl.Menus;
+  Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.ExtActns, Vcl.Menus, RzButton,
+  System.ImageList, Vcl.ImgList, JvImageList, Vcl.ExtCtrls, RzPanel;
 
 type
   TForm5 = class(TForm)
@@ -26,6 +27,12 @@ type
     FileRun1: TFileRun;
     FileExit1: TFileExit;
     BrowseForFolder1: TBrowseForFolder;
+    tb1: TRzToolbar;
+    ilSmall16X16: TJvImageList;
+    btn1: TRzToolButton;
+    act3: TAction;
+    act1: TAction;
+    act2: TAction;
     procedure FileSaveAs1BeforeExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FileOpenWith1AfterOpen(Sender: TObject);

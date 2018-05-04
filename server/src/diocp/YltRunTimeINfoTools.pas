@@ -3,14 +3,14 @@ unit YltRunTimeINfoTools;
 interface
 
 uses
-  SysUtils, DateUtils;
+  SysUtils,
+  DateUtils;
 
 type
   TRunTimeINfoTools = class(TObject)
   public
-    class function GetRunTimeINfo: String;
-
-    class function TransByteSize(pvByte:Int64): String;
+    class function GetRunTimeINfo: string;
+    class function TransByteSize(pvByte: Int64): string;
   end;
 
 const
@@ -18,28 +18,27 @@ const
   BytePerMB = BytePerKB * 1024;
   BytePerGB = BytePerMB * 1024;
 
-
 implementation
 
 var
-  __startTime:TDateTime;
+  __startTime: TDateTime;
 
 
 {$if CompilerVersion < 15}  // <D7
 const
-  HoursPerDay   = 24;
-  MinsPerHour   = 60;
-  SecsPerMin    = 60;
-  MSecsPerSec   = 1000;
-  MinsPerDay    = HoursPerDay * MinsPerHour;
-  SecsPerDay    = MinsPerDay * SecsPerMin;
-  MSecsPerDay   = SecsPerDay * MSecsPerSec;
+  HoursPerDay = 24;
+  MinsPerHour = 60;
+  SecsPerMin = 60;
+  MSecsPerSec = 1000;
+  MinsPerDay = HoursPerDay * MinsPerHour;
+  SecsPerDay = MinsPerDay * SecsPerMin;
+  MSecsPerDay = SecsPerDay * MSecsPerSec;
 {$ifend}
 
-class function TRunTimeINfoTools.GetRunTimeINfo: String;
+class function TRunTimeINfoTools.GetRunTimeINfo: string;
 var
-  lvMSec, lvRemain:Int64;
-  lvDay, lvHour, lvMin, lvSec:Integer;
+  lvMSec, lvRemain: Int64;
+  lvDay, lvHour, lvMin, lvSec: Integer;
 begin
   lvMSec := MilliSecondsBetween(Now(), __startTime);
   lvDay := Trunc(lvMSec / MSecsPerDay);
@@ -66,33 +65,33 @@ begin
     Result := Result + IntToStr(lvSec) + ' s ';
 end;
 
-
-
-class function TRunTimeINfoTools.TransByteSize(pvByte:Int64): String;
+class function TRunTimeINfoTools.TransByteSize(pvByte: Int64): string;
 var
-  lvTB, lvGB, lvMB, lvKB:Word;
-  lvRemain:Int64;
+  lvTB, lvGB, lvMB, lvKB: Word;
+  lvRemain: Int64;
 begin
   lvRemain := pvByte;
 
-  lvTB := Trunc(lvRemain/BytePerGB/1024);
+  lvTB := Trunc(lvRemain / BytePerGB / 1024);
   //lvRemain := pvByte - (lvTB * BytePerGB * 1024);
-  
-  lvGB := Trunc(lvRemain/BytePerGB);
+
+  lvGB := Trunc(lvRemain / BytePerGB);
 
   lvGB := lvGB mod 1024;      // trunc TB
 
   lvRemain := lvRemain mod BytePerGB;
 
-  lvMB := Trunc(lvRemain/BytePerMB);
+  lvMB := Trunc(lvRemain / BytePerMB);
   lvRemain := lvRemain mod BytePerMB;
 
-  lvKB := Trunc(lvRemain/BytePerKB);
+  lvKB := Trunc(lvRemain / BytePerKB);
   lvRemain := lvRemain mod BytePerKB;
-  Result := Format('%d TB, %d GB, %d MB, %d KB, %d B', [lvTB, lvGB, lvMB, lvKB, lvRemain]);
+  Result := Format('%d TB, %d GB, %d MB, %d KB, %d B', [lvTB, lvGB, lvMB, lvKB,
+    lvRemain]);
 end;
 
 initialization
-  __startTime :=  Now();
+  __startTime := Now();
 
 end.
+

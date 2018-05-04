@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{7B643B9D-1CE6-44CF-B333-F48A559DAD98}</ProjectGuid>
         <MainSource>YPubliclibs.dpk</MainSource>
-        <ProjectVersion>18.2</ProjectVersion>
+        <ProjectVersion>18.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

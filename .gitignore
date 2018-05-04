@@ -66,6 +66,8 @@ __recovery/
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
 server/src/hospitalservices/EwellMqExpts---.pas
-server/debug/tcp_server_log.cdd
+server/debug/tcp_server_log.cdd
+
 config.db
 
+.gitignore

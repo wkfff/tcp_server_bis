@@ -1,6 +1,6 @@
 program InterfaceServer;
 
-{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
+//{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
 
 uses
   Vcl.Forms,

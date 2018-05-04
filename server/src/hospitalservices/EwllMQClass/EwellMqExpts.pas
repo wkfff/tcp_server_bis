@@ -264,6 +264,7 @@ begin
       CnDebugger.LogMsgWithTag(AParam, 'MQPut');
       pPutMsg := ConvertStringToAnsiChar(AParam);
 
+      //修改后的DLL  方法
       iReturn := GetInfoFromMQ(ConvertStringToAnsiChar(ServiceId),
         1000 * 60, pMsgId, pPutMsg, pGetMsg, pErrorMsg);
 
@@ -272,7 +273,7 @@ begin
         raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
           iReturn, pErrorMsg]));
       end;
-{$REGION ''}
+{$REGION '老方法'}
 //      iReturn := PutMsgMQ(ConvertStringToAnsiChar(ServiceId), pMsgId,
 //        pPutMsg, pErrorMsg);
 //      CnDebugger.LogMsgWithTag(string(pMsgId), 'MQMessageID');
@@ -306,7 +307,11 @@ begin
       Result := iReturn;
     except
       on E: Exception do
+      begin
         CnDebugger.LogMsgWithTag(E.Message, 'QueryByParam_Error');
+        raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
+          iReturn, pErrorMsg]));
+      end;
     end;
   finally
     FreeMem(pMsgId);
@@ -315,7 +320,7 @@ begin
   end;
 end;
 
-{$REGION ''}
+{$REGION '老方法 备份'}
 //function TMQClass.QueryByParam(const AParam: string): Integer;
 //var
 //  iReturn: Integer;
