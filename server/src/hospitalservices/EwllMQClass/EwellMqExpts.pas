@@ -18,7 +18,7 @@ type
   MQException = class(Exception)
   end;
 
-  TMQClass = class(TObject)
+  TTXMQClass = class(TObject)
   private
     FEWellMQ: TEWellMQ;
     FActive: Boolean;
@@ -36,6 +36,8 @@ type
     procedure SetWaitInterval(const Value: Integer);
     function CreateQueryParamsMsg: string;
     function ConvertStringToAnsiChar(AData: string): PAnsiChar;
+//    function GetInfoFromMQ(Fid: PAnsiChar; WaitInterval: Integer; QMsgID,
+//      QInMsg, QOutMsg, ErrMsg: PAnsiChar): Integer; stdcall;
   public
     constructor Create;
     destructor Destroy; override;
@@ -68,7 +70,7 @@ function GetInfoFromMQ(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar;
 
 { TMQClass }
 
-procedure TMQClass.Connect;
+procedure TTXMQClass.Connect;
 var
   iReturn: Integer;
 begin
@@ -78,7 +80,7 @@ begin
   FActive := True;
 end;
 
-procedure TMQClass.Connect(AServerName: string);
+procedure TTXMQClass.Connect(AServerName: string);
 var
   iReturn: Integer;
 begin
@@ -88,12 +90,12 @@ begin
   FActive := True;
 end;
 
-function TMQClass.ConvertStringToAnsiChar(AData: string): PAnsiChar;
+function TTXMQClass.ConvertStringToAnsiChar(AData: string): PAnsiChar;
 begin
   Result := PAnsiChar(AnsiString(AData));
 end;
 
-constructor TMQClass.Create;
+constructor TTXMQClass.Create;
 begin
   inherited;
   FWaitInterval := 10000;
@@ -104,7 +106,7 @@ begin
   FEWellMQ := TEWellMQ.Create;
 end;
 
-destructor TMQClass.Destroy;
+destructor TTXMQClass.Destroy;
 var
   I: Integer;
 begin
@@ -119,7 +121,7 @@ begin
   inherited;
 end;
 
-procedure TMQClass.DisConnect;
+procedure TTXMQClass.DisConnect;
 var
   iReturn: Integer;
 begin
@@ -129,17 +131,17 @@ begin
   FActive := False;
 end;
 
-function TMQClass.GetActive: Boolean;
+function TTXMQClass.GetActive: Boolean;
 begin
   Result := FActive;
 end;
 
-function TMQClass.PutMQMessage: Integer;
+function TTXMQClass.PutMQMessage: Integer;
 begin
   Result := 0;
 end;
 
-function TMQClass.CreateQueryParamsMsg: string;
+function TTXMQClass.CreateQueryParamsMsg: string;
 var
   AMsgXML: TQXML;
   AChildNode: TQXMLNode;
@@ -197,7 +199,7 @@ begin
   end;
 end;
 
-function TMQClass.PutMsgMQ(Fid, QMsgID, QMsg, ErrMsg: PAnsiChar): Integer;
+function TTXMQClass.PutMsgMQ(Fid, QMsgID, QMsg, ErrMsg: PAnsiChar): Integer;
 var
   vFID: AnsiString;
   vMsgID: AnsiString;
@@ -216,7 +218,7 @@ begin
   end;
 end;
 
-function TMQClass.GetMsgMQ(Fid: PAnsiChar; WaitInterval: Integer;var QMsgID, QMsg,
+function TTXMQClass.GetMsgMQ(Fid: PAnsiChar; WaitInterval: Integer;var QMsgID, QMsg,
   ErrMsg: PAnsiChar): Integer;
 var
   msg: AnsiString;
@@ -237,7 +239,64 @@ begin
   end;
 end;
 
-function TMQClass.QueryByParam(const AParam: string): Integer;
+//function TTXMQClass.GetInfoFromMQ(Fid: PAnsiChar; WaitInterval: Integer; QMsgID: PAnsiChar; QInMsg: PAnsiChar;
+//  QOutMsg: PAnsiChar; ErrMsg: PAnsiChar): Integer; stdcall;
+//var
+//  AMQ: TEWellMQ;
+//  vMsgID: AnsiString;
+//  vErrMsg: AnsiString;
+//  vFID: AnsiString;
+//  msg: AnsiString;
+//begin
+//  Result := 0;
+//  AMQ := TEWellMQ.Create;
+//  try
+//    //connect
+//    Result := AMQ.Connect;
+//    if Result <> 1 then
+//    begin
+//      ErrMsg := 'MQ Connect Error';
+//      Exit;
+//    end;
+//
+//    //put msg
+//    vFID := AnsiString(Fid) + '_0';
+//    if Trim(QMsgID) <> '' then
+//      Result := AMQ.PutMsgWithID(vFID, QInMsg, QMsgID, vErrMsg)
+//    else
+//      Result := AMQ.Put(vFID, QInMsg, vMsgID, vErrMsg);
+//
+//    System.AnsiStrings.Strpcopy(QMsgID, vMsgID);
+//    System.AnsiStrings.Strpcopy(ErrMsg, vErrMsg);
+//    if Result <> 1 then
+//      Exit;
+//
+//    //get msg
+//    vFID := Fid + '_1';
+//    msg := AMQ.Get(vFID, WaitInterval, mfGet, vErrMsg, QMsgID);
+//    if msg <> '' then
+//    begin
+//      Result := 1;
+//    end;
+//    System.AnsiStrings.StrPCopy(QOutMsg, msg);
+//    System.AnsiStrings.Strpcopy(ErrMsg, vErrMsg);
+//    if Result <> 1 then
+//      Exit;
+//
+//    //disconnect
+//    Result := AMQ.DisConnect;
+//    if Result <> 1 then
+//    begin
+//      ErrMsg := 'MQ DisConnect Error';
+//      Exit;
+//    end;
+//
+//  finally
+//    AMQ.Free;
+//  end;
+//end;
+
+function TTXMQClass.QueryByParam(const AParam: string): Integer;
 var
   iReturn: Integer;
   pSecId: PAnsiChar;
@@ -251,23 +310,21 @@ begin
   if ServiceId = '' then
     raise MQException.Create('QueryByParam Error: ServiceId is null');
 
-  pSecId := ConvertStringToAnsiChar(ServiceId);
-  CnDebugger.LogMsgWithTag(string(pSecId), 'ServiceId');
-
+  GetMem(pSecId, 24);
   GetMem(pMsgId, 49);
   GetMem(pErrorMsg, 2048);
   GetMem(pGetMsg, 1024 * 1024 * 100);
   try
     try
+      System.AnsiStrings.StrPCopy(pSecId, AnsiString(ServiceId));
       FillChar(pMsgId[0], 49, #0);
       FillChar(pErrorMsg[0], 2048, #0);
       CnDebugger.LogMsgWithTag(AParam, 'MQPut');
       pPutMsg := ConvertStringToAnsiChar(AParam);
 
       //修改后的DLL  方法
-      iReturn := GetInfoFromMQ(ConvertStringToAnsiChar(ServiceId),
+      iReturn := GetInfoFromMQ(pSecId,
         1000 * 60, pMsgId, pPutMsg, pGetMsg, pErrorMsg);
-
       if iReturn <> 1 then
       begin
         raise MQException.Create(Format('获取消息失败,服务ID：%s,返回值：%d ,错误信息：%s', [ServiceId,
@@ -314,6 +371,7 @@ begin
       end;
     end;
   finally
+    FreeMem(pSecId);
     FreeMem(pMsgId);
     FreeMem(pErrorMsg);
     FreeMem(pGetMsg);
@@ -386,7 +444,7 @@ end;
 //end;
 {$ENDREGION}
 
-function TMQClass.Query: Integer;
+function TTXMQClass.Query: Integer;
 var
   iReturn: Integer;
   pSecId: PAnsiChar;
@@ -438,7 +496,7 @@ begin
   end;
 end;
 
-procedure TMQClass.SetActive(const Value: Boolean);
+procedure TTXMQClass.SetActive(const Value: Boolean);
 begin
   if not FActive and Value then
     Connect;
@@ -449,7 +507,7 @@ begin
   FActive := Value;
 end;
 
-procedure TMQClass.SetWaitInterval(const Value: Integer);
+procedure TTXMQClass.SetWaitInterval(const Value: Integer);
 begin
   FWaitInterval := Value;
 end;

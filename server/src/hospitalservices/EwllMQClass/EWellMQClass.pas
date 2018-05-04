@@ -258,6 +258,7 @@ begin
   begin
     ErrMsg := AnsiString(Format('CompCode:%d;Reason:%d', [CompCode, Reason]));
     writeMQCode('Put-OpenQueue', CompCode, Reason);
+    writeMQCode('Put-OpenQueue-qName:' + qName + '-QmTag:'+ FQManager.QmTag + '-Fid:' + fid, CompCode, Reason);
     exit;
   end;
   FActiveMQ.MQPutMsg(msgID, qName, msg, FQManager.QmCSID, CompCode, Reason);

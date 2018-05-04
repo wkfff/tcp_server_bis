@@ -24,7 +24,10 @@ uses
   Vcl.ExtCtrls,
   Vcl.StdCtrls;
 
+const
+  WM_HASSHOWED = WM_USER + 1024;
 type
+
   TfrmMain = class(TForm)
     ilMain: TImageList;
     mmMain: TMainMenu;
@@ -65,10 +68,13 @@ type
     procedure actHideExecute(Sender: TObject);
     procedure actShowExecute(Sender: TObject);
     procedure traMainDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     FTcpServer: TDiocpCoderTcpServer;
+    FHasShowed: Boolean;
     procedure SetServerPort;
+    procedure HasShow(var Msg: TMessage);message WM_HASSHOWED;
   public
     { Public declarations }
   end;
@@ -129,7 +135,8 @@ end;
 procedure TfrmMain.FormCanResize(Sender: TObject; var NewWidth, NewHeight:
   Integer; var Resize: Boolean);
 begin
-  Resize := False;
+  if FHasShowed then
+    Resize := False;
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -180,11 +187,22 @@ begin
 
   TFMMonitor.createAsChild(pnlMonitor, FTcpServer);
   FTcpServer.LogicWorkerNeedCoInitialize := true;
+  FHasShowed := False;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
   FTcpServer.Free;
+end;
+
+procedure TfrmMain.FormShow(Sender: TObject);
+begin
+  PostMessage(Handle, WM_HASSHOWED, 1, 1);
+end;
+
+procedure TfrmMain.HasShow(var Msg: TMessage);
+begin
+  FHasShowed := True;
 end;
 
 end.

@@ -122,7 +122,7 @@ var
   AValue: string;
   APy: IPythonScriptService;
   ATemp: UnicodeString;
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   OrderId: string;
 begin
   Result := False;
@@ -138,7 +138,7 @@ begin
   AFormatXml := nil;
   AMq := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
     ASql := 'select * from View_Ins_Fee_List where produceno  = ''%s'' '
       +' and PAT_INDEX_NO = ''%s'' and PatientNumber = ''%s'' and INHOSP_NO = ''%s'' ';
@@ -238,7 +238,7 @@ var
   AValue: string;
   APy: IPythonScriptService;
   ATemp: UnicodeString;
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   OrderId: string;
 begin
   Result := False;
@@ -250,7 +250,7 @@ begin
   AFormatXml := nil;
   AMq := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
     ASql :=
       'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
@@ -389,7 +389,7 @@ end;
 function TFZSEInterfaceObject.GetTestItemResultInfos(const ARecvXML: TQXML; var
   ASendXML: TQXML): Boolean;
 var
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   APy: IPythonScriptService;
   ADB: TdmDatabase;
   AClone: TQXML;
@@ -442,7 +442,7 @@ begin
   APy := nil;
   ADB := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
     APy := PluginsManager.ByPath('Services/PythonScript') as IPythonScriptService;
     ADB := TdmDatabase.Create(nil);
     ADB.TableName := GetTableNameByClass('gettestitemresultinfos');
@@ -515,7 +515,7 @@ end;
 function TFZSEInterfaceObject.QueryHisInfos(const AClass: string; const ARecvXML:
   TQXML; var ASendXML: TQXML): Boolean;
 var
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   APy: IPythonScriptService;
   ADB: TdmDatabase;
   AReturn: string;
@@ -530,7 +530,7 @@ begin
   AXml := nil;
   AReturnXML := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
 
     AXml := TQXML.Create;
 
@@ -583,7 +583,7 @@ var
   AValue: string;
   APy: IPythonScriptService;
   ATemp: UnicodeString;
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   OrderId: string;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
@@ -594,7 +594,7 @@ begin
   AFormatXml := nil;
   AMq := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
     ASql :=
       'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';
@@ -686,7 +686,7 @@ var
   AValue: string;
   APy: IPythonScriptService;
   ATemp: UnicodeString;
-  AMq: TMQClass;
+  AMq: TTXMQClass;
   OrderId: string;
 begin
   RequisitionID := ARecvXML.TextByPath('interfacemessage.interfaceparms.requisitionid',
@@ -697,7 +697,7 @@ begin
   AFormatXml := nil;
   AMq := nil;
   try
-    AMq := TMQClass.Create;
+    AMq := TTXMQClass.Create;
     dmDB := TdmDatabase.Create(nil);
     ASql :=
       'SELECT * FROM clinical_requisition_order WHERE RequisitionID  = ''%s'' order by OrderType';

@@ -1,10 +1,12 @@
 object FMMonitor: TFMMonitor
   Left = 0
   Top = 0
-  Width = 451
-  Height = 305
+  Width = 560
+  Height = 347
   Align = alClient
   TabOrder = 0
+  ExplicitWidth = 451
+  ExplicitHeight = 305
   object lblServerStateCaption: TLabel
     Left = 16
     Top = 16

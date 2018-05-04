@@ -1,6 +1,6 @@
 program InterfaceServer;
 
-//{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
+{$DEFINE FZSE_INTF} //是否启用福州市二接口，该接口依赖外部DLL
 
 uses
   Vcl.Forms,
@@ -51,7 +51,7 @@ begin
   begin
     Application.MainFormOnTaskbar := True;
     TStyleManager.TrySetStyle('Windows10 SlateGray');
-    Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmMain, frmMain);
     Application.Run;
   end;
   ReleaseMutex(hMutex);    //释放互斥对象

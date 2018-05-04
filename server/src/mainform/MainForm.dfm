@@ -1,6 +1,7 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu]
   Caption = 'InterfacesServer'
   ClientHeight = 415
   ClientWidth = 551
@@ -324,6 +325,7 @@ object frmMain: TfrmMain
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pgcMain: TPageControl
@@ -354,7 +356,7 @@ object frmMain: TfrmMain
     Left = 245
     Top = 193
     Bitmap = {
-      494C01010A002800580010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010A002800600010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
